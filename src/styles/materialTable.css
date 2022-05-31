@@ -1,0 +1,16 @@
+.MuiTableSortLabel-root {
+  color: white !important
+}
+.MuiTableSortLabel-root:hover {
+  color: #F7901D !important
+}
+.Mui-active {
+  color: #F7901D
+}
+.MuiTableSortLabel-icon {
+  color: #F7901D !important
+}
+
+.MuiTableSortLabel-root.MuiTableSortLabel-active{
+  color: #F7901D !important;
+}
