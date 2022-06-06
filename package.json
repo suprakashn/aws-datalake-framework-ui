@@ -1,5 +1,5 @@
 {
-  "name": "gcp",
+  "name": "AWS",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
