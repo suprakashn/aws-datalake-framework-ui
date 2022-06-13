@@ -10,6 +10,10 @@ import { Button } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import Fab from '@material-ui/core/Fab';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import DeleteIcon from '@material-ui/icons/Delete';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import EditIcon from '@material-ui/icons/Edit';
 import { MTableToolbar } from 'material-table';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -17,7 +21,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
-import { openSourceSystemSidebar, updateMode, updateAllSourceSystemValues, resetSourceSystemValues} from 'actions/sourceSystemsAction';
+import { openSourceSystemSidebar, updateMode, updateAllSourceSystemValues, resetSourceSystemValues } from 'actions/sourceSystemsAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Drawer from '@material-ui/core/Drawer';
@@ -36,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
         color: '#fff',
     },
     button: {
+        float: 'right',
+        margin: '1vh',
         backgroundColor: '#49494a',
         color: '#fff',
         '&:hover': {
@@ -82,24 +88,58 @@ const ThreeDotsMenu = ({ props, rowData }) => {
 
 const SourceSystemTable = (props) => {
     const classes = useStyles();
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+        {
+            "src_sys_id": 10000,
+            "bucket_name": "dl-fmwrk-10000-us-east-1",
+            "src_sys_nm": "auto generated system",
+            "src_sys_desc": null,
+            "mechanism": "push",
+            "data_owner": "Suprakash Nandy",
+            "support_cntct": "suprakash.nandy@tigeranalytics.com",
+            "ingstn_pattern": "database",
+            "db_type": "postgres",
+            "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
+            "db_username": "postgresadmin",
+            "db_schema": "public",
+            "db_port": 5432,
+            "ingstn_src_bckt_nm": "2194-datastore-new",
+            "db_name": "dl_fmwrk"
+        },
+        {
+            "src_sys_id": 7416533097172425,
+            "bucket_name": "dl-fmwrk-10000-us-east-1",
+            "src_sys_nm": "auto generated system",
+            "src_sys_desc": null,
+            "mechanism": "push",
+            "data_owner": "Suprakash Nandy",
+            "support_cntct": "suprakash.nandy@tigeranalytics.com",
+            "ingstn_pattern": "file",
+            "db_type": null,
+            "db_hostname": null,
+            "db_username": null,
+            "db_schema": null,
+            "db_port": null,
+            "ingstn_src_bckt_nm": "dl-fmwrk-7416533097172425-us-east-2",
+            "db_name": null
+        },]);
     const [backdrop, setBackdrop] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    useEffect(() => {
-        setBackdrop(true);
-        defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
-            .then(response => {
-                console.log("response in aws", response)
-                setData(response.data.body.src_info)
-                setBackdrop(false)
-            })
-            .catch(error => {
-                console.log("error", error)
-                setData([]);
-                setBackdrop(false);
-            })
-    }, [])
+    // useEffect(() => {
+    //     setBackdrop(true);
+    //     defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
+    //         .then(response => {
+    //             console.log("response in aws", response)
+    //             setData(response.data.body.src_info)
+    //             setBackdrop(false)
+    //         })
+    //         .catch(error => {
+    //             console.log("error", error)
+    //             setData([]);
+    //             setBackdrop(false);
+    //         })
+    // }, [])
     const columns = [
         // {
         //     title: "", field: "", cellStyle: {
@@ -127,12 +167,22 @@ const SourceSystemTable = (props) => {
         props.resetSourceSystemValues();
     }
 
-    const handleRowClick = (evt, selectedRow) => {
-        console.log("selected row", selectedRow)
-        props.updateAllSourceSystemValues({ ...selectedRow })
-        setSelectedRow(selectedRow.tableData.id)
+    const handleRowClick = (evt, rowData) => {
+        console.log("selected row", rowData)
+       // props.updateAllSourceSystemValues({ ...selectedRow })
+        setSelectedRow(rowData)
+       // props.openSourceSystemSidebar();
+       // props.updateMode('view');
+    }
+
+    const handleAction = (mode) => {
+        props.updateMode(mode);
         props.openSourceSystemSidebar();
-        props.updateMode('view');
+        if(mode === 'create'){  
+            props.resetSourceSystemValues();
+        }else {
+            props.updateAllSourceSystemValues({ ...selectedRow })
+        }
     }
 
     return (
@@ -144,15 +194,27 @@ const SourceSystemTable = (props) => {
                         <MaterialTable
                             components={{
                                 Toolbar: (toolbarProps) => (
-                                    <Box display="flex" alignItems="center">
-                                        <Button
-                                            className={classes.button}
-                                            style={{ marginLeft: '2%', marginRight: 'auto' }}
-                                            variant="contained"
-                                            onClick = {handleCreate}
-                                        >
-                                            Create
-                                        </Button>
+                                    <Box >
+                                         <Tooltip title="Delete" >
+                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('delete')}>
+                                                <DeleteIcon style={{ color: 'white' }} />
+                                            </Fab>
+                                        </Tooltip>
+                                        <Tooltip title="Clone" >
+                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('clone')}>
+                                                <FileCopyIcon style={{ color: 'white' }} />
+                                            </Fab>
+                                        </Tooltip>
+                                        <Tooltip title="Edit" >
+                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('edit')}>
+                                                <EditIcon style={{ color: 'white' }} />
+                                            </Fab>
+                                        </Tooltip>
+                                        <Tooltip title="Create" >
+                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('create')}>
+                                                <AddCircleIcon style={{ color: 'white' }} />
+                                            </Fab>
+                                        </Tooltip>
                                         <MTableToolbar {...toolbarProps} />
                                     </Box>
                                 ),
@@ -162,16 +224,16 @@ const SourceSystemTable = (props) => {
                             title="Data Quality"
                             columns={columns}
                             data={data}
-                            onRowClick={((evt, selectedRow) => handleRowClick(evt, selectedRow))}
+                            onRowClick={((evt, rowData) => handleRowClick(evt, rowData))}
                             options={{
                                 // rowStyle: {
                                 //     overflowWrap: 'break-word'
                                 // },
                                 // padding: 'dense',
                                 rowStyle: rowData => ({
-                                    backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
+                                    backgroundColor: (selectedRow && selectedRow.tableData.id === rowData.tableData.id) ? '#FBC181' : '#FFF'
                                 }),
-                                // searchFieldAlignment: 'left',
+                                searchFieldAlignment: 'left',
                                 showTitle: false,
                                 draggable: false,
                                 minBodyHeight: '59vh',

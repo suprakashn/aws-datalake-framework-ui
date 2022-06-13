@@ -7,8 +7,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
+import Fab from '@material-ui/core/Fab';
+import Tooltip from '@material-ui/core/Tooltip';
+import CloseIcon from '@material-ui/icons/Close';
 import { MECHANISM, INGESTION_PATTERN, DB_TYPE } from 'components/Constants/SourceSystemConstants'
-import { sourceSystemFieldValue } from 'actions/sourceSystemsAction'
+import { sourceSystemFieldValue, closeSourceSystemSidebar } from 'actions/sourceSystemsAction'
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -16,6 +19,17 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 240,
         margin: 15,
         fontSize: 14
+    },
+    button: {
+        position:'absolute',
+        top: 3,
+        left: 4,
+       // backgroundColor: '#49494a',
+        color: '#fff',
+        '&:hover': {
+            backgroundColor: '#F7901D',
+            color: 'white',
+        }
     },
 }));
 
@@ -49,13 +63,18 @@ const SourceSystemSidebar = (props) => {
 
     return (
         <div>
-            {console.log("mode",props.mode)}
-            <div style={{ backgroundColor: '#49494A', color: 'white', textAlign: 'center', padding: 10, fontWeight: 'bold', fontSize: 16 }}>
+            {console.log("mode", props.mode)}
+            <div style={{ backgroundColor: '#49494A', color: 'white',textAlign: 'center', padding: 10, fontWeight: 'bold', fontSize: 16 }}>
+                <Tooltip title="Close" >
+                    <Fab size="small" color="primary" className={classes.button} onClick={()=>props.closeSourceSystemSidebar()}>
+                        <CloseIcon style={{ color: 'white' }} />
+                    </Fab>
+                </Tooltip>
                 <span>{`Source system Attributes`}</span>
             </div>
             <div style={{ marginLeft: '3%' }}>
                 <div>
-                    
+
                     <FormControl className={classes.formControl}>
                         <InputLabel id="id-label">{<span style={{ color: error.idError ? 'red' : '' }}>Source System Id</span>}</InputLabel>
                         <Input
@@ -119,15 +138,15 @@ const SourceSystemSidebar = (props) => {
                     </FormControl>
                 </div>
                 <div>
-                    {props.mode !=='create' && 
-                    <FormControl className={classes.formControl}>
-                        <InputLabel id="bucketName-label">{<span style={{ color: error.bucketNameError ? 'red' : '' }}>Bucket Name</span>}</InputLabel>
-                        <Input
-                            value={props.fieldValues.bucket_name}
-                            id="bucketName_label"
-                            onChange={(event) => handleValueChange('bucket_name', 'bucketNameError', event.target.value)}
-                        />
-                    </FormControl>}
+                    {props.mode !== 'create' &&
+                        <FormControl className={classes.formControl}>
+                            <InputLabel id="bucketName-label">{<span style={{ color: error.bucketNameError ? 'red' : '' }}>Bucket Name</span>}</InputLabel>
+                            <Input
+                                value={props.fieldValues.bucket_name}
+                                id="bucketName_label"
+                                onChange={(event) => handleValueChange('bucket_name', 'bucketNameError', event.target.value)}
+                            />
+                        </FormControl>}
                     <FormControl className={classes.formControl}>
                         <InputLabel id="patternLabel">{<span style={{ color: error.ingestionPatternError ? 'red' : '' }}>Ingestion Pattern</span>}</InputLabel>
                         <Select
@@ -146,7 +165,7 @@ const SourceSystemSidebar = (props) => {
                     </FormControl>
                 </div>
             </div>
-            {props.fieldValues.ingstn_pattern === 'database' && <div style={{marginTop: 10}}>
+            {props.fieldValues.ingstn_pattern === 'database' && <div style={{ marginTop: 10 }}>
                 <div style={{ backgroundColor: '#49494A', color: 'white', textAlign: 'center', padding: 10, fontWeight: 'bold', fontSize: 16 }}>
                     <span>{`Database Properties`}</span>
                 </div>
@@ -181,7 +200,7 @@ const SourceSystemSidebar = (props) => {
                         <FormControl className={classes.formControl}>
                             <InputLabel id="dbName-label">{<span style={{ color: error.dbNameError ? 'red' : '' }}>DB Name</span>}</InputLabel>
                             <Input
-                                value={props.fieldValues.src_sys_id}
+                                value={props.fieldValues.db_name}
                                 id="dbName_label"
                                 onChange={(event) => handleValueChange('db_name', 'dbNameError', event.target.value)}
                             />
@@ -213,17 +232,17 @@ const SourceSystemSidebar = (props) => {
                             />
                         </FormControl>
                     </div>
-                    {props.mode === 'create' && 
-                    <div>
-                        <FormControl className={classes.formControl}>
-                            <InputLabel id="dbPass-label">{<span style={{ color: error.dbPassError ? 'red' : '' }}>DB Password</span>}</InputLabel>
-                            <Input
-                                value={props.fieldValues.db_pass}
-                                id="dbPass_label"
-                                onChange={(event) => handleValueChange('db_pass', 'dbPassError', event.target.value)}
-                            />
-                        </FormControl>
-                    </div>}
+                    {props.mode === 'create' &&
+                        <div>
+                            <FormControl className={classes.formControl}>
+                                <InputLabel id="dbPass-label">{<span style={{ color: error.dbPassError ? 'red' : '' }}>DB Password</span>}</InputLabel>
+                                <Input
+                                    value={props.fieldValues.db_pass}
+                                    id="dbPass_label"
+                                    onChange={(event) => handleValueChange('db_pass', 'dbPassError', event.target.value)}
+                                />
+                            </FormControl>
+                        </div>}
                 </div>
             </div>}
         </div>
@@ -236,7 +255,8 @@ const mapStateToProps = state => ({
 
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    sourceSystemFieldValue
+    sourceSystemFieldValue,
+    closeSourceSystemSidebar,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SourceSystemSidebar);

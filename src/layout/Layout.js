@@ -44,7 +44,8 @@ const Layout = (props) => {
             <CssBaseline />
             <AppBar position="sticky">
                 <CssBaseline />
-                <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}>
+                {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
+                <Toolbar style={{ backgroundColor: 'black' }}>
                     <Link to="/" className={classes.logo}>
                         TIGER ANALYTICS AWS DATA LAKE
                     </Link>
