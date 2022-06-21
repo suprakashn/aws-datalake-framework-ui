@@ -10,6 +10,13 @@ const initialSourceSystemValues = {
     support_cntct: '',
     bucket_name: '',
     ingstn_pattern: '',
+    db_hostname: '',
+    db_type: '',
+    db_name: '',
+    db_port: '',
+    db_schema: '',
+    db_username: '',
+    db_pass: '',
 }
 const sidebar = (state = { sidebarFlag: false }, action) => {
     switch (action.type) {

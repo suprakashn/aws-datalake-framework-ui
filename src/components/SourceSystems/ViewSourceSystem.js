@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import Close from '@material-ui/icons/Close';
+import { Button } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -10,68 +16,210 @@ import Input from '@material-ui/core/Input';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import CloseIcon from '@material-ui/icons/Close';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 import { MECHANISM, INGESTION_PATTERN, DB_TYPE } from 'components/Constants/SourceSystemConstants'
 import { sourceSystemFieldValue, closeSourceSystemSidebar } from 'actions/sourceSystemsAction'
+import { BorderBottom } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 240,
-        margin: 15,
-        fontSize: 14
-    },
-    button: {
-        position:'absolute',
-        top: 3,
-        left: 4,
-       // backgroundColor: '#49494a',
-        color: '#fff',
-        '&:hover': {
-            backgroundColor: '#F7901D',
-            color: 'white',
-        }
-    },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 240,
+    margin: 15,
+    fontSize: 14,
+    wordBreak: 'break-word',
+    maxWidth: 240
+  },
+  button: {
+    position: 'absolute',
+    top: 3,
+    left: 4,
+    // backgroundColor: '#49494a',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#F7901D',
+      color: 'white',
+    }
+  },
 }));
 
-const SourceSystemSidebar = (props) => {
-    const classes = useStyles();
-    const [error, setError] = useState({
-        idError: false,
-        nameError: false,
-        descriptionError: false,
-        mechanismError: false,
-        dataOwnerError: false,
-        supportContactError: false,
-        bucketNameError: false,
-        ingestionPatternError: false,
-        dbHostError: false,
-        dbTypeError: false,
-        dbNameError: false,
-        dbPortError: false,
-        dbSchemaError: false,
-        dbUsernameError: false,
-        dbPassError: false
+const ViewSourceSystem = (props) => {
+  const classes = useStyles();
+  const [tabIndex, setTabIndex] = useState(0);
+  const [error, setError] = useState({
+    idError: false,
+    nameError: false,
+    descriptionError: false,
+    mechanismError: false,
+    dataOwnerError: false,
+    supportContactError: false,
+    bucketNameError: false,
+    ingestionPatternError: false,
+    dbHostError: false,
+    dbTypeError: false,
+    dbNameError: false,
+    dbPortError: false,
+    dbSchemaError: false,
+    dbUsernameError: false,
+    dbPassError: false
+  })
+
+  const handleValueChange = (field, errorField, value) => {
+    props.sourceSystemFieldValue(field, value);
+    setError({
+      ...error,
+      [errorField]: value.trim().length > 0 ? false : true
     })
+  }
 
-    const handleValueChange = (field, errorField, value) => {
-        props.sourceSystemFieldValue(field, value);
-        setError({
-            ...error,
-            [errorField]: value.trim().length > 0 ? false : true
-        })
-    }
-
-    return (
+  return (
+    <Dialog classes={{ paper: classes.customWidth }} open={props.open}>
+      <DialogTitle >
+        {props.mode === 'view' && <> {props.fieldValues.src_sys_id ? <div>ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''} </>}
+        <Tooltip title="close">
+          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={() => props.closeSourceSystemSidebar()} />
+        </Tooltip>
+      </DialogTitle>
+      <DialogContent>
         <div>
-            <div style={{ backgroundColor: '#49494A', color: 'white',textAlign: 'center', padding: 10, fontWeight: 'bold', fontSize: 16 }}>
-                <Tooltip title="Close" >
-                    <Fab size="small" color="primary" className={classes.button} onClick={()=>props.closeSourceSystemSidebar()}>
-                        <CloseIcon style={{ color: 'white' }} />
-                    </Fab>
-                </Tooltip>
-                <span>{`Source system Attributes`}</span>
-            </div>
-            <div style={{ marginLeft: '3%' }}>
+          <Tabs>
+            <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
+              <Tab style={{
+                fontWeight: tabIndex === 0 ? 'bold' : '',
+                border: 'none',
+                borderBottom: tabIndex === 0 ? '10px solid #F7901D' : ''
+              }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
+              <Tab style={{
+                fontWeight: tabIndex === 1 ? 'bold' : '',
+                margin: ' 0 20px',
+                border: 'none',
+                borderBottom: tabIndex === 1 ? '10px solid #F7901D' : ''
+              }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
+              {/* <Tab style={{
+            fontWeight: tabIndex === 2 ? 'bold' : '',
+            margin: ' 0 20px',
+            border: 'none',
+            borderBottom: tabIndex === 2 ? '10px solid #F7901D' : ''
+          }} onClick={() => setTabIndex(2)}><span>Streaming Data Properties</span></Tab> */}
+            </TabList>
+            <TabPanel>
+              <div style={{ border: '1px solid #CBCBCB' }}>
+                <div style={{ marginLeft: '3%', paddingTop: 10 }}>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Source System Id
+                      </div>
+                      <div>{props.fieldValues.src_sys_id}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Source System Name
+                      </div>
+                      <div>{props.fieldValues.src_sys_nm}</div>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Source System Description
+                      </div>
+                      {/* <div>{props.fieldValues.src_sys_desc}</div> */}
+                      <div>
+                        n publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.
+                      </div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Mechanism
+                      </div>
+                      <div>{props.fieldValues.mechanism}</div>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Data Owner
+                      </div>
+                      <div>{props.fieldValues.data_owner}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Support Contact
+                      </div>
+                      <div>{props.fieldValues.support_cntct}</div>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Bucket Name
+                      </div>
+                      <div>{props.fieldValues.bucket_name}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Ingestion Pattern
+                      </div>
+                      <div>{props.fieldValues.ingstn_pattern}</div>
+                    </FormControl>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <div style={{ border: '1px solid #CBCBCB' }}>
+                <div style={{ marginLeft: '3%', paddingTop: 10 }}>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Host
+                      </div>
+                      <div>{props.fieldValues.db_hostname}</div>
+
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Type
+                      </div>
+                      <div>{props.fieldValues.db_type}</div>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Name
+                      </div>
+                      <div>{props.fieldValues.db_name}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Port
+                      </div>
+                      <div>{props.fieldValues.db_port}</div>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Schema
+                      </div>
+                      <div>{props.fieldValues.db_schema}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Username
+                      </div>
+                      <div>{props.fieldValues.db_username}</div>
+
+                    </FormControl>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+          </Tabs>
+          {/* <div style={{ marginLeft: '3%' }}>
                 <div>
 
                     <FormControl className={classes.formControl}>
@@ -243,19 +391,28 @@ const SourceSystemSidebar = (props) => {
                             </FormControl>
                         </div>}
                 </div>
-            </div>}
+            </div>} */}
         </div>
-    );
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus >
+          Close
+        </Button>
+        <Button>Edit</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 const mapStateToProps = state => ({
-    fieldValues: state.sourceSystemState.sourceSystemValues,
-    mode: state.sourceSystemState.updateMode.mode,
+  open: state.sourceSystemState.sidebar.sidebarFlag,
+  fieldValues: state.sourceSystemState.sourceSystemValues,
+  mode: state.sourceSystemState.updateMode.mode,
 
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    sourceSystemFieldValue,
-    closeSourceSystemSidebar,
+  sourceSystemFieldValue,
+  closeSourceSystemSidebar,
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(SourceSystemSidebar);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewSourceSystem);

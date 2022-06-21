@@ -4,30 +4,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import defaultInstance from 'routes/defaultInstance';
-import { Box } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import InputLabel from '@material-ui/core/InputLabel';
-import Fab from '@material-ui/core/Fab';
-import AddSharpIcon from '@material-ui/icons/AddSharp';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import EditIcon from '@material-ui/icons/Edit';
+import { Box, Button } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Tooltip from '@material-ui/core/Tooltip';
 import { openSourceSystemSidebar, updateMode, updateAllSourceSystemValues, resetSourceSystemValues } from 'actions/sourceSystemsAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Drawer from '@material-ui/core/Drawer';
-import clsx from 'clsx';
+import show from 'images/Show.png';
+import edit from 'images/edit.png';
+import clone from 'images/clone.png';
+import remove from 'images/Remove.png';
 
-const drawerWidth = 500;
 const useStyles = makeStyles((theme) => ({
     root: {
         height: '80vh',
@@ -42,49 +28,17 @@ const useStyles = makeStyles((theme) => ({
     button: {
         float: 'right',
         margin: '1vh',
-        backgroundColor: '#49494a',
-        color: '#fff',
+        backgroundColor: '#00B1E8',
+        color: 'white',
+        marginTop: '12px',
+        // backgroundColor: '#49494a',
+        // color: '#fff',
         '&:hover': {
             backgroundColor: '#F7901D',
             color: 'white',
         }
     },
 }));
-
-const ThreeDotsMenu = ({ props, rowData }) => {
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    function handleMenuClick(mode) {
-        props.openSourceSystemSidebar();
-        setAnchorEl(null);
-        props.updateMode(mode);
-    }
-    const handleClick = (e) => {
-        setAnchorEl(e.currentTarget);
-    }
-    const handleClose = () => {
-        setAnchorEl(null);
-    }
-    return (
-        <React.Fragment>
-            <Tooltip title="Action">
-                <MoreVertIcon onClick={handleClick} /></Tooltip>
-            <Menu
-                id="card-actions-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                {/* <MenuItem onClick={() => handleMenuClick('')}>View</MenuItem> */}
-                <MenuItem onClick={() => handleMenuClick('edit')}>Edit</MenuItem>
-                <MenuItem onClick={() => handleMenuClick('clone')}>Clone</MenuItem>
-                <MenuItem onClick={() => handleMenuClick('delete')}>Delete</MenuItem>
-            </Menu>
-        </React.Fragment>
-    )
-}
 
 const SourceSystemTable = (props) => {
     const classes = useStyles();
@@ -126,37 +80,11 @@ const SourceSystemTable = (props) => {
     const [backdrop, setBackdrop] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    // useEffect(() => {
-    //     setBackdrop(true);
-    //     defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
-    //         .then(response => {
-    //             console.log("response in aws", response)
-    //             setData(response.data.body.src_info)
-    //             setBackdrop(false)
-    //         })
-    //         .catch(error => {
-    //             console.log("error", error)
-    //             setData([]);
-    //             setBackdrop(false);
-    //         })
-    // }, [])
+
     const columns = [
-        // {
-        //     title: "", field: "", cellStyle: {
-        //         minWidth: 25,
-        //         maxWidth: 25
-        //     },
-        //     headerStyle: {
-        //         minWidth: 25,
-        //         maxWidth: 25
-        //     },
-        //     render: rowData => {
-        //         return <>
-        //             <ThreeDotsMenu rowData={rowData} props={props} />
-        //         </>
-        //     }
-        // },
-        { title: "Source System Id", field: "src_sys_id", },
+        { title: "Source System ID", field: "src_sys_id", render : (rowData)=>{
+           return <span style={{color:'blue',cursor:'pointer'}} onClick={()=>handleAction('view',rowData)}>{rowData.src_sys_id}</span>
+        }},
         { title: "Source System Name", field: "src_sys_nm", },
         { title: "Bucket Name", field: "bucket_name", },
     ];
@@ -169,18 +97,18 @@ const SourceSystemTable = (props) => {
 
     const handleRowClick = (evt, rowData) => {
         console.log("selected row", rowData)
-       // props.updateAllSourceSystemValues({ ...selectedRow })
+        // props.updateAllSourceSystemValues({ ...selectedRow })
         setSelectedRow(rowData)
-       // props.openSourceSystemSidebar();
-       // props.updateMode('view');
+        // props.openSourceSystemSidebar();
+        // props.updateMode('view');
     }
 
-    const handleAction = (mode) => {
+    const handleAction = (mode, selectedRow) => {
         props.updateMode(mode);
         props.openSourceSystemSidebar();
-        if(mode === 'create'){  
+        if (mode === 'create') {
             props.resetSourceSystemValues();
-        }else {
+        } else {
             props.updateAllSourceSystemValues({ ...selectedRow })
         }
     }
@@ -195,44 +123,49 @@ const SourceSystemTable = (props) => {
                             components={{
                                 Toolbar: (toolbarProps) => (
                                     <Box >
-                                         <Tooltip title="Delete" >
-                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('delete')}>
-                                                <DeleteIcon style={{ color: 'white' }} />
-                                            </Fab>
-                                        </Tooltip>
-                                        <Tooltip title="Clone" >
-                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('clone')}>
-                                                <FileCopyIcon style={{ color: 'white' }} />
-                                            </Fab>
-                                        </Tooltip>
-                                        <Tooltip title="Edit" >
-                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('edit')}>
-                                                <EditIcon style={{ color: 'white' }} />
-                                            </Fab>
-                                        </Tooltip>
-                                        <Tooltip title="Create" >
-                                            <Fab size="small" color="primary" className={classes.button} onClick={()=>handleAction('create')}>
-                                                <AddCircleIcon style={{ color: 'white' }} />
-                                            </Fab>
-                                        </Tooltip>
+                                        <Button variant="contained" className={classes.button} >Add New</Button>
                                         <MTableToolbar {...toolbarProps} />
                                     </Box>
                                 ),
                             }}
                             isLoading={backdrop}
                             icons={tableIcons}
-                            title="Data Quality"
+                            title="Source Systems"
                             columns={columns}
                             data={data}
-                            onRowClick={((evt, rowData) => handleRowClick(evt, rowData))}
+                            actions={[
+                                {
+                                    icon: () => <img src={show} style={{maxWidth :'80%'}}/>,
+                                    tooltip: 'View',
+                                     onClick: (event, rowData) => {
+                                        handleAction('view',rowData)
+                                     }
+                                },
+                                {
+                                    icon: () => <img src={edit} style={{maxWidth :'80%'}}/>,
+                                    tooltip: 'Edit',
+                                    onClick: (event, rowData) => {
+                                        handleAction('edit',rowData)
+                                     }
+                                },
+                                {
+                                    icon: () => <img src={clone} style={{maxWidth :'80%'}}/>,
+                                    tooltip: 'Clone',
+                                    onClick: (event, rowData) => {
+                                        handleAction('clone',rowData)
+                                     }
+                                },
+                                {
+                                    icon: () => <img src={remove} style={{maxWidth :'80%'}}/>,
+                                    tooltip: 'Delete',
+                                    onClick: (event, rowData) => {
+                                        handleAction('delete',rowData)
+                                     }
+                                }
+                            ]}
+                            
                             options={{
-                                // rowStyle: {
-                                //     overflowWrap: 'break-word'
-                                // },
-                                // padding: 'dense',
-                                rowStyle: rowData => ({
-                                    backgroundColor: (selectedRow && selectedRow.tableData.id === rowData.tableData.id) ? '#FBC181' : '#FFF'
-                                }),
+                                paging: false,
                                 searchFieldAlignment: 'left',
                                 showTitle: false,
                                 draggable: false,
@@ -241,17 +174,17 @@ const SourceSystemTable = (props) => {
                                 actionsColumnIndex: -1,
                                 toolbarButtonAlignment: "left",
                                 searchFieldStyle: {
-                                    backgroundColor: '#49494A',
-                                    color: 'white'
+                                    backgroundColor: '#F5F5F5',
+                                    color: 'black'
                                 },
                                 sorting: true,
                                 headerStyle: {
                                     // textAlign: 'center',
                                     position: 'sticky',
                                     top: 0,
-                                    backgroundColor: '#49494A',
-                                    color: 'white',
-                                    // fontWeight: 'bold',
+                                    backgroundColor: '#F5F5F5',
+                                    //color: 'black',
+                                    fontWeight: 'bold',
                                 }
                             }}
                         />
@@ -264,8 +197,6 @@ const SourceSystemTable = (props) => {
 
 const mapStateToProps = state => ({
     open: state.sourceSystemState.sidebar.sidebarFlag,
-    // mode: state.manageTaskState.updateMode.mode,
-
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
     openSourceSystemSidebar,
