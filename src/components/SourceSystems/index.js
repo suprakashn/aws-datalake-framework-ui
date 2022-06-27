@@ -2,323 +2,112 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   openSourceSystemSidebar, updateMode, closeSourceSystemSidebar, updateAllSourceSystemValues,
-  resetSourceSystemValues
+  resetSourceSystemValues, updateSourceSysTableData
 } from 'actions/sourceSystemsAction';
+import defaultInstance from 'routes/defaultInstance';
 import show from 'images/Show.png';
 import edit from 'images/edit.png';
 import clone from 'images/clone.png';
 import remove from 'images/Remove.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import { Box, Button } from '@material-ui/core';
+import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
-import CreateSourceSystem from 'components/SourceSystems/CreateSourceSystem';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '2%'
+    margin: '3%'
   },
   button: {
     float: 'right',
-    margin: '1%',
+    margin: '15px',
     color: 'white',
     marginTop: '12px',
   },
+  search: {
+    '& .MuiInput-underline:before': {
+      borderBottomColor: '#fff8', // Semi-transparent underline
+    },
+    '& .MuiInput-underline:hover:before': {
+      borderBottomColor: '#fff', // Solid underline on hover
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: '#fff', // Solid underline on focus
+    },
+  }
 }));
 
 const SourceSystems = (props) => {
   const classes = useStyles();
-  const [openCreateScreen, setOpenCreateScreen] = useState(false);
-  const [openEditScreen, setOpenEditScreen] = useState(false);
-  const [openViewScreen, setOpenViewScreen] = useState(false);
-  const [openDeleteScreen, setOpenDeleteScreen] = useState(false);
-  const [data, setData] = useState([
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },  {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-      {
-      "src_sys_id": 10000,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "database",
-      "db_type": "postgres",
-      "db_hostname": "dl-fmwrk-db-instance.capmtud4vnyz.us-east-2.rds.amazonaws.com",
-      "db_username": "postgresadmin",
-      "db_schema": "public",
-      "db_port": 5432,
-      "ingstn_src_bckt_nm": "2194-datastore-new",
-      "db_name": "dl_fmwrk"
-    },
-    {
-      "src_sys_id": 7416533097172425,
-      "bucket_name": "dl-fmwrk-10000-us-east-1",
-      "src_sys_nm": "auto generated system",
-      "src_sys_desc": null,
-      "mechanism": "push",
-      "data_owner": "Suprakash Nandy",
-      "support_cntct": "suprakash.nandy@tigeranalytics.com",
-      "ingstn_pattern": "file",
-      "db_type": null,
-      "db_hostname": null,
-      "db_username": null,
-      "db_schema": null,
-      "db_port": null,
-      "ingstn_src_bckt_nm": "dl-fmwrk-7416533097172425-us-east-2",
-      "db_name": null
-    },]);
+  const navigate = useNavigate();
+  const [selectedRow, setSelectedRow] = ([]);
   const [backdrop, setBackdrop] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
 
+  useEffect(() => {
+    if (props.dataFlag) {
+      setBackdrop(true);
+      defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
+        .then(response => {
+          console.log("response in aws", response)
+          props.updateSourceSysTableData(response.data.body.src_info);
+          //setData(response.data.body.src_info)
+          setBackdrop(false);
+        })
+        .catch(error => {
+          console.log("error", error)
+          props.updateSourceSysTableData([]);
+          setBackdrop(false);
+        })
+    }
+  }, [])
 
   const columns = [
     {
       title: "Source System ID", field: "src_sys_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.src_sys_id}</span>
+        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.src_sys_id}</span>
       }
     },
     { title: "Source System Name", field: "src_sys_nm", },
     { title: "Bucket Name", field: "bucket_name", },
+    {
+      title: "Actions", field: "", render: (rowData) => {
+        return <>
+          <Tooltip placement='top' title="View"><img onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Edit"><img onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Clone"><img onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Delete"><img onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '9%', padding: '2%', marginRight: '2%' }} /></Tooltip>
+        </>
+      }
+    },
   ];
 
   const handleCreate = () => {
-    setOpenCreateScreen(true);
-    props.openSourceSystemSidebar();
     props.updateMode('create');
     props.resetSourceSystemValues();
+  }
+
+  const handleEdit = (selectedRow) => {
+    props.updateMode('edit');
+    props.updateAllSourceSystemValues({ ...selectedRow })
+    navigate("/create-source-system")
+  }
+
+  const handleClone = (selectedRow) => {
+    props.updateMode('clone');
+    props.updateAllSourceSystemValues({ ...selectedRow })
+    navigate("/create-source-system")
   }
 
   const handleRowClick = (evt, rowData) => {
     console.log("selected row", rowData)
     // props.updateAllSourceSystemValues({ ...selectedRow })
-    setSelectedRow(rowData)
     // props.openSourceSystemSidebar();
     // props.updateMode('view');
   }
@@ -326,83 +115,45 @@ const SourceSystems = (props) => {
   const handleAction = (mode, selectedRow) => {
     console.log("selected row", selectedRow);
     props.updateMode(mode);
-    setSelectedRow(selectedRow);
     props.openSourceSystemSidebar();
-    if (mode === 'create') {
-      props.resetSourceSystemValues();
-    } else {
-      props.updateAllSourceSystemValues({ ...selectedRow })
-    }
+    props.updateAllSourceSystemValues({ ...selectedRow })
   }
 
   return (
     <>
-     
-      {/* <SourceSystemTable /> */}
-      {openCreateScreen && <CreateSourceSystem />}
-      {props.mode === 'view' && <ViewSourceSystem/>}
+      <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
                 <Link to="/create-source-system" >
-                <Button variant="contained" className={classes.button} style={{backgroundColor: '#00B1E8'}} onClick={()=>handleCreate()}>Add New +</Button>
-                    </Link>
+                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
             ),
           }}
-          isLoading={backdrop}
+          // isLoading={backdrop}
           icons={tableIcons}
           title="Source Systems"
           columns={columns}
-          data={data}
-          actions={[
-            {
-              icon: () => <img src={show} style={{ maxWidth: '70%' }} />,
-              tooltip: 'View',
-              onClick: (event, rowData) => {
-                handleAction('view', rowData)
-              }
-            },
-            {
-              icon: () => <img src={edit} style={{ maxWidth: '70%' }} />,
-              tooltip: 'Edit',
-              onClick: (event, rowData) => {
-                handleAction('edit', rowData)
-              }
-            },
-            {
-              icon: () => <img src={clone} style={{ maxWidth: '70%' }} />,
-              tooltip: 'Clone',
-              onClick: (event, rowData) => {
-                handleAction('clone', rowData)
-              }
-            },
-            {
-              icon: () => <img src={remove} style={{ maxWidth: '70%' }} />,
-              tooltip: 'Delete',
-              onClick: (event, rowData) => {
-                handleAction('delete', rowData)
-              }
-            }
-          ]}
-
+          data={props.data}
           options={{
             //padding: 'dense',
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,
-            actionsColumnIndex: -1,
             toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#F5F5F5',
               color: 'black'
             },
             sorting: true,
+            // searchFieldStyle:,
             headerStyle: {
+              textAlign: 'left',
               position: 'sticky',
               top: 0,
               backgroundColor: '#F5F5F5',
@@ -419,6 +170,8 @@ const mapStateToProps = state => ({
   open: state.sourceSystemState.sidebar.sidebarFlag,
   fieldValues: state.sourceSystemState.sourceSystemValues,
   mode: state.sourceSystemState.updateMode.mode,
+  data: state.sourceSystemState.updateSourceSysTableData.data,
+  dataFlag: state.sourceSystemState.updateDataFlag.dataFlag
 
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -426,7 +179,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   closeSourceSystemSidebar,
   updateMode,
   updateAllSourceSystemValues,
-  resetSourceSystemValues
+  resetSourceSystemValues,
+  updateSourceSysTableData
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SourceSystems);

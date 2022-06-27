@@ -41,3 +41,17 @@ export const resetSourceSystemValues = () => dispatch => {
         type: constants.RESET_SOURCE_SYSTEM_FIELD_VALUES,
     })
 }
+
+export const updateDataFlag = (flag) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_SS_TABLE_DATA,
+        flag: flag,
+    })
+}
+
+export const updateSourceSysTableData = (data) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_TABLE_DATA,
+        data: data
+    })
+}
