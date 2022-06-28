@@ -13,7 +13,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode } from 'actions/sourceSystemsAction'
+import defaultInstance from 'routes/defaultInstance';
+import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -73,7 +74,15 @@ const ViewSourceSystem = (props) => {
   }
 
   const handleDelete = () => {
-    console.log("delete")
+    defaultInstance.post('sourcesystem/delete?tasktype=delete', {"src_config":{"src_sys_id": props.fieldValues.src_sys_id} })
+            .then((response) => {
+                console.log("response", response)
+            })
+            .catch((error) => {
+                console.log("error", error)
+            })
+            props.updateDataFlag(true);
+            navigate("/source-systems");
   }
 
   const handleClose = () => {
@@ -228,6 +237,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateAllSourceSystemValues,
   sourceSystemFieldValue,
   closeSourceSystemSidebar,
+  updateDataFlag
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewSourceSystem);

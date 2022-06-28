@@ -55,7 +55,6 @@ const SourceSystems = (props) => {
       setBackdrop(true);
       defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
         .then(response => {
-          console.log("response in aws", response)
           props.updateSourceSysTableData(response.data.body.src_info);
           //setData(response.data.body.src_info)
           setBackdrop(false);
@@ -105,15 +104,7 @@ const SourceSystems = (props) => {
     navigate("/create-source-system")
   }
 
-  const handleRowClick = (evt, rowData) => {
-    console.log("selected row", rowData)
-    // props.updateAllSourceSystemValues({ ...selectedRow })
-    // props.openSourceSystemSidebar();
-    // props.updateMode('view');
-  }
-
   const handleAction = (mode, selectedRow) => {
-    console.log("selected row", selectedRow);
     props.updateMode(mode);
     props.openSourceSystemSidebar();
     props.updateAllSourceSystemValues({ ...selectedRow })

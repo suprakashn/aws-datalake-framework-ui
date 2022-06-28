@@ -132,6 +132,7 @@ const CreateSourceSystem = (props) => {
     const handleCancel = () => {
         props.updateMode('');
         props.resetSourceSystemValues();
+        props.closeSourceSystemSidebar();
         if(props.dataFlag){
             props.updateDataFlag(false);
         }   
@@ -244,10 +245,15 @@ const CreateSourceSystem = (props) => {
         console.log("inside handle save", props.fieldValues)
     }
 
+    const handleBack = () => {
+        props.updateDataFlag(false);
+        props.closeSourceSystemSidebar();
+    }
+
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <div style={{display:'flex'}} onClick={()=>props.updateDataFlag(false)}>
+            <div style={{display:'flex'}} onClick={handleBack}>
             <Link to="/source-systems" className={classes.link}>
                 <ArrowBackIosIcon fontSize='small' />
                 <span>Back</span>
