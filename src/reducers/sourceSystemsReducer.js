@@ -10,6 +10,13 @@ const initialSourceSystemValues = {
     support_cntct: '',
     bucket_name: '',
     ingstn_pattern: '',
+    db_hostname: '',
+    db_type: '',
+    db_name: '',
+    db_port: '',
+    db_schema: '',
+    db_username: '',
+    db_pass: '',
 }
 const sidebar = (state = { sidebarFlag: false }, action) => {
     switch (action.type) {
@@ -26,10 +33,30 @@ const sidebar = (state = { sidebarFlag: false }, action) => {
     }
 }
 
+const updateDataFlag = (state = { dataFlag : true }, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_SS_TABLE_DATA:
+            return {
+                ...state, dataFlag: action.flag
+            }
+        default:
+            return { ...state }
+    }
+}
+
 const updateMode = (state = { mode: '' }, action) => {
     switch (action.type) {
         case Constants.UPDATE_MODE:
             return { ...state, mode: action.mode }
+        default:
+            return { ...state }
+    }
+}
+
+const updateSourceSysTableData = (state = { data: [] }, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_TABLE_DATA:
+            return { ...state, data: action.data }
         default:
             return { ...state }
     }
@@ -51,7 +78,9 @@ const sourceSystemValues = (state = initialSourceSystemValues, action) => {
 const sourceSystemsReducer = combineReducers({
     sidebar,
     updateMode,
-    sourceSystemValues
+    sourceSystemValues,
+    updateDataFlag,
+    updateSourceSysTableData
 })
 
 export default sourceSystemsReducer;
