@@ -1,0 +1,40 @@
+import { combineReducers } from "redux";
+import * as Constants from 'components/Constants/Constants'
+
+const initialLakeDestinationValues = {
+    target_id: '',
+    domain: '',
+    subdomain: '',
+    bucket_name: '',
+    data_owner: '',
+    support_cntct: ''    
+}
+
+const lakeDestinationValues = (state = initialLakeDestinationValues, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_LAKE_DESTINATION_FIELD_VALUE:
+            return { ...state, [action.payload.field]: action.payload.value };
+        case Constants.UPDATE_ALL_LAKE_DESTINATION_FIELD_VALUES:
+            return { ...state, ...action.row }        
+        case Constants.RESET_LAKE_DESTINATION_FIELD_VALUES:
+            return { ...initialLakeDestinationValues };
+        default:
+            return { ...state }
+    }
+}
+
+const updateMode = (state = { mode: '' }, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_MODE:
+            return { ...state, mode: action.mode }
+        default:
+            return { ...state }
+    }
+}
+
+const lakeDestinationsReducer = combineReducers({
+    updateMode,
+    lakeDestinationValues
+})
+
+export default lakeDestinationsReducer;
