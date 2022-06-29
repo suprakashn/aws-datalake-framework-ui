@@ -12,7 +12,7 @@ import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import { Box, Button } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import ViewLakeDestination from './ViewLakeDestination';
+import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

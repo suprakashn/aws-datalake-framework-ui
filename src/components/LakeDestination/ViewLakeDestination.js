@@ -18,7 +18,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import { lakeDestinationFieldValue, updateAllLakeDestinationValues } from 'actions/lakeDestinationsAction'
 import { useNavigate } from 'react-router';
-import { updateMode } from './../../actions/sourceSystemsAction';
+import { updateMode } from 'actions/lakeDestinationsAction';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {

@@ -11,7 +11,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import { openSnackbar } from './../../actions/notificationAction';
+import { openSnackbar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
     root: {
