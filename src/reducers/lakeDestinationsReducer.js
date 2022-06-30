@@ -2,10 +2,8 @@ import { combineReducers } from "redux";
 import * as Constants from 'components/Constants/Constants'
 
 const initialLakeDestinationValues = {
-    target_id: '',
     domain: '',
     subdomain: '',
-    bucket_name: '',
     data_owner: '',
     support_cntct: ''    
 }
@@ -17,7 +15,9 @@ const lakeDestinationValues = (state = initialLakeDestinationValues, action) => 
         case Constants.UPDATE_ALL_LAKE_DESTINATION_FIELD_VALUES:
             return { ...state, ...action.row }        
         case Constants.RESET_LAKE_DESTINATION_FIELD_VALUES:
-            return { ...initialLakeDestinationValues };
+            return {
+                ...state, ...initialLakeDestinationValues
+            };
         default:
             return { ...state }
     }
