@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { makeStyles } from '@material-ui/core/styles';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  resetLakeDestinationValues, updateMode, updateAllLakeDestinationValues,
+  updateFetchDataFlag, updateLakeDestinationTableData
+} from 'actions/lakeDestinationsAction';
+import show from 'images/Show.png';
+import edit from 'images/edit.png';
+import clone from 'images/clone.png';
+import remove from 'images/Remove.png';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import MaterialTable from "material-table";
+import { Box, Button, LinearProgress } from '@material-ui/core';
+import { MTableToolbar } from 'material-table';
+import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
+import defaultInstance from 'routes/defaultInstance';
+import { openSnackbar } from 'actions/notificationAction';
+
+const useStyles = makeStyles((theme) => ({
+  customWidth: {
+    maxWidth: '1060px'
+  },
+  table: {
+    margin: '3%',
+    "& .MuiBox-root+div": {
+      width: '100%',
+    },
+    "& .MuiInput-underline:before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:after": {
+      borderBottom: 'none'
+    },
+  },
+  button: {
+    float: 'right',
+    margin: '1%',
+    color: 'white',
+    marginTop: '12px',
+  },
+}));
+
+const LakeDestination = (props) => {
+  const classes = useStyles();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const tableFallbackData = [
+    {
+      "target_id": 461725,
+      "domain": "education",
+      "subdomain": "university_rankings",
+      "bucket_name": "dl-fmwrk-tgt-461725-us-east-2",
+      "data_owner": "Sagar Das",
+      "support_cntct": "sagar.das@tigeranalytics.com",
+      "rs_load_ind": true,
+      "rs_db_nm": "test red shift db",
+      "rs_schema_nm": "test red shift schema"
+    },
+    {
+      "target_id": 461726,
+      "domain": "finance",
+      "subdomain": "corporate_rankings",
+      "bucket_name": "dl-fmwrk-tgt-461725-us-east-3",
+      "data_owner": "Divya",
+      "support_cntct": "divya@tigeranalytics.com",
+      "rs_load_ind": false,
+    },
+  ];
+
+  useEffect(() => {
+    if (props.fetchDataFlag) {
+      setLoading(true);
+      defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
+        .then(response => {
+          console.log(response.data);
+          setLoading(false);
+          props.updateLakeDestinationTableData(response.data.body.target_info);
+        })
+        .catch(error => {
+          setLoading(false);
+          props.openSnackbar({ variant: 'error', message: 'Some error occurred while loading data' });
+          console.log("error", error);
+          props.updateLakeDestinationTableData([]);
+        });
+      props.updateFetchDataFlag(false);
+    }
+
+  }, [props.fetchDataFlag])
+
+  const columns = [
+    {
+      title: "Target ID", field: "target_id", render: (rowData) => {
+        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
+      }
+    },
+    { title: "Domain", field: "domain", },
+    { title: "Subdomain", field: "subdomain" },
+  ];
+
+  const handleCreate = () => {
+    props.updateMode('create');
+    props.resetLakeDestinationValues();
+  }
+
+  const handleAction = (mode, selectedRow) => {
+    props.updateMode(mode);
+    setSelectedRow(selectedRow);
+    if (mode === 'create') {
+      props.resetLakeDestinationValues();
+    } else {
+      props.updateAllLakeDestinationValues(selectedRow)
+    }
+  }
+
+  return (
+    <>
+      {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
+      <div className={classes.table}>
+        <LinearProgress hidden={!loading} color="secondary" />
+        <MaterialTable
+          components={{
+            Toolbar: (toolbarProps) => (
+              <Box >
+                <Link to="/create-lake-destination" >
+                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                </Link>
+                <MTableToolbar {...toolbarProps} />
+              </Box>
+            ),
+          }}
+          icons={tableIcons}
+          title="Lake Destination"
+          columns={columns}
+          data={props.tableData}
+          onSelectionChange={selected => {
+            if (selected.length > 0) {
+              console.log(selected);
+            }
+          }}
+          actions={[
+            {
+              icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
+              tooltip: 'View',
+              position: 'row', // 'auto' | 'toolbar' | 'toolbarOnSelect' | 'row'
+              onClick: (event, rowData) => {
+                handleAction('view', rowData)
+              }
+            },
+            {
+              icon: () => <img src={edit} alt="edit" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Edit',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleAction('edit', rowData);
+                navigate('/create-lake-destination')
+              }
+            },
+            {
+              icon: () => <img src={clone} alt="clone" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Clone',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleAction('clone', rowData)
+                navigate('/create-lake-destination')
+              }
+            },
+            {
+              icon: () => <img src={remove} alt="delete" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Delete',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleAction('delete', rowData)
+              }
+            },
+            {
+              icon: () => <img src={remove} alt="delete" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Delete',
+              //isFreeAction: true,
+              position: 'toolbarOnSelect',
+              onClick: (event, rowData) => {
+                handleAction('delete', rowData)
+              }
+            }
+          ]}
+
+          options={{
+            selection: true,
+            showTextRowsSelected: false,
+            paging: false,
+            searchFieldAlignment: 'left',
+            showTitle: false,
+            draggable: false,
+            actionsColumnIndex: -1,
+            toolbarButtonAlignment: "left",
+            searchFieldStyle: {
+              backgroundColor: '#FFF',
+              color: 'black',
+              padding: '0.3rem 0.75rem',
+              margin: '1.25rem 0',
+              boxShadow: '2px 2px 4px 1px #ccc',
+              "& svg.MuiSvgIconRoot": {
+                fontSize: '1.75rem',
+                color: '#707070'
+              }
+            },
+            sorting: true,
+            headerStyle: {
+              position: 'sticky',
+              top: 0,
+              backgroundColor: '#F5F5F5',
+              fontWeight: 'bold',
+              padding: '0',
+              textAlign: 'left'
+            },
+            cellStyle: { padding: '5px 0' },
+            actionsCellStyle: {
+              minWidth: '200px',
+              textAlign: 'left'
+            }
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
+const mapStateToProps = state => ({
+  fieldValues: state.lakeDestinationState.lakeDestinationValues,
+  mode: state.lakeDestinationState.updateMode.mode,
+  fetchDataFlag: state.lakeDestinationState.updateFetchDataFlag.dataFlag,
+  tableData: state.lakeDestinationState.updateLakeDestinationTableData.data,
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  resetLakeDestinationValues,
+  updateAllLakeDestinationValues,
+  updateLakeDestinationTableData,
+  updateFetchDataFlag,
+  updateMode,
+  openSnackbar
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(LakeDestination);
