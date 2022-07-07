@@ -5,7 +5,8 @@ const initialLakeDestinationValues = {
     domain: '',
     subdomain: '',
     data_owner: '',
-    support_cntct: ''    
+    support_cntct: '',
+    rs_load_ind: false    
 }
 
 const lakeDestinationValues = (state = initialLakeDestinationValues, action) => {
@@ -32,9 +33,31 @@ const updateMode = (state = { mode: '' }, action) => {
     }
 }
 
+const updateFetchDataFlag = (state = { dataFlag : true }, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_LAKE_DESTINATION_TABLE_FETCH_DATA_FLAG:
+            return {
+                ...state, dataFlag: action.flag
+            }
+        default:
+            return { ...state }
+    }
+}
+
+const updateLakeDestinationTableData = (state = { data: [] }, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_LAKE_DESTINATION_TABLE_DATA:
+            return { ...state, data: action.data }
+        default:
+            return { ...state }
+    }
+}
+
 const lakeDestinationsReducer = combineReducers({
     updateMode,
-    lakeDestinationValues
+    lakeDestinationValues,
+    updateLakeDestinationTableData,
+    updateFetchDataFlag
 })
 
 export default lakeDestinationsReducer;

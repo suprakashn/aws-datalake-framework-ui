@@ -10,11 +10,11 @@ export const lakeDestinationFieldValue = (field,value) => dispatch => {
     })
 }
 
-export const updateAllLakeDestinationValues = (row) => dispatch => {
+export const updateAllLakeDestinationValues = (data) => dispatch => {    
     dispatch({
         type: constants.UPDATE_ALL_LAKE_DESTINATION_FIELD_VALUES,
-        row : row,
-    })
+        row: data,
+    });
 }
 
 export const resetLakeDestinationValues = () => dispatch => {
@@ -27,5 +27,19 @@ export const updateMode = (mode) => dispatch => {
     dispatch({
         type: constants.UPDATE_MODE,
         mode: mode
+    })
+}
+
+export const updateFetchDataFlag = (flag) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_LAKE_DESTINATION_TABLE_FETCH_DATA_FLAG,
+        flag: flag,
+    })
+}
+
+export const updateLakeDestinationTableData = (data) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_LAKE_DESTINATION_TABLE_DATA,
+        data: data
     })
 }

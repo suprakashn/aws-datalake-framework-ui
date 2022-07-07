@@ -6,12 +6,16 @@ import Paper from '@material-ui/core/Paper';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { Link, useNavigate } from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
-import { lakeDestinationFieldValue, resetLakeDestinationValues } from 'actions/lakeDestinationsAction'
+import {
+    lakeDestinationFieldValue, resetLakeDestinationValues, updateAllLakeDestinationValues,
+    updateFetchDataFlag
+} from 'actions/lakeDestinationsAction'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { TextField } from '@material-ui/core';
+import { CircularProgress, Switch, TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { openSnackbar } from 'actions/notificationAction';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         float: 'right',
         margin: '1vh',
         color: 'white',
-        minWidth:'7%',
+        minWidth: '7%',
         marginTop: '12px',
     },
 }));
@@ -54,9 +58,13 @@ const CreateLakeDestination = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [error, setError] = useState({});
-    
+    const [saving, setSavingFlag] = useState(false);
+
     const handleValueChange = (event) => {
-        const {id, value} = event.target;
+        let { id, value, checked } = event.target;
+        if(event.target.type === 'checkbox'){
+            value = checked;
+        }
 
         props.lakeDestinationFieldValue(id, value);
         setError({
@@ -66,25 +74,25 @@ const CreateLakeDestination = (props) => {
         console.log(error);
     }
 
-    const validate= (field, value) => {
+    const validate = (field, value) => {
         // Required Check
         let error = "";
         const emailRegx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        switch(field){            
+        switch (field) {
             case 'domain':
             case 'subdomain':
-                error = value?.trim().length > 0 ? "" : "Required field";    
-                error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");                
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
                 break;
             case 'data_owner':
-                error = value?.trim().length > 0 ? "" : "Required field";    
-                error = error || (value?.trim().length <= 40 ? "" : "Reached maximum limit of 40 characters");                
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (value?.trim().length <= 40 ? "" : "Reached maximum limit of 40 characters");
                 break;
             case 'support_cntct':
-                error = value?.trim().length > 0 ? "" : "Required field";    
+                error = value?.trim().length > 0 ? "" : "Required field";
                 error = error || (emailRegx.test(value) ? "" : "Invalid email");
                 break;
-            
+
             default: error = "";
         }
         return error;
@@ -100,19 +108,18 @@ const CreateLakeDestination = (props) => {
         navigate(-1)
     }
 
-    const handleSave = (e) => {
-        // ToDo
+    const handleSave = async (e) => {
         e.preventDefault();
         let errorList = {};
         let isFormValid = true;
 
         // Get all errors by iterating HTML collection
         Array.from(e.target?.elements)
-        .filter(e => e.tagName === 'INPUT')
-        .forEach(e => {            
-            errorList[e.id] = validate(e.id, e.value); 
-            isFormValid = isFormValid && !Boolean(errorList[e.id]);
-        });
+            .filter(e => e.tagName === 'INPUT' || e.tagName === 'CHECKBOX')
+            .forEach(e => {
+                errorList[e.id] = validate(e.id, e.value);
+                isFormValid = isFormValid && !Boolean(errorList[e.id]);
+            });
 
         setError({
             ...error,
@@ -120,10 +127,41 @@ const CreateLakeDestination = (props) => {
         });
 
         if (isFormValid) {
+            setSavingFlag(true);
+            await makeSaveRequest();
+            setSavingFlag(false);
             props.resetLakeDestinationValues();
             navigate(-1);
         } else {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
+        }
+    }
+
+    const makeSaveRequest = async () => {
+        let url = '/targetsystem/update';
+        let message = 'Record updated successfully';
+        let requestData = {
+            target_config: {
+                target_id: props.fieldValues.target_id,
+                update_data: props.fieldValues
+            }
+        }
+
+        if (props.mode === 'new' || props.mode === 'clone') {
+            url = '/targetsystem/create';
+            message = 'Record added successfully'
+            requestData = {
+                target_config: props.fieldValues
+            }
+        }
+
+        try {
+            const response = await defaultInstance.post(url, requestData)
+            props.updateFetchDataFlag(true);
+            props.openSnackbar({ variant: 'info', message });
+        }
+        catch (er) {
+            props.openSnackbar({ variant: 'error', message: 'Some error occurred while saving!' });
         }
     }
 
@@ -135,7 +173,7 @@ const CreateLakeDestination = (props) => {
                 <span>Back</span>
             </Link>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize:'16px' }}>  {props.mode === 'edit' ? 'Edit' : 'New'} Destination </span>
+                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>  {props.mode === 'edit' ? 'Edit' : 'New'} Destination </span>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -146,18 +184,18 @@ const CreateLakeDestination = (props) => {
                     <div>
                         <div style={{ fontWeight: 'bold', marginBottom: '2%' }}>Target System Attributes</div>
                         <div>
-                            {props.mode !== "create" && props.mode !== 'clone' &&
-                            <FormControl className={classes.formControl}>
-                                <div> Target Id </div>
-                                <TextField
-                                    disabled={props.mode === "edit"}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.fieldValues.target_id}
-                                    id="target_id"
-                                    onChange={handleValueChange}
-                                />
-                            </FormControl>
+                            {props.mode === "edit" &&
+                                <FormControl className={classes.formControl}>
+                                    <div> Target Id </div>
+                                    <TextField
+                                        disabled={props.mode === "edit"}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={props.fieldValues.target_id}
+                                        id="target_id"
+                                        onChange={handleValueChange}
+                                    />
+                                </FormControl>
                             }
                             <FormControl className={classes.formControl}>
                                 <div> Domain*</div>
@@ -183,18 +221,18 @@ const CreateLakeDestination = (props) => {
                                     onChange={handleValueChange}
                                 />
                             </FormControl>
-                            {props.mode !== "create" && 
-                            <FormControl className={classes.formControl}>
-                                <div> Bucket Name </div>
-                                <TextField
-                                    margin='dense'
-                                    variant='outlined'
-                                    disabled={props.mode === "edit"}
-                                    value={props.fieldValues.bucket_name}
-                                    id="bucket_name"
-                                    onChange={handleValueChange}
-                                />
-                            </FormControl>
+                            {props.mode !== "create" &&
+                                <FormControl className={classes.formControl}>
+                                    <div> Bucket Name </div>
+                                    <TextField
+                                        margin='dense'
+                                        variant='outlined'
+                                        disabled={props.mode === "edit"}
+                                        value={props.fieldValues.bucket_name}
+                                        id="bucket_name"
+                                        onChange={handleValueChange}
+                                    />
+                                </FormControl>
                             }
                             <FormControl className={classes.formControl}>
                                 <div > Data Owner* </div>
@@ -220,12 +258,28 @@ const CreateLakeDestination = (props) => {
                                     onChange={handleValueChange}
                                 />
                             </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <div> Enable Redshift Load </div>
+                                <Switch
+                                    color="primary"
+                                    name="rs_load_ind"
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    margin='dense'
+                                    variant='outlined'
+                                    checked={Boolean(props.fieldValues.rs_load_ind)}
+                                    id="rs_load_ind"
+                                    onChange={handleValueChange}
+                                />
+                            </FormControl>
                         </div>
                     </div>
                 </div>
             </Paper>
-            <Button  type='submit' className={classes.button} style={{backgroundColor: '#00B1E8'}}>Save</Button>
-            <Button className={classes.button} style={{backgroundColor:'#A3A3A390'}} onClick={handleCancel}>Cancel</Button>
+            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+                {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
+                {!saving && 'Save'}
+            </Button>
+            <Button className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </form>
 
     );
@@ -238,7 +292,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     lakeDestinationFieldValue,
+    updateAllLakeDestinationValues,
     resetLakeDestinationValues,
+    updateFetchDataFlag,
     openSnackbar
 }, dispatch)
 
