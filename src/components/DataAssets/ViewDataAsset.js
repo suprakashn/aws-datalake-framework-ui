@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
+import { closeDataAssetDialogue, updateAllDataAssetValues, updateMode, updateDataFlag } from 'actions/dataAssetActions'
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 },
 }));
 
-const ViewSourceSystem = (props) => {
+const ViewDataAsset = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
@@ -59,18 +59,10 @@ const ViewSourceSystem = (props) => {
     dbPassError: false
   })
 
-  const handleValueChange = (field, errorField, value) => {
-    props.sourceSystemFieldValue(field, value);
-    setError({
-      ...error,
-      [errorField]: value.trim().length > 0 ? false : true
-    })
-  }
-
   const handleEdit = () => {
     props.updateMode('edit');
-    props.updateAllSourceSystemValues({ ...props.selectedRow })
-    navigate("/create-source-system")
+    props.updateAllDataAssetValues({ ...props.selectedRow })
+    navigate("/create-data-asset")
   }
 
   const handleDelete = () => {
@@ -81,14 +73,14 @@ const ViewSourceSystem = (props) => {
             .catch((error) => {
                 console.log("error", error)
             })
-            props.closeSourceSystemSidebar();
+            props.closeDataAssetDialogue();
             props.updateDataFlag(true);
-            navigate("/source-systems");
+            navigate("/data-assets");
   }
 
   const handleClose = () => {
     setTabIndex(0);
-    props.closeSourceSystemSidebar();
+    props.closeDataAssetDialogue();
   }
 
   return (
@@ -108,17 +100,23 @@ const ViewSourceSystem = (props) => {
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
                 borderBottom: tabIndex === 0 ? '10px solid #F7901D' : ''
-              }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
+              }} onClick={() => setTabIndex(0)}><span>Asset Attributes</span></Tab>
               <Tab style={{
                 fontWeight: tabIndex === 1 ? 'bold' : '',
                 //margin: ' 0 20px',
                 border: 'none',
                 borderBottom: tabIndex === 1 ? '10px solid #F7901D' : ''
-              }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
+              }} onClick={() => setTabIndex(1)}><span>Ingestion Attributes</span></Tab>
             </TabList>
             <TabPanel>
               <div style={{ border: '1px solid #CBCBCB' }}>
                 <div style={{ marginLeft: '3%', paddingTop: 10 }}>
+                <FormControl className={classes.formControl}>
+                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                      Asset Id
+                    </div>
+                    <div>{props.fieldValues.asset_id}</div>
+                  </FormControl>
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                       Source System Id
@@ -127,16 +125,15 @@ const ViewSourceSystem = (props) => {
                   </FormControl>
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      Source System Name
+                      Target ID
                     </div>
-                    <div>{props.fieldValues.src_sys_nm}</div>
+                    <div>{props.fieldValues.target_id}</div>
                   </FormControl>
-
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      Source System Description
+                      File Header
                     </div>
-                    <div>{props.fieldValues.src_sys_desc}</div>
+                    <div>{props.fieldValues.file_header}</div>
                   </FormControl>
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
@@ -228,17 +225,18 @@ const ViewSourceSystem = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.sourceSystemState.sidebar.sidebarFlag,
-  fieldValues: state.sourceSystemState.sourceSystemValues,
-  mode: state.sourceSystemState.updateMode.mode,
+  open: state.dataAssetState.dialogue.flag,
+  fieldValues: state.dataAssetState.dataAssetValues,
+  mode: state.dataAssetState.updateMode.mode,
+  dataFlag: state.dataAssetState.updateDataFlag.dataFlag
 
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
-  updateAllSourceSystemValues,
-  sourceSystemFieldValue,
-  closeSourceSystemSidebar,
-  updateDataFlag
+  updateDataFlag,
+  closeDataAssetDialogue,
+  updateMode,
+  updateAllDataAssetValues,
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewSourceSystem);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewDataAsset);

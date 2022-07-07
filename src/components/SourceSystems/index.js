@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   openSourceSystemSidebar, updateMode, closeSourceSystemSidebar, updateAllSourceSystemValues,
-  resetSourceSystemValues, updateSourceSysTableData
+  resetSourceSystemValues, updateSourceSysTableData, updateDataFlag
 } from 'actions/sourceSystemsAction';
 import defaultInstance from 'routes/defaultInstance';
 import show from 'images/Show.png';
@@ -53,7 +53,7 @@ const SourceSystems = (props) => {
   useEffect(() => {
     if (props.dataFlag) {
       setBackdrop(true);
-      defaultInstance.post('/sourcesystem/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
+      defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
         .then(response => {
           props.updateSourceSysTableData(response.data.body.src_info);
           //setData(response.data.body.src_info)
@@ -88,23 +88,27 @@ const SourceSystems = (props) => {
   ];
 
   const handleCreate = () => {
+    props.updateDataFlag(false);
     props.updateMode('create');
     props.resetSourceSystemValues();
   }
 
   const handleEdit = (selectedRow) => {
+    props.updateDataFlag(false);
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...selectedRow })
     navigate("/create-source-system")
   }
 
   const handleClone = (selectedRow) => {
+    props.updateDataFlag(false);
     props.updateMode('clone');
     props.updateAllSourceSystemValues({ ...selectedRow })
     navigate("/create-source-system")
   }
 
   const handleAction = (mode, selectedRow) => {
+    props.updateDataFlag(false);
     props.updateMode(mode);
     props.openSourceSystemSidebar();
     props.updateAllSourceSystemValues({ ...selectedRow })
@@ -169,6 +173,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   openSourceSystemSidebar,
   closeSourceSystemSidebar,
   updateMode,
+  updateDataFlag,
   updateAllSourceSystemValues,
   resetSourceSystemValues,
   updateSourceSysTableData
