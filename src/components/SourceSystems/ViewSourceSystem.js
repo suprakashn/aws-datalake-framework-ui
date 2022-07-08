@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link , useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     'max-width': '65%'
   },
   formControl: {
-    margin: theme.spacing(1),
     minWidth: '25%',
     margin: 15,
     fontSize: 14,
@@ -34,39 +33,14 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     minWidth: '7%',
     marginTop: '12px',
-},
+  },
 }));
 
 const ViewSourceSystem = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  const [error, setError] = useState({
-    idError: false,
-    nameError: false,
-    descriptionError: false,
-    mechanismError: false,
-    dataOwnerError: false,
-    supportContactError: false,
-    bucketNameError: false,
-    ingestionPatternError: false,
-    dbHostError: false,
-    dbTypeError: false,
-    dbNameError: false,
-    dbPortError: false,
-    dbSchemaError: false,
-    dbUsernameError: false,
-    dbPassError: false
-  })
-
-  const handleValueChange = (field, errorField, value) => {
-    props.sourceSystemFieldValue(field, value);
-    setError({
-      ...error,
-      [errorField]: value.trim().length > 0 ? false : true
-    })
-  }
-
+  
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...props.selectedRow })
@@ -74,15 +48,15 @@ const ViewSourceSystem = (props) => {
   }
 
   const handleDelete = () => {
-    defaultInstance.post('sourcesystem/delete?tasktype=delete', {"src_config":{"src_sys_id": props.fieldValues.src_sys_id} })
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
-            props.updateDataFlag(true);
-            navigate("/source-systems");
+    defaultInstance.post('sourcesystem/delete?tasktype=delete', { "src_config": { "src_sys_id": props.fieldValues.src_sys_id } })
+      .then((response) => {
+        console.log("response", response)
+      })
+      .catch((error) => {
+        console.log("error", error)
+      })
+    props.updateDataFlag(true);
+    navigate("/source-systems");
   }
 
   const handleClose = () => {
