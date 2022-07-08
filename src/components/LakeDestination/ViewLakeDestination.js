@@ -37,6 +37,16 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '7%',
     marginTop: '12px',
   },
+  primaryBtn: {
+    background: '#00B1E8',
+    '&:disabled': {
+        background: '#ccc',
+        color: 'white',
+    },
+    '&:hover': {
+      background: '#0192bf',
+    }
+  }
 }));
 
 const ViewLakeDestination = (props) => {
@@ -169,7 +179,7 @@ const ViewLakeDestination = (props) => {
         <Button onClick={handleClose} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
         {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Edit</Button>}
         {props.mode === 'delete' &&
-          <Button onClick={handleDelete} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
             {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
             {!deleting && 'Delete'}
           </Button>

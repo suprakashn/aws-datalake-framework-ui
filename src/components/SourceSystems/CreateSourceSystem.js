@@ -58,6 +58,16 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '7%',
         marginTop: '12px',
     },
+    primaryBtn: {
+        background: '#00B1E8',
+        '&:disabled': {
+            background: '#ccc',
+            color: 'white',
+        },
+        '&:hover': {
+          background: '#0192bf',
+        }
+    }
 }));
 
 const CreateSourceSystem = (props) => {
@@ -158,7 +168,7 @@ const CreateSourceSystem = (props) => {
         navigate("/source-systems");
     }
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         let payload = {
             "src_config":
             {
@@ -180,16 +190,17 @@ const CreateSourceSystem = (props) => {
                 "db_pass": props.fieldValues.db_pass
             }
         }
-        defaultInstance.post('sourcesystem/create?tasktype=create', payload)
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
+
+        try {
+            await defaultInstance.post('sourcesystem/create?tasktype=create', payload)
+            props.openSnackbar({ variant: 'info', message: "Record added successfully" });
+        }
+        catch (ex) {
+            props.openSnackbar({ variant: 'error', message: 'Some error occurred while saving!' });
+        }
     }
 
-    const handleEdit = () => {
+    const handleEdit = async () => {
         let payload = {
             "src_config":
             {
@@ -217,16 +228,17 @@ const CreateSourceSystem = (props) => {
                 }
             }
         }
-        defaultInstance.post('sourcesystem/update', payload)
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
+
+        try {
+            await defaultInstance.post('sourcesystem/update', payload)
+            props.openSnackbar({ variant: 'info', message: "Record updated successfully" });
+        }
+        catch (ex) {
+            props.openSnackbar({ variant: 'error', message: 'Some error occurred while saving!' });
+        }
     }
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
         let errorList = {};
         let isFormValid = true;
@@ -248,10 +260,10 @@ const CreateSourceSystem = (props) => {
         if (isFormValid) {
             setSavingFlag(true);
             if (props.mode === 'create' || props.mode === 'clone') {
-                handleCreate();
+                await handleCreate();
             }
             if (props.mode === 'edit') {
-                handleEdit();
+                await handleEdit();
             }
             props.updateMode('');
             props.resetSourceSystemValues();
@@ -362,6 +374,7 @@ const CreateSourceSystem = (props) => {
                                 <TextField
                                     margin='dense'
                                     variant='outlined'
+                                    type='email'
                                     value={props.fieldValues.support_cntct}
                                     id="support_cntct"
                                     error={Boolean(error.support_cntct)}
@@ -517,7 +530,7 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>

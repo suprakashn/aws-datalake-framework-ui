@@ -52,6 +52,16 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '7%',
         marginTop: '12px',
     },
+    primaryBtn: {
+        background: '#00B1E8',
+        '&:disabled': {
+            background: '#ccc',
+            color: 'white',
+        },
+        '&:hover': {
+          background: '#0192bf',
+        }
+    }
 }));
 
 const CreateLakeDestination = (props) => {
@@ -251,6 +261,7 @@ const CreateLakeDestination = (props) => {
                                 <TextField
                                     margin='dense'
                                     variant='outlined'
+                                    type='email'
                                     error={Boolean(error.support_cntct)}
                                     helperText={error.support_cntct}
                                     value={props.fieldValues.support_cntct}
@@ -275,7 +286,7 @@ const CreateLakeDestination = (props) => {
                     </div>
                 </div>
             </Paper>
-            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>

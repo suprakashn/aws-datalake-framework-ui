@@ -8,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import Close from '@material-ui/icons/Close';
-import { Button } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -34,29 +34,49 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '7%',
     marginTop: '12px',
   },
+  primaryBtn: {
+    background: '#00B1E8',
+    '&:disabled': {
+        background: '#ccc',
+        color: 'white',
+    },
+    '&:hover': {
+      background: '#0192bf',
+    }
+  }
 }));
 
 const ViewSourceSystem = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  
+  const [deleting, setDeletingFlag] = useState(false);
+
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...props.selectedRow })
     navigate("/create-source-system")
   }
 
-  const handleDelete = () => {
-    defaultInstance.post('sourcesystem/delete?tasktype=delete', { "src_config": { "src_sys_id": props.fieldValues.src_sys_id } })
-      .then((response) => {
-        console.log("response", response)
-      })
-      .catch((error) => {
-        console.log("error", error)
-      })
-    props.updateDataFlag(true);
-    navigate("/source-systems");
+  const handleDelete = async () => {
+    try {
+      setDeletingFlag(true);
+      const requestData = {
+        src_config: {
+          src_sys_id: props.fieldValues.src_sys_id
+        }
+      }
+      const response = await defaultInstance.post('sourcesystem/delete?tasktype=delete', requestData)
+      setDeletingFlag(false);
+      props.openSnackbar({ variant: 'success', message: 'Successfully Deleted' });
+      props.updateFetchDataFlag(true);
+    }
+    catch (ex) {
+      console.log(ex);
+      setDeletingFlag(false);
+      props.openSnackbar({ variant: 'error', message: 'Error occurred while deleting' });
+    }
+    props.updateMode('');
   }
 
   const handleClose = () => {
@@ -194,7 +214,12 @@ const ViewSourceSystem = (props) => {
       <DialogActions>
         <Button onClick={handleClose} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
         {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Edit</Button>}
-        {props.mode === 'delete' && <Button onClick={handleDelete} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Delete</Button>}
+        {props.mode === 'delete' &&
+          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
+            {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
+            {!deleting && 'Delete'}
+          </Button>
+        }
       </DialogActions>
     </Dialog>
   );
