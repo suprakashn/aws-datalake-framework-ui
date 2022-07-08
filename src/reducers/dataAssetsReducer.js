@@ -23,6 +23,19 @@ const initialIngestionAttributes = {
     "trigger_mechanism": "",
     "frequency": "",
 }
+ const initialColumnAttributes = {
+    "col_id"   : "",
+    "col_nm" : "",
+    "tgt_col_nm" : "",
+    "tgt_data_type" : "",
+    "col_desc" : "",
+    "data_classification" : "",
+    "col_length" : "",
+    "req_tokenization" : false,
+    "pk_ind" : false,
+    "data_type" : "",
+    //"modified_ts" : null
+ }
 
 const dialogue = (state = { flag: false }, action) => {
     switch (action.type) {

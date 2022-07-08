@@ -9,3 +9,16 @@ export const FILE_TYPE = [
     { name: 'XML', value: 'xml' },
     { name: 'JSON', value: 'json' }
 ]
+
+export const TARGET_DATA_TYPE = [
+    { name: 'String', value: 'string' },
+    { name: 'Decimal', value: 'decimal' },
+    { name: 'Boolean', value: 'boolean' }
+]
+
+export const DATA_CLASSIFICATION = [
+    { name: 'Public', value: 'Public' },
+    { name: 'Internal', value: 'internal' },
+    { name: 'Confidential', value: 'confidential' },
+    { name: 'Restricted', value: 'restricted' }
+]
