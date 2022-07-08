@@ -14,58 +14,78 @@ import clone from 'images/clone.png';
 import remove from 'images/Remove.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import { Box, Button, Tooltip } from '@material-ui/core';
+import { Box, Button, Tooltip,LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
+import { openSnackbar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%'
+    margin: '3%',
+    "& .MuiBox-root+div": {
+      width: '100%',
+    },
+    "& .MuiInput-underline:before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:after": {
+      borderBottom: 'none'
+    },
+    // "& svg.MuiSvgIcon-root:first-child": {
+    //   fontSize: '1.75rem',
+    //   color: '#707070'
+    // }
   },
   button: {
     float: 'right',
-    margin: '15px',
+    margin: '1%',
     color: 'white',
     marginTop: '12px',
   },
-  search: {
-    '& .MuiInput-underline:before': {
-      borderBottomColor: '#fff8', // Semi-transparent underline
-    },
-    '& .MuiInput-underline:hover:before': {
-      borderBottomColor: '#fff', // Solid underline on hover
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: '#fff', // Solid underline on focus
-    },
-  }
 }));
+// search: {
+//   '& .MuiInput-underline:before': {
+//     borderBottomColor: '#fff8', // Semi-transparent underline
+//   },
+//   '& .MuiInput-underline:hover:before': {
+//     borderBottomColor: '#fff', // Solid underline on hover
+//   },
+//   '& .MuiInput-underline:after': {
+//     borderBottomColor: '#fff', // Solid underline on focus
+//   },
+// }
+
 
 const SourceSystems = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
-  const [backdrop, setBackdrop] = useState(false);
+  const [loading, setLoading] = useState(false);  
 
   useEffect(() => {
     if (props.dataFlag) {
-      setBackdrop(true);
+      setLoading(true);
       defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
         .then(response => {
+          console.log(response.data);
           props.updateSourceSysTableData(response.data.body.src_info);
-          //setData(response.data.body.src_info)
-          setBackdrop(false);
+          setLoading(false);
         })
         .catch(error => {
+          setLoading(false);
+          props.openSnackbar({ variant: 'error', message: 'Some error occurred while loading data' });
           console.log("error", error)
           props.updateSourceSysTableData([]);
-          setBackdrop(false);
-        })
+        });
+        props.updateDataFlag(false);
     }
-  }, [])
+  }, [props.dataFlag])
 
   const columns = [
     {
@@ -118,6 +138,7 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
+       <LinearProgress hidden={!loading} color="secondary" /> 
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
@@ -129,30 +150,43 @@ const SourceSystems = (props) => {
               </Box>
             ),
           }}
-          // isLoading={backdrop}
           icons={tableIcons}
           title="Source Systems"
           columns={columns}
           data={props.data}
           options={{
-            //padding: 'dense',
+            selection: true,
+            showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false,
+            draggable: false, 
+            actionsColumnIndex: -1,
             toolbarButtonAlignment: "left",
             searchFieldStyle: {
-              backgroundColor: '#F5F5F5',
-              color: 'black'
+              backgroundColor: '#FFF',
+              color: 'black',
+              padding: '0.3rem 0.75rem',
+              margin: '1.25rem 0',
+              boxShadow: '2px 2px 4px 1px #ccc',
+              "& svg.MuiSvgIconRoot": {
+                fontSize: '1.75rem',
+                color: '#707070'
+              }
             },
             sorting: true,
-            // searchFieldStyle:,
             headerStyle: {
-              textAlign: 'left',
               position: 'sticky',
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
+              padding: '0',
+              textAlign: 'left'
+            },
+            cellStyle: { padding: '5px 0' },
+            actionsCellStyle: {
+              minWidth: '200px',
+              textAlign: 'left'
             }
           }}
         />
@@ -176,7 +210,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateDataFlag,
   updateAllSourceSystemValues,
   resetSourceSystemValues,
-  updateSourceSysTableData
+  updateSourceSysTableData,
+  updateDataFlag,
+  openSnackbar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SourceSystems);

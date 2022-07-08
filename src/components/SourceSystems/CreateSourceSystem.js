@@ -8,7 +8,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { Link, useNavigate } from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import { openSnackbar, } from 'actions/notificationAction'
@@ -19,9 +18,10 @@ import {
 } from 'actions/sourceSystemsAction'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { TextField } from '@material-ui/core';
+import { TextField, CircularProgress, FormHelperText, Tooltip } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,18 +39,12 @@ const useStyles = makeStyles((theme) => ({
     link: {
         cursor: 'pointer',
         display: 'flex',
-        // alignItems: 'center',
-        // flexWrap: 'wrap',
         color: 'black',
         textDecoration: "none",
         fontSize: "12px",
         marginLeft: 0,
-        "&:hover": {
-            // color: "#fffc"
-        },
     },
     formControl: {
-        margin: theme.spacing(1),
         minWidth: 250,
         margin: '0px 3% 1% 0px',
         fontSize: 13,
@@ -70,67 +64,89 @@ const CreateSourceSystem = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [disableButton, setDisableButton] = useState(false);
-    const [error, setError] = useState({
-        idError: false,
-        nameError: false,
-        descriptionError: false,
-        mechanismError: false,
-        dataOwnerError: false,
-        supportContactError: false,
-        bucketNameError: false,
-        ingestionPatternError: false,
-        dbHostError: false,
-        dbTypeError: false,
-        dbNameError: false,
-        dbPortError: false,
-        dbSchemaError: false,
-        dbUsernameError: false,
-        dbPassError: false
-    })
+    const [error, setError] = useState({})
+    const [saving, setSavingFlag] = useState(false);
 
-    const handleValueChange = (field, errorField, value) => {
-        props.sourceSystemFieldValue(field, value);
+    const handleValueChange = (event) => {
+        var { id, value, name } = event.target;
+        id = id || name;
+        props.sourceSystemFieldValue(id, value);
         setError({
             ...error,
-            [errorField]: value.trim().length > 0 ? false : true
-        })
+            [id]: validate(id, value)
+        });
+        console.log(error);
     }
 
-    const handleSourceChange = (field, errorField, value) => {
-        if (value.length <= 25) {
-            props.sourceSystemFieldValue(field, value);
+    const validate = (field, value) => {
+        // Required Check
+        let error = "";
+        const emailRegx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const passwordRegx = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
+        const portRegx = /^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$/gi;
+
+
+        switch (field) {
+            case 'src_sys_nm':
+            case 'mechanism':
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
+                break;
+            case 'data_owner':
+            case 'ingstn_pattern':
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (value?.trim().length <= 40 ? "" : "Reached maximum limit of 40 characters");
+                break;
+            case 'src_sys_desc':
+                error = error || (value?.trim().length <= 400 ? "" : "Reached maximum limit of 400 characters");
+                break;
+            case 'support_cntct':
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (emailRegx.test(value) ? "" : "Invalid email");
+                break;
+            default: ;
         }
-        setError({
-            ...error,
-            [errorField]: value.trim().length > 0 && value.trim().length <= 25 ? false : true
-        })
+
+        if (props.fieldValues.ingstn_pattern === 'database') {
+            switch (field) {
+                case 'db_name':
+                    error = value?.trim().length > 0 ? "" : "Required field";
+                    error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
+                    break;
+                case 'db_schema':
+                    error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
+                    break;
+                case 'db_port':
+                    error = value?.trim().length > 0 ? "" : "Required field";
+                    error = error || (portRegx.test(value) ? "" : "Invalid Port");
+                    break;
+                case 'db_pass':
+                    error = value?.trim().length > 0 ? "" : "Required field";
+                    error = error || (passwordRegx.test(value) ? "" : "Weak Password");
+                    break;
+                case 'db_type':
+                case 'db_username':
+                    error = value?.trim().length > 0 ? "" : "Required field";
+                    error = error || (value?.trim().length <= 40 ? "" : "Reached maximum limit of 40 characters");
+                    break;
+                case 'db_hostname':
+                    error = value?.trim().length > 0 ? "" : "Required field";
+                    error = error || (value?.trim().length <= 100 ? "" : "Reached maximum limit of 100 characters");
+                    break;
+                default: ;
+            }
+        }
+        return error;
     }
 
-    const handleIngestionPattern = (field, errorField, value) => {
+    const handleIngestionPattern = (event) => {
         props.updateAllSourceSystemValues({ ...props.fieldValues, db_hostname: '', db_type: '', db_name: '', db_port: '', db_schema: '', db_username: '', db_pass: '', });
-        handleValueChange(field, errorField, value)
+        handleValueChange(event)
     }
 
     const handleReset = () => {
         props.resetSourceSystemValues();
-        setDisableButton(false);
-        setError({
-            idError: false,
-            nameError: false,
-            descriptionError: false,
-            mechanismError: false,
-            dataOwnerError: false,
-            supportContactError: false,
-            bucketNameError: false,
-            ingestionPatternError: false,
-            dbHostError: false,
-            dbTypeError: false,
-            dbNameError: false,
-            dbPortError: false,
-            dbSchemaError: false,
-            dbUsernameError: false,
-            dbPassError: false
-        })
+        setError({})
     }
 
     const handleCancel = () => {
@@ -141,26 +157,6 @@ const CreateSourceSystem = (props) => {
         //     props.updateDataFlag(false);
         // }   
         navigate("/source-systems");
-    }
-
-    const validate = () => {
-        let errorObj = {}
-        errorObj = {
-            ...error,
-            nameError: props.fieldValues.src_sys_nm.trim() ? false : true,
-            mechanismError: props.fieldValues.mechanism.trim() ? false : true,
-            dataOwnerError: props.fieldValues.data_owner.trim() ? false : true,
-            ingestionPatternError: props.fieldValues.ingstn_pattern.trim() ? false : true,
-            dbHostError: props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_hostname.trim() ? false : true) : false,
-            dbTypeError: props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_type.trim() ? false : true) : false,
-            dbNameError: props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_name.trim() ? false : true) : false,
-            dbPortError: props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_port.trim() ? false : true) : false,
-            dbUsernameError: props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_username.trim() ? false : true) : false,
-            dbPassError: (props.mode === 'create' || props.mode === 'clone') && props.fieldValues.ingstn_pattern === 'database' ? (props.fieldValues.db_pass.trim() ? false : true) : false
-        }
-        setError(errorObj);
-        console.log("error obj", errorObj)
-        return Object.values(errorObj).filter(item => item === true).length;
     }
 
     const handleCreate = () => {
@@ -212,7 +208,7 @@ const CreateSourceSystem = (props) => {
                     "src_sys_desc": props.fieldValues.src_sys_desc,
                     "mechanism": props.fieldValues.mechanism,
                     "data_owner": props.fieldValues.data_owner,
-                    "support_cntct": props.fieldValues.support_cntct
+                    "support_cntct": props.fieldValues.support_cntct,
                 }
             },
             "ingestion_config":
@@ -245,11 +241,28 @@ const CreateSourceSystem = (props) => {
                 setDisableButton(false);
             })
     }
-    const handleSave = () => {
-        let errorLength = validate();
-        if (errorLength) {
-            props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
-        } else {
+
+    const handleSave = (e) => {
+        e.preventDefault();
+        let errorList = {};
+        let isFormValid = true;
+
+        // Get all errors by iterating HTML collection
+        Array.from(e.target?.elements)
+            .filter(e => e.tagName === 'INPUT' || e.tagName === 'SELECT')
+            .forEach(e => {
+                e.id = e.id || e.name;
+                errorList[e.id] = validate(e.id, e.value);
+                isFormValid = isFormValid && !Boolean(errorList[e.id]);
+            });
+
+        setError({
+            ...error,
+            ...errorList
+        });
+
+        if (isFormValid) {
+            setSavingFlag(true);
             if (props.mode === 'create' || props.mode === 'clone') {
                 handleCreate();
             }
@@ -257,6 +270,8 @@ const CreateSourceSystem = (props) => {
                 handleEdit();
             }
 
+        } else {
+            props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         }
         console.log("inside handle save", props.fieldValues)
     }
@@ -267,7 +282,7 @@ const CreateSourceSystem = (props) => {
     }
 
     return (
-        <div className={classes.root}>
+        <form className={classes.root} onSubmit={handleSave}>
             <CssBaseline />
             <div style={{ display: 'flex' }} onClick={handleBack}>
                 <Link to="/source-systems" className={classes.link}>
@@ -286,30 +301,30 @@ const CreateSourceSystem = (props) => {
                     <div>
                         <div style={{ fontWeight: 'bold', marginBottom: '2%' }}>Source System Attributes</div>
                         <div>
-                            {props.mode !== 'create' && props.mode !== 'clone' &&
+                            {props.mode === 'edit' &&
                                 <FormControl className={classes.formControl}>
-                                    <div > Source System Id </div>
+                                    <div> Source System Id </div>
                                     <TextField
                                         disabled={props.mode !== 'create' || disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.src_sys_id}
-                                        id="id_label"
-                                        onChange={(event) => handleValueChange('src_sys_id', 'idError', event.target.value)}
+                                        id="src_sys_id"
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
-                                <div > Source System Name*</div>
+                                <div> Source System Name*</div>
                                 <TextField
-                                    error={error.nameError}
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.src_sys_nm}
-                                    id="name_label"
-                                    onChange={(event) => handleSourceChange('src_sys_nm', 'nameError', event.target.value)}
+                                    error={Boolean(error.src_sys_nm)}
+                                    helperText={error.src_sys_nm}
+                                    id="src_sys_nm"
+                                    onChange={(event) => handleValueChange(event)}
                                 />
-                                <FormHelperText>{error.nameError ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : ''}</FormHelperText>
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Source System Description </div>
@@ -318,20 +333,24 @@ const CreateSourceSystem = (props) => {
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.src_sys_desc}
-                                    id="description_label"
-                                    onChange={(event) => handleValueChange('src_sys_desc', 'descriptionError', event.target.value)}
+                                    error={Boolean(error.src_sys_desc)}
+                                    helperText={error.src_sys_desc}
+                                    id="src_sys_desc"
+                                    onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Mechanism*</div>
                                 <Select
-                                    error={error.mechanismError}
                                     disabled={disableButton}
                                     margin="dense"
                                     variant="outlined"
-                                    id="mechanism_value"
+                                    id="mechanism"
+                                    name="mechanism"
                                     value={props.fieldValues.mechanism}
-                                    onChange={(event) => handleValueChange('mechanism', 'mechanismError', event.target.value)}
+                                    error={Boolean(error.mechanism)}
+                                    //helperText={error.mechanism} 
+                                    onChange={(event) => handleValueChange(event)}
                                 >
                                     <MenuItem value="">
                                         <em>Select mechanism</em>
@@ -340,17 +359,19 @@ const CreateSourceSystem = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
+                                <FormHelperText style={{ color: 'red' }}>{error.mechanism}</FormHelperText>
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Data Owner* </div>
                                 <TextField
-                                    error={error.dataOwnerError}
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.data_owner}
-                                    id="dataOwner_label"
-                                    onChange={(event) => handleValueChange('data_owner', 'dataOwnerError', event.target.value)}
+                                    id="data_owner"
+                                    error={Boolean(error.data_owner)}
+                                    helperText={error.data_owner}
+                                    onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -360,8 +381,10 @@ const CreateSourceSystem = (props) => {
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.support_cntct}
-                                    id="supportContact_label"
-                                    onChange={(event) => handleValueChange('support_cntct', 'supportContactError', event.target.value)}
+                                    id="support_cntct"
+                                    error={Boolean(error.support_cntct)}
+                                    helperText={error.support_cntct}
+                                    onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
                             {props.mode !== 'create' && props.mode !== 'clone' &&
@@ -372,20 +395,24 @@ const CreateSourceSystem = (props) => {
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.bucket_name}
-                                        id="bucketName_label"
-                                        onChange={(event) => handleValueChange('bucket_name', 'bucketNameError', event.target.value)}
+                                        id="bucket_name"
+                                        error={Boolean(error.bucket_name)}
+                                        helperText={error.bucket_name}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Ingestion Pattern*</div>
                                 <Select
-                                    error={error.ingestionPatternError}
                                     disabled={disableButton}
                                     margin="dense"
                                     variant="outlined"
-                                    id="pattern_value"
+                                    id="ingstn_pattern"
+                                    name="ingstn_pattern"
+                                    error={Boolean(error.ingstn_pattern)}
+                                    //helperText={error.ingstn_pattern} 
                                     value={props.fieldValues.ingstn_pattern}
-                                    onChange={(event) => handleIngestionPattern('ingstn_pattern', 'ingestionPatternError', event.target.value)}
+                                    onChange={(event) => handleIngestionPattern(event)}
                                 >
                                     <MenuItem value="">
                                         <em>Select ingestion pattern</em>
@@ -394,6 +421,7 @@ const CreateSourceSystem = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
+                                <FormHelperText style={{ color: 'red' }}>{error.ingstn_pattern}</FormHelperText>
                             </FormControl>
                         </div>
                     </div>
@@ -404,25 +432,28 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Host*</div>
                                     <TextField
-                                        error={error.dbHostError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_hostname}
-                                        id="host_label"
-                                        onChange={(event) => handleValueChange('db_hostname', 'dbHostError', event.target.value)}
+                                        id="db_hostname"
+                                        error={Boolean(error.db_hostname)}
+                                        helperText={error.db_hostname}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '6px' }}>DB Type*</div>
                                     <Select
-                                        error={error.dbTypeError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        id="dbType_value"
+                                        id="db_type"
+                                        name="db_type"
+                                        error={Boolean(error.db_type)}
+                                        //helperText={error.db_type} 
                                         value={props.fieldValues.db_type}
-                                        onChange={(event) => handleValueChange('db_type', 'dbTypeError', event.target.value)}
+                                        onChange={(event) => handleValueChange(event)}
                                     >
                                         <MenuItem value="">
                                             <em>Select DB Type</em>
@@ -431,29 +462,32 @@ const CreateSourceSystem = (props) => {
                                             return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                         })}
                                     </Select>
+                                    <FormHelperText style={{ color: 'red' }}>{error.db_type}</FormHelperText>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div >DB Name*</div>
                                     <TextField
-                                        error={error.dbNameError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_name}
-                                        id="dbName_label"
-                                        onChange={(event) => handleValueChange('db_name', 'dbNameError', event.target.value)}
+                                        id="db_name"
+                                        error={Boolean(error.db_name)}
+                                        helperText={error.db_name}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div >DB Port*</div>
                                     <TextField
-                                        error={error.dbPortError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_port}
-                                        id="port_label"
-                                        onChange={(event) => handleValueChange('db_port', 'dbPortError', event.target.value)}
+                                        id="db_port"
+                                        error={Boolean(error.db_port)}
+                                        helperText={error.db_port}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
@@ -463,33 +497,39 @@ const CreateSourceSystem = (props) => {
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_schema}
-                                        id="dbSchema_label"
-                                        onChange={(event) => handleValueChange('db_schema', 'dbSchemaError', event.target.value)}
+                                        id="db_schema"
+                                        error={Boolean(error.db_schema)}
+                                        helperText={error.db_schema}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div >DB Username*</div>
                                     <TextField
-                                        error={error.dbUsernameError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_username}
-                                        id="port_label"
-                                        onChange={(event) => handleValueChange('db_username', 'dbUsernameError', event.target.value)}
+                                        id="db_username"
+                                        error={Boolean(error.db_username)}
+                                        helperText={error.db_username}
+                                        onChange={(event) => handleValueChange(event)}
                                     />
                                 </FormControl>
                                 {props.mode === 'create' &&
                                     <FormControl className={classes.formControl}>
-                                        <div >DB Password*</div>
+                                        <Tooltip open={error.db_pass === 'Weak Password'} placement="top-start" title="Password should be 8 to 16 characters long and contains atleast one digit and one special charater(!@#$%^&*)">
+                                            <div >DB Password <HelpOutlineIcon style={{ fontSize: '14px' }} color='secondary'></HelpOutlineIcon></div>
+                                        </Tooltip>
                                         <TextField
-                                            error={error.dbPassError}
                                             disabled={disableButton}
                                             margin='dense'
                                             variant='outlined'
                                             value={props.fieldValues.db_pass}
-                                            id="dbPass_label"
-                                            onChange={(event) => handleValueChange('db_pass', 'dbPassError', event.target.value)}
+                                            id="db_pass"
+                                            error={Boolean(error.db_pass)}
+                                            helperText={error.db_pass}
+                                            onChange={(event) => handleValueChange(event)}
                                         />
                                     </FormControl>}
                             </div>
@@ -497,9 +537,12 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={handleSave}>Save</Button>
-            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
-        </div>
+            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+                {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
+                {!saving && 'Save'}
+            </Button>
+            <Button className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+        </form>
 
     );
 }
