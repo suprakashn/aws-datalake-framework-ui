@@ -55,7 +55,7 @@ const Layout = (props) => {
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid orange'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid orange'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
