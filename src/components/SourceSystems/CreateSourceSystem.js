@@ -58,6 +58,16 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '7%',
         marginTop: '12px',
     },
+    primaryBtn: {
+        background: '#00B1E8',
+        '&:disabled': {
+            background: '#ccc',
+            color: 'white',
+        },
+        '&:hover': {
+          background: '#0192bf',
+        }
+      }
 }));
 
 const CreateSourceSystem = (props) => {
@@ -75,7 +85,6 @@ const CreateSourceSystem = (props) => {
             ...error,
             [id]: validate(id, value)
         });
-        console.log(error);
     }
 
     const validate = (field, value) => {
@@ -153,13 +162,10 @@ const CreateSourceSystem = (props) => {
         props.updateMode('');
         props.resetSourceSystemValues();
         props.closeSourceSystemSidebar();
-        // if(props.dataFlag){
-        //     props.updateDataFlag(false);
-        // }   
         navigate("/source-systems");
     }
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         setDisableButton(true);
         let payload = {
             "src_config":
@@ -182,22 +188,28 @@ const CreateSourceSystem = (props) => {
                 "db_pass": props.fieldValues.db_pass
             }
         }
-        defaultInstance.post('source_system/create?tasktype=create', payload)
-            .then((response) => {
-                console.log("response", response)
-                props.updateMode('');
-                props.resetSourceSystemValues();
-                props.closeSourceSystemSidebar();
+
+        try{
+            const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
+            if(response.data.responseStatus){
+                props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-                navigate("/source-systems");
-            })
-            .catch((error) => {
-                props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
-                setDisableButton(false);
-            })
+            }else{
+                props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+            }
+            props.updateMode('');
+            props.resetSourceSystemValues();
+            props.closeSourceSystemSidebar();
+            navigate("/source-systems");
+        }
+        catch(error){
+            console.log(error);
+            props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
+            setDisableButton(false);
+        }
     }
 
-    const handleEdit = () => {
+    const handleEdit = async () => {
         setDisableButton(true);
         let payload = {
             "src_config":
@@ -226,23 +238,28 @@ const CreateSourceSystem = (props) => {
                 }
             }
         }
-        defaultInstance.post('source_system/update', payload)
-            .then((response) => {
-                console.log("response", response)
-                props.updateMode('');
-                props.resetSourceSystemValues();
-                props.closeSourceSystemSidebar();
+
+        try{
+            const response = await defaultInstance.post('source_system/update', payload);
+            if(response.data.responseStatus){
+                props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-                navigate("/source-systems");
-            })
-            .catch((error) => {
-                console.log("error", error)
-                props.openSnackbar({ variant: 'error', message: `Encounterd error while editing source system ID: ${props.fieldValues.src_sys_id}!` });
-                setDisableButton(false);
-            })
+            }else{
+                props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+            }
+            props.updateMode('');
+            props.resetSourceSystemValues();
+            props.closeSourceSystemSidebar();
+            navigate("/source-systems");
+    
+        }catch(error){
+            console.log("error", error)
+            props.openSnackbar({ variant: 'error', message: `Failed to update source system ID: ${props.fieldValues.src_sys_id}!` });
+            setDisableButton(false);
+        }        
     }
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
         let errorList = {};
         let isFormValid = true;
@@ -264,16 +281,16 @@ const CreateSourceSystem = (props) => {
         if (isFormValid) {
             setSavingFlag(true);
             if (props.mode === 'create' || props.mode === 'clone') {
-                handleCreate();
+                await handleCreate();
             }
             if (props.mode === 'edit') {
-                handleEdit();
+                await handleEdit();
             }
+            setSavingFlag(false);
 
         } else {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         }
-        console.log("inside handle save", props.fieldValues)
     }
 
     const handleBack = () => {
@@ -537,11 +554,11 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>
-            <Button className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+            <Button className={classes.button} disabled={saving} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </form>
 
     );

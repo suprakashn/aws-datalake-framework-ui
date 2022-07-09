@@ -8,13 +8,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import Close from '@material-ui/icons/Close';
-import { Button } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
 import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
+import { openSnackbar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -34,12 +35,23 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '7%',
     marginTop: '12px',
   },
+  primaryBtn: {
+    background: '#00B1E8',
+    '&:disabled': {
+        background: '#ccc',
+        color: 'white',
+    },
+    '&:hover': {
+      background: '#0192bf',
+    }
+  }
 }));
 
 const ViewSourceSystem = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
+  const [deleting, setDeletingFlag] = useState(false);
   
   const handleEdit = () => {
     props.updateMode('edit');
@@ -47,17 +59,26 @@ const ViewSourceSystem = (props) => {
     navigate("/create-source-system")
   }
 
-  const handleDelete = () => {
-    defaultInstance.post('source_system/delete?tasktype=delete', {"src_config":{"src_sys_id": props.fieldValues.src_sys_id} })
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
-            props.closeSourceSystemSidebar();
-            props.updateDataFlag(true);
-            navigate("/source-systems");
+  const handleDelete = async () => {
+    try{
+      setDeletingFlag(true);
+      const response = await defaultInstance.post('source_system/delete?tasktype=delete', {"src_config":{"src_sys_id": props.fieldValues.src_sys_id} })
+      props.closeSourceSystemSidebar();
+      setDeletingFlag(false);
+      if(response.data.responseStatus){
+        props.updateDataFlag(true);
+        props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+      }else{
+        props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+      }
+      navigate("/source-systems");
+    }
+    catch(error){
+      console.log("error", error);
+      setDeletingFlag(false);
+      props.openSnackbar({ variant: 'error', message: `Failed to delete the source system!` });    
+    }
+            
   }
 
   const handleClose = () => {
@@ -193,9 +214,14 @@ const ViewSourceSystem = (props) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
+        <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
         {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Edit</Button>}
-        {props.mode === 'delete' && <Button onClick={handleDelete} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Delete</Button>}
+        {props.mode === 'delete' &&
+          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
+            {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
+            {!deleting && 'Delete'}
+          </Button>
+        }
       </DialogActions>
     </Dialog>
   );
@@ -212,7 +238,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateAllSourceSystemValues,
   sourceSystemFieldValue,
   closeSourceSystemSidebar,
-  updateDataFlag
+  updateDataFlag,
+  openSnackbar,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewSourceSystem);
