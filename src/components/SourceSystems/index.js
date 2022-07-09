@@ -73,17 +73,20 @@ const SourceSystems = (props) => {
       setLoading(true);
       defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
         .then(response => {
-          console.log(response.data);
-          props.updateSourceSysTableData(response.data.body.src_info);
+          if(response.data.responseStatus){
+            props.updateSourceSysTableData(response.data.responseBody);
+            props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+          }else{
+            props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+          }
           setLoading(false);
         })
         .catch(error => {
           setLoading(false);
-          props.openSnackbar({ variant: 'error', message: 'Some error occurred while loading data' });
-          console.log("error", error)
+          console.log("error", error);
           props.updateSourceSysTableData([]);
-        });
-        props.updateDataFlag(false);
+          props.openSnackbar({ variant: 'error', message: `Failed to create the source system!` });
+        })
     }
   }, [props.dataFlag])
 
@@ -98,10 +101,10 @@ const SourceSystems = (props) => {
     {
       title: "Actions", field: "", render: (rowData) => {
         return <>
-          <Tooltip placement='top' title="View"><img onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Edit"><img onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Clone"><img onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Delete"><img onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '9%', padding: '2%', marginRight: '2%' }} /></Tooltip>
+          <Tooltip placement='top' title="View"><img alt="view" onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Edit"><img alt="edit" onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Clone"><img alt="clone" onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
+          <Tooltip placement='top' title="Delete"><img alt="delete" onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '9%', padding: '2%', marginRight: '2%' }} /></Tooltip>
         </>
       }
     },
@@ -211,7 +214,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateAllSourceSystemValues,
   resetSourceSystemValues,
   updateSourceSysTableData,
-  updateDataFlag,
   openSnackbar
 }, dispatch)
 
