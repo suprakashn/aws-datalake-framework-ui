@@ -58,11 +58,22 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '7%',
         marginTop: '12px',
     },
+    primaryBtn: {
+        background: '#00B1E8',
+        '&:disabled': {
+            background: '#ccc',
+            color: 'white',
+        },
+        '&:hover': {
+          background: '#0192bf',
+        }
+      }
 }));
 
 const CreateSourceSystem = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const [disableButton, setDisableButton] = useState(false);
     const [error, setError] = useState({})
     const [saving, setSavingFlag] = useState(false);
 
@@ -74,7 +85,6 @@ const CreateSourceSystem = (props) => {
             ...error,
             [id]: validate(id, value)
         });
-        console.log(error);
     }
 
     const validate = (field, value) => {
@@ -152,13 +162,11 @@ const CreateSourceSystem = (props) => {
         props.updateMode('');
         props.resetSourceSystemValues();
         props.closeSourceSystemSidebar();
-        if (props.dataFlag) {
-            props.updateDataFlag(false);
-        }
         navigate("/source-systems");
     }
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
+        setDisableButton(true);
         let payload = {
             "src_config":
             {
@@ -176,20 +184,33 @@ const CreateSourceSystem = (props) => {
                 "db_username": props.fieldValues.db_username,
                 "db_schema": props.fieldValues.db_schema,
                 "db_name": props.fieldValues.db_name,
-                "db_port": props.fieldValues.ingstn_pattern === 'database' ? props.fieldValues.db_port : null,
+                "db_port": props.fieldValues.ingstn_pattern === 'database' ? props.fieldValues.db_port : 0,
                 "db_pass": props.fieldValues.db_pass
             }
         }
-        defaultInstance.post('sourcesystem/create?tasktype=create', payload)
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
+
+        try{
+            const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
+            if(response.data.responseStatus){
+                props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+                props.updateDataFlag(true);
+            }else{
+                props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+            }
+            props.updateMode('');
+            props.resetSourceSystemValues();
+            props.closeSourceSystemSidebar();
+            navigate("/source-systems");
+        }
+        catch(error){
+            console.log(error);
+            props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
+            setDisableButton(false);
+        }
     }
 
-    const handleEdit = () => {
+    const handleEdit = async () => {
+        setDisableButton(true);
         let payload = {
             "src_config":
             {
@@ -212,21 +233,33 @@ const CreateSourceSystem = (props) => {
                     "db_username": props.fieldValues.db_username,
                     "db_schema": props.fieldValues.db_schema,
                     "db_name": props.fieldValues.db_name,
-                    "db_port": props.fieldValues.db_port,
+                    "db_port": props.fieldValues.ingstn_pattern === 'database' ? props.fieldValues.db_port : 0,
                     // "db_pass": props.fieldValues.db_pass
                 }
             }
         }
-        defaultInstance.post('sourcesystem/update', payload)
-            .then((response) => {
-                console.log("response", response)
-            })
-            .catch((error) => {
-                console.log("error", error)
-            })
+
+        try{
+            const response = await defaultInstance.post('source_system/update', payload);
+            if(response.data.responseStatus){
+                props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+                props.updateDataFlag(true);
+            }else{
+                props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+            }
+            props.updateMode('');
+            props.resetSourceSystemValues();
+            props.closeSourceSystemSidebar();
+            navigate("/source-systems");
+    
+        }catch(error){
+            console.log("error", error)
+            props.openSnackbar({ variant: 'error', message: `Failed to update source system ID: ${props.fieldValues.src_sys_id}!` });
+            setDisableButton(false);
+        }        
     }
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
         let errorList = {};
         let isFormValid = true;
@@ -248,23 +281,20 @@ const CreateSourceSystem = (props) => {
         if (isFormValid) {
             setSavingFlag(true);
             if (props.mode === 'create' || props.mode === 'clone') {
-                handleCreate();
+                await handleCreate();
             }
             if (props.mode === 'edit') {
-                handleEdit();
+                await handleEdit();
             }
-            props.updateMode('');
-            props.resetSourceSystemValues();
-            props.updateDataFlag(true);
-            navigate("/source-systems");
+            setSavingFlag(false);
+
         } else {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         }
-        console.log("inside handle save", props.fieldValues)
     }
 
     const handleBack = () => {
-        props.updateDataFlag(false);
+        //  props.updateDataFlag(false);
         props.closeSourceSystemSidebar();
     }
 
@@ -292,7 +322,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div> Source System Id </div>
                                     <TextField
-                                        disabled={props.mode !== 'create'}
+                                        disabled={props.mode !== 'create' || disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.src_sys_id}
@@ -303,6 +333,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Source System Name*</div>
                                 <TextField
+                                    disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.src_sys_nm}
@@ -315,6 +346,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div > Source System Description </div>
                                 <TextField
+                                    disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.src_sys_desc}
@@ -327,6 +359,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Mechanism*</div>
                                 <Select
+                                    disabled={disableButton}
                                     margin="dense"
                                     variant="outlined"
                                     id="mechanism"
@@ -348,6 +381,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div > Data Owner* </div>
                                 <TextField
+                                    disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.data_owner}
@@ -360,6 +394,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div >Support Contact  </div>
                                 <TextField
+                                    disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
                                     value={props.fieldValues.support_cntct}
@@ -373,6 +408,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >Bucket Name </div>
                                     <TextField
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.bucket_name}
@@ -385,6 +421,7 @@ const CreateSourceSystem = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Ingestion Pattern*</div>
                                 <Select
+                                    disabled={disableButton}
                                     margin="dense"
                                     variant="outlined"
                                     id="ingstn_pattern"
@@ -412,7 +449,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Host*</div>
                                     <TextField
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_hostname}
@@ -425,7 +462,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '6px' }}>DB Type*</div>
                                     <Select
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         id="db_type"
@@ -447,7 +484,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Name*</div>
                                     <TextField
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_name}
@@ -460,7 +497,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Port*</div>
                                     <TextField
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_port}
@@ -473,7 +510,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Schema</div>
                                     <TextField
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_schema}
@@ -486,7 +523,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >DB Username*</div>
                                     <TextField
-                                        disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                        disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.db_username}
@@ -502,7 +539,7 @@ const CreateSourceSystem = (props) => {
                                             <div >DB Password <HelpOutlineIcon style={{ fontSize: '14px' }} color='secondary'></HelpOutlineIcon></div>
                                         </Tooltip>
                                         <TextField
-                                            disabled={props.fieldValues.ingstn_pattern !== 'database'}
+                                            disabled={disableButton}
                                             margin='dense'
                                             variant='outlined'
                                             value={props.fieldValues.db_pass}
@@ -517,11 +554,11 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>
-            <Button className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+            <Button className={classes.button} disabled={saving} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </form>
 
     );
