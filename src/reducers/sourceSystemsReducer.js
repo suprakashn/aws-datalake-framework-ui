@@ -2,13 +2,11 @@ import { combineReducers } from "redux";
 import * as Constants from 'components/Constants/Constants'
 
 const initialSourceSystemValues = {
-    src_sys_id: '',
     src_sys_nm: '',
     src_sys_desc: '',
     mechanism: '',
     data_owner: '',
     support_cntct: '',
-    bucket_name: '',
     ingstn_pattern: '',
     db_hostname: '',
     db_type: '',

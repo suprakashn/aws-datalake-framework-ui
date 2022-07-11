@@ -97,17 +97,7 @@ const SourceSystems = (props) => {
       }
     },
     { title: "Source System Name", field: "src_sys_nm", },
-    { title: "Bucket Name", field: "bucket_name", },
-    {
-      title: "Actions", field: "", render: (rowData) => {
-        return <>
-          <Tooltip placement='top' title="View"><img alt="view" onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Edit"><img alt="edit" onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Clone"><img alt="clone" onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '10%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Delete"><img alt="delete" onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '9%', padding: '2%', marginRight: '2%' }} /></Tooltip>
-        </>
-      }
-    },
+    { title: "Bucket Name", field: "bucket_name", },    
   ];
 
   const handleCreate = () => {
@@ -157,6 +147,40 @@ const SourceSystems = (props) => {
           title="Source Systems"
           columns={columns}
           data={props.data}
+          actions={[
+            {
+              icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
+              tooltip: 'View',
+              position: 'row', // 'auto' | 'toolbar' | 'toolbarOnSelect' | 'row'
+              onClick: (event, rowData) => {
+                handleAction('view', rowData)
+              }
+            },
+            {
+              icon: () => <img src={edit} alt="edit" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Edit',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleEdit(rowData);
+              }
+            },
+            {
+              icon: () => <img src={clone} alt="clone" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Clone',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleClone(rowData);
+              }
+            },
+            {
+              icon: () => <img src={remove} alt="delete" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Delete',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleAction('delete', rowData)
+              }
+            }
+          ]}
           options={{
             selection: true,
             showTextRowsSelected: false,
