@@ -322,7 +322,7 @@ const CreateSourceSystem = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div> Source System Id </div>
                                     <TextField
-                                        disabled={props.mode !== 'create' || disableButton}
+                                        disabled={'true'}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.src_sys_id}
@@ -404,11 +404,11 @@ const CreateSourceSystem = (props) => {
                                     onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
-                            {props.mode !== 'create' && props.mode !== 'clone' &&
+                            {props.mode === 'edit' &&
                                 <FormControl className={classes.formControl}>
                                     <div >Bucket Name </div>
                                     <TextField
-                                        disabled={disableButton}
+                                        disabled={'true'}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.fieldValues.bucket_name}
