@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewLakeDestination = (props) => {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
@@ -94,11 +93,11 @@ const ViewLakeDestination = (props) => {
   }
 
   return (
-    <Dialog open={open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
+    <Dialog open={'true'} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
         <div>{props.mode === 'view' ? 'View' : 'Delete'} ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.target_id}</span></div>
         <Tooltip title="close">
-          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={() => setOpen(false)} />
+          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={handleClose} />
         </Tooltip>
       </DialogTitle>
       <DialogContent>

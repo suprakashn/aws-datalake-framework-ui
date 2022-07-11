@@ -89,6 +89,10 @@ const CreateLakeDestination = (props) => {
         const emailRegx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         switch (field) {
             case 'domain':
+                error = value?.trim().length > 0 ? "" : "Required field";
+                error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
+                error = error || (!/\s+/.test(value) ? "" : "Space not allowed. Use underscore instead");
+                break;
             case 'subdomain':
                 error = value?.trim().length > 0 ? "" : "Required field";
                 error = error || (value?.trim().length <= 25 ? "" : "Reached maximum limit of 25 characters");
@@ -247,7 +251,7 @@ const CreateLakeDestination = (props) => {
                                     onChange={handleValueChange}
                                 />
                             </FormControl>
-                            {props.mode !== "create" &&
+                            {props.mode === "edit" &&
                                 <FormControl className={classes.formControl}>
                                     <div> Bucket Name </div>
                                     <TextField
