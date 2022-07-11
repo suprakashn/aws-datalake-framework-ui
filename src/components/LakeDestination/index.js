@@ -51,41 +51,25 @@ const LakeDestination = (props) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const tableFallbackData = [
-    {
-      "target_id": 461725,
-      "domain": "education",
-      "subdomain": "university_rankings",
-      "bucket_name": "dl-fmwrk-tgt-461725-us-east-2",
-      "data_owner": "Sagar Das",
-      "support_cntct": "sagar.das@tigeranalytics.com",
-      "rs_load_ind": true,
-      "rs_db_nm": "test red shift db",
-      "rs_schema_nm": "test red shift schema"
-    },
-    {
-      "target_id": 461726,
-      "domain": "finance",
-      "subdomain": "corporate_rankings",
-      "bucket_name": "dl-fmwrk-tgt-461725-us-east-3",
-      "data_owner": "Divya",
-      "support_cntct": "divya@tigeranalytics.com",
-      "rs_load_ind": false,
-    },
-  ];
-
+  
   useEffect(() => {
     if (props.fetchDataFlag) {
       setLoading(true);
       defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
         .then(response => {
-          console.log(response.data);
           setLoading(false);
-          props.updateLakeDestinationTableData(response.data.body.target_info);
+          if(response.data.responseStatus){
+            props.updateLakeDestinationTableData(response.data.responseBody);
+            props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
+          }else{
+            props.updateLakeDestinationTableData([]);
+            const message = response.data.responseMessage || 'Failed to fetch Target System'
+            props.openSnackbar({ variant: 'error', message});
+          }
         })
         .catch(error => {
           setLoading(false);
-          props.openSnackbar({ variant: 'error', message: 'Some error occurred while loading data' });
+          props.openSnackbar({ variant: 'error', message: 'Failed to fetch Target System' });
           console.log("error", error);
           props.updateLakeDestinationTableData([]);
         });
@@ -138,12 +122,7 @@ const LakeDestination = (props) => {
           icons={tableIcons}
           title="Lake Destination"
           columns={columns}
-          data={props.tableData}
-          onSelectionChange={selected => {
-            if (selected.length > 0) {
-              console.log(selected);
-            }
-          }}
+          data={props.tableData}          
           actions={[
             {
               icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,

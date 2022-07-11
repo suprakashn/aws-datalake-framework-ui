@@ -52,6 +52,16 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '7%',
         marginTop: '12px',
     },
+    primaryBtn: {
+        background: '#00B1E8',
+        '&:disabled': {
+            background: '#ccc',
+            color: 'white',
+        },
+        '&:hover': {
+          background: '#0192bf',
+        }
+      }
 }));
 
 const CreateLakeDestination = (props) => {
@@ -71,7 +81,6 @@ const CreateLakeDestination = (props) => {
             ...error,
             [id]: validate(id, value)
         });
-        console.log(error);
     }
 
     const validate = (field, value) => {
@@ -138,30 +147,47 @@ const CreateLakeDestination = (props) => {
     }
 
     const makeSaveRequest = async () => {
-        let url = '/targetsystem/update';
-        let message = 'Record updated successfully';
-        let requestData = {
-            target_config: {
-                target_id: props.fieldValues.target_id,
-                update_data: props.fieldValues
-            }
+        let url, requestData;
+        const dataToSave = {
+            data_owner: props.fieldValues.data_owner,
+            domain: props.fieldValues.domain,
+            rs_load_ind: props.fieldValues.rs_load_ind,
+            subdomain: props.fieldValues.subdomain,
+            support_cntct: props.fieldValues.support_cntct
         }
 
-        if (props.mode === 'new' || props.mode === 'clone') {
-            url = '/targetsystem/create';
-            message = 'Record added successfully'
-            requestData = {
-                target_config: props.fieldValues
-            }
+        switch (props.mode) {
+            case 'create':
+            case 'clone':
+                url = '/targetsystem/create';
+                requestData = {
+                    target_config: dataToSave
+                }
+                break;
+            case 'edit':
+                url = '/targetsystem/update';
+                requestData = {
+                    target_config: {
+                        target_id: props.fieldValues.target_id,
+                        update_data: dataToSave
+                    }
+                }
+                break;
+            default: throw(new Error("Invalid Mode"));
         }
-
+        
         try {
             const response = await defaultInstance.post(url, requestData)
-            props.updateFetchDataFlag(true);
-            props.openSnackbar({ variant: 'info', message });
+            if(response.data.responseStatus){
+                props.updateFetchDataFlag(true);
+                props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
+            }else{
+                let message = response.data.responseMessage || `Failed to create target system ID: ${props.fieldValues.target_id}!`
+                props.openSnackbar({ variant: 'error', message });
+            }            
         }
         catch (er) {
-            props.openSnackbar({ variant: 'error', message: 'Some error occurred while saving!' });
+            props.openSnackbar({ variant: 'error', message: `Failed to create target system ID: ${props.fieldValues.target_id}!` });
         }
     }
 
@@ -275,11 +301,11 @@ const CreateLakeDestination = (props) => {
                     </div>
                 </div>
             </Paper>
-            <Button type='submit' className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')}  >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>
-            <Button className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+            <Button className={classes.button} disabled={saving} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </form>
 
     );
