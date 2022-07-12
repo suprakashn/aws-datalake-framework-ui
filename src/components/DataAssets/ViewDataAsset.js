@@ -86,8 +86,7 @@ const ViewDataAsset = (props) => {
   return (
     <Dialog open={props.open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
-        {props.mode === 'view' && <> {props.fieldValues.src_sys_id ? <div style={{ fontWeight: 'bold' }}>View ID: <span > {props.fieldValues.src_sys_id}</span></div> : ''} </>}
-        {props.mode === 'delete' && <> {props.fieldValues.src_sys_id ? <div style={{ fontWeight: 'bold' }}>Delete ID: <span > {props.fieldValues.src_sys_id}</span></div> : ''} </>}
+        {props.fieldValues.src_sys_id ? <div >Data Asset ID : <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''}
         <Tooltip title="close">
           <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={handleClose} />
         </Tooltip>
