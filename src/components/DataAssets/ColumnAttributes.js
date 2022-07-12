@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -15,14 +13,10 @@ import {
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ReplayIcon from '@material-ui/icons/Replay';
 import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import cron from 'cron-validate';
-import { Tooltip, Fab } from '@material-ui/core';
-import AddSharpIcon from '@material-ui/icons/AddSharp';
 
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -81,6 +75,47 @@ const ColumnAttributes = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
+    const [data, setData] = useState([{
+        "col_id": 1,
+        "col_nm": "world rank",
+        "tgt_col_nm": "world_rank",
+        "tgt_data_type": "None",
+        "col_desc": "column",
+        "data_classification": "non-confidential",
+        "col_length": 0,
+        "req_tokenization": false,
+        "pk_ind": false,
+        "null_ind": false,
+        "data_type": "Integral",
+        "modified_ts": null
+    }, {
+        "col_id": 2,
+        "col_nm": "institution",
+        "tgt_col_nm": "None",
+        "tgt_data_type": "None",
+        "col_desc": "column",
+        "data_classification": "non-confidential",
+        "col_length": 0,
+        "req_tokenization": true,
+        "pk_ind": false,
+        "null_ind": false,
+        "data_type": "String",
+        "modified_ts": null
+    },
+    {
+        "col_id": 3,
+        "col_nm": "country",
+        "tgt_col_nm": "None",
+        "tgt_data_type": "None",
+        "col_desc": "column",
+        "data_classification": "non-confidential",
+        "col_length": 0,
+        "req_tokenization": true,
+        "pk_ind": false,
+        "null_ind": false,
+        "data_type": "String",
+        "modified_ts": null
+    },])
 
     useEffect(() => {
         getSourceSystemData();
@@ -273,19 +308,25 @@ const ColumnAttributes = (props) => {
     }
 
     return (
-        <div className={classes.root}>
-            <div >
-                <Accordion style={{ margin: "1% 0" }}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
-                        <Typography className={classes.heading}>Column Attributes</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <div style={{ padding: "0 2%" }}>
-                            <FormControl className={classes.formControl}>
+        <Accordion style={{ margin: "1% 0" }} defaultExpanded={true}>
+            <AccordionDetails>
+                {/* <div>
+                <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }}>Add New +</Button>
+                </div>
+            */}
+                <div>
+                    {data.map(row => {
+                        return <Accordion style={{ margin: "1% 0" }}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography >Column Name : {row.col_nm}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <div style={{ padding: "0 2%" }}>
+                                    {/* <FormControl className={classes.formControl}>
                                 <div > ID* </div>
                                 <TextField
                                     disabled={true}
@@ -295,166 +336,175 @@ const ColumnAttributes = (props) => {
                                     id="col_id"
                                     onChange={(event) => handleValueChange('col_id', 'colIDError', event.target.value)}
                                 />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div >Name*</div>
-                                <TextField
-                                    error={error.colNameError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.fieldValues.col_nm}
-                                    id="col_nm"
-                                    onChange={(event) => handleMaxCharacter('col_nm', 'colNameError', event.target.value, 30)}
-                                />
-                                <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div >Target column name</div>
-                                <TextField
-                                    error={error.targetColumnNameError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.fieldValues.tgt_col_nm}
-                                    id="tgt_col_nm"
-                                    onChange={(event) => handleMaxCharacter('tgt_col_nm', 'targetColumnNameError', event.target.value, 30)}
-                                />
-                                <FormHelperText>{error.targetColumnNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}>Target Data Type*</div>
-                                <Select
-                                    error={error.targetDataTypeError}
-                                    disabled={disableButton}
-                                    margin="dense"
-                                    variant="outlined"
-                                    id="tgt_data_type"
-                                    value={props.fieldValues.tgt_data_type}
-                                    onChange={(event) => handleValueChange('tgt_data_type', 'targetDataTypeError', event.target.value)}
-                                >
-                                    <MenuItem value="">
-                                        <em>Select target data type</em>
-                                    </MenuItem>
-                                    {TARGET_DATA_TYPE.map(item => {
-                                        return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div > Description* </div>
-                                <TextField
-                                    error={error.colDescriptionError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.fieldValues.col_desc}
-                                    id="col_desc"
-                                    onChange={(event) => handleValueChange('col_desc', 'colDescriptionError', event.target.value)}
-                                />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}>Data Classification*</div>
-                                <Select
-                                    error={error.dataClassificationError}
-                                    disabled={disableButton}
-                                    margin="dense"
-                                    variant="outlined"
-                                    id="data_classification"
-                                    value={props.fieldValues.data_classification}
-                                    onChange={(event) => handleValueChange('data_classification', 'dataClassificationError', event.target.value)}
-                                >
-                                    {DATA_CLASSIFICATION.map(item => {
-                                        return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div > Trigger file pattern</div>
-                                <TextField
-                                    type={"number"}
-                                    error={error.columnLengthError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.fieldValues.col_length}
-                                    id="col_length"
-                                    onChange={(event) => handleValueChange('data_classification', 'dataClassificationError', event.target.value)}
-                                />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}> Enable Tokenization</div>
-                                <Select
-                                    error={error.tokenizationError}
-                                    disabled={disableButton}
-                                    margin="dense"
-                                    variant="outlined"
-                                    id="req_tokenization"
-                                    value={props.fieldValues.req_tokenization}
-                                    onChange={(event) => handleValueChange('req_tokenization', 'tokenizationError', event.target.value)}
-                                >
-                                    {BOOLEAN_VALUES.map(item => {
-                                        return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
-                                <Select
-                                    error={error.primaryKeyIndicatorError}
-                                    disabled={disableButton}
-                                    margin="dense"
-                                    variant="outlined"
-                                    id="pk_ind"
-                                    value={props.fieldValues.pk_ind}
-                                    onChange={(event) => handleValueChange('pk_ind', 'primaryKeyIndicatorError', event.target.value)}
-                                >
-                                    {BOOLEAN_VALUES.map(item => {
-                                        return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}>Data Type*</div>
-                                <Select
-                                    error={error.dataTypeError}
-                                    disabled={disableButton}
-                                    margin="dense"
-                                    variant="outlined"
-                                    id="data_type"
-                                    value={props.fieldValues.data_type}
-                                    onChange={(event) => handleValueChange('data_type', 'dataTypeError', event.target.value)}
-                                >
-                                    <MenuItem value="">
-                                        <em>Select data type</em>
-                                    </MenuItem>
-                                    {TARGET_DATA_TYPE.map(item => {
-                                        return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            {props.mode === 'view' &&
-                                <FormControl className={classes.formControl}>
-                                    <div >Last Modified On</div>
-                                    <TextField
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        value={props.fieldValues.modified_ts}
-                                        id="modified_ts"
-                                        onChange={(event) => handleValueChange('modified_ts', 'modifiedtimeStampError', event.target.value)}
-                                    />
-                                </FormControl>}
-                            <Tooltip title="Add new column" placement='top'>
-                                <Fab size="large" color="primary" style={{ float: "right", margin: "1% 4% 0 0" }} >
-                                    <AddSharpIcon style={{ color: 'white' }} />
-                                </Fab>
-                            </Tooltip>
-                        </div>
-                    </AccordionDetails>
-                </Accordion>
-            </div>
-        </div>
+                            </FormControl> */}
+                                    <FormControl className={classes.formControl}>
+                                        <div >Name*</div>
+                                        <TextField
+                                            error={error.colNameError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            // value={props.fieldValues.col_nm}
+                                            value={row.col_nm}
+                                            id="col_nm"
+                                            onChange={(event) => handleMaxCharacter('col_nm', 'colNameError', event.target.value, 30)}
+                                        />
+                                        <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div >Target column name</div>
+                                        <TextField
+                                            error={error.targetColumnNameError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            // value={props.fieldValues.tgt_col_nm}
+                                            value={row.tgt_col_nm}
+                                            id="tgt_col_nm"
+                                            onChange={(event) => handleMaxCharacter('tgt_col_nm', 'targetColumnNameError', event.target.value, 30)}
+                                        />
+                                        <FormHelperText>{error.targetColumnNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Target Data Type*</div>
+                                        <Select
+                                            error={error.targetDataTypeError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="tgt_data_type"
+                                            // value={props.fieldValues.tgt_data_type}
+                                            value={row.tgt_data_type}
+                                            onChange={(event) => handleValueChange('tgt_data_type', 'targetDataTypeError', event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select target data type</em>
+                                            </MenuItem>
+                                            {TARGET_DATA_TYPE.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div > Description* </div>
+                                        <TextField
+                                            error={error.colDescriptionError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            // value={props.fieldValues.col_desc}
+                                            value={row.col_desc}
+                                            id="col_desc"
+                                            onChange={(event) => handleValueChange('col_desc', 'colDescriptionError', event.target.value)}
+                                        />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Data Classification*</div>
+                                        <Select
+                                            error={error.dataClassificationError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="data_classification"
+                                            // value={props.fieldValues.data_classification}
+                                            value={row.data_classification}
+                                            onChange={(event) => handleValueChange('data_classification', 'dataClassificationError', event.target.value)}
+                                        >
+                                            {DATA_CLASSIFICATION.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div > Trigger file pattern</div>
+                                        <TextField
+                                            type={"number"}
+                                            error={error.columnLengthError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            // value={props.fieldValues.col_length}
+                                            value={row.col_length}
+                                            id="col_length"
+                                            onChange={(event) => handleValueChange('data_classification', 'dataClassificationError', event.target.value)}
+                                        />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}> Enable Tokenization</div>
+                                        <Select
+                                            error={error.tokenizationError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="req_tokenization"
+                                            // value={props.fieldValues.req_tokenization}
+                                            value={row.req_tokenization}
+                                            onChange={(event) => handleValueChange('req_tokenization', 'tokenizationError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
+                                        <Select
+                                            error={error.primaryKeyIndicatorError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="pk_ind"
+                                            // value={props.fieldValues.pk_ind}
+                                            value={row.pk_ind}
+                                            onChange={(event) => handleValueChange('pk_ind', 'primaryKeyIndicatorError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Data Type*</div>
+                                        <Select
+                                            error={error.dataTypeError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="data_type"
+                                            // value={props.fieldValues.data_type}
+                                            value={row.data_type}
+                                            onChange={(event) => handleValueChange('data_type', 'dataTypeError', event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select data type</em>
+                                            </MenuItem>
+                                            {TARGET_DATA_TYPE.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    {props.mode === 'view' &&
+                                        <FormControl className={classes.formControl}>
+                                            <div >Last Modified On</div>
+                                            <TextField
+                                                disabled={disableButton}
+                                                margin='dense'
+                                                variant='outlined'
+                                                // value={props.fieldValues.modified_ts}
+                                                value={row.modified_ts}
+                                                id="modified_ts"
+                                                onChange={(event) => handleValueChange('modified_ts', 'modifiedtimeStampError', event.target.value)}
+                                            />
+                                        </FormControl>}
+                                </div>
+                            </AccordionDetails>
+                        </Accordion>
+                    })}
+                </div>
+            </AccordionDetails>
+        </Accordion>
+        //     </div>
+        // </div>
 
     );
 }

@@ -23,7 +23,19 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%'
+    margin: '3%',
+    "& .MuiBox-root+div": {
+      width: '100%',
+    },
+    "& .MuiInput-underline:before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+      borderBottom: 'none'
+    },
+    "& .MuiInput-underline:after": {
+      borderBottom: 'none'
+    },
   },
   button: {
     float: 'right',
@@ -31,17 +43,6 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     marginTop: '12px',
   },
-  search: {
-    '& .MuiInput-underline:before': {
-      borderBottomColor: '#fff8', // Semi-transparent underline
-    },
-    '& .MuiInput-underline:hover:before': {
-      borderBottomColor: '#fff', // Solid underline on hover
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: '#fff', // Solid underline on focus
-    },
-  }
 }));
 
 const DataAssets = (props) => {
@@ -206,24 +207,38 @@ const DataAssets = (props) => {
           columns={columns}
           data={data}
           options={{
-            //padding: 'dense',
+            //selection: true,
+           // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false,
-            toolbarButtonAlignment: "left",
+            draggable: false, 
+            actionsColumnIndex: -1,
+           // toolbarButtonAlignment: "left",
             searchFieldStyle: {
-              backgroundColor: '#F5F5F5',
-              color: 'black'
+              backgroundColor: '#FFF',
+              color: 'black',
+              padding: '0.3rem 0.75rem',
+              margin: '1.25rem 0',
+              boxShadow: '2px 2px 4px 1px #ccc',
+              "& svg.MuiSvgIconRoot": {
+                fontSize: '1.75rem',
+                color: '#707070'
+              }
             },
             sorting: true,
-            // searchFieldStyle:,
             headerStyle: {
-              textAlign: 'left',
               position: 'sticky',
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
+             // padding: '0',
+              textAlign: 'left'
+            },
+           // cellStyle: { padding: '5px 0' },
+            actionsCellStyle: {
+              minWidth: '200px',
+              textAlign: 'left'
             }
           }}
         />

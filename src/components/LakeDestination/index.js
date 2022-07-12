@@ -60,17 +60,17 @@ const LakeDestination = (props) => {
           setLoading(false);
           if(response.data.responseStatus){
             props.updateLakeDestinationTableData(response.data.responseBody);
-            props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
+           // props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
           }else{
             props.updateLakeDestinationTableData([]);
-            const message = response.data.responseMessage || 'Failed to fetch Target System'
-            props.openSnackbar({ variant: 'error', message});
+            // const message = response.data.responseMessage || 'Failed to load Target System data!'
+            // props.openSnackbar({ variant: 'error', message});
           }
         })
         .catch(error => {
           setLoading(false);
-          props.openSnackbar({ variant: 'error', message: 'Failed to fetch Target System' });
-          console.log("error", error);
+          // props.openSnackbar({ variant: 'error', message: 'Failed to load Target System data!' });
+          // console.log("error", error);
           props.updateLakeDestinationTableData([]);
         });
       props.updateFetchDataFlag(false);
@@ -170,8 +170,8 @@ const LakeDestination = (props) => {
           ]}
 
           options={{
-            selection: true,
-            showTextRowsSelected: false,
+            //selection: true,
+            //showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
@@ -195,10 +195,10 @@ const LakeDestination = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-              padding: '0',
+             // padding: '0',
               textAlign: 'left'
             },
-            cellStyle: { padding: '5px 0' },
+           // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'

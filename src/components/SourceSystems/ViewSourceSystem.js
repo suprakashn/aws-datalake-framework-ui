@@ -19,7 +19,8 @@ import { openSnackbar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
-    'max-width': '65%'
+    'max-width': '65%',
+    'min-height': '450px'
   },
   formControl: {
     minWidth: '25%',
@@ -83,14 +84,15 @@ const ViewSourceSystem = (props) => {
 
   const handleClose = () => {
     setTabIndex(0);
+    props.updateMode('');
     props.closeSourceSystemSidebar();
   }
 
   return (
     <Dialog open={props.open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
-        {props.mode === 'view' && <> {props.fieldValues.src_sys_id ? <div style={{ fontWeight: 'bold' }}>View ID: <span > {props.fieldValues.src_sys_id}</span></div> : ''} </>}
-        {props.mode === 'delete' && <> {props.fieldValues.src_sys_id ? <div style={{ fontWeight: 'bold' }}>Delete ID: <span > {props.fieldValues.src_sys_id}</span></div> : ''} </>}
+        {props.mode === 'view' && <> {props.fieldValues.src_sys_id ? <div>View ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''} </>}
+        {props.mode === 'delete' && <> {props.fieldValues.src_sys_id ? <div>Delete ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''} </>}
         <Tooltip title="close">
           <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={handleClose} />
         </Tooltip>
@@ -102,14 +104,16 @@ const ViewSourceSystem = (props) => {
               <Tab style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
-                borderBottom: tabIndex === 0 ? '10px solid #F7901D' : ''
+                borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
-              <Tab style={{
+              { props.fieldValues.ingstn_pattern === 'database' &&
+                <Tab style={{
                 fontWeight: tabIndex === 1 ? 'bold' : '',
                 //margin: ' 0 20px',
                 border: 'none',
-                borderBottom: tabIndex === 1 ? '10px solid #F7901D' : ''
+                borderBottom: tabIndex === 1 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
+              }
             </TabList>
             <TabPanel>
               <div style={{ border: '1px solid #CBCBCB' }}>

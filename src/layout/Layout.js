@@ -51,11 +51,11 @@ const Layout = (props) => {
                             <img src={logo}  style={{maxWidth: '5%'}}/>
                         </div> */}
                     <Link to="/" className={classes.logo}>
-                        TIGER ANALYTICS AWS DATA LAKE
+                        TIGER ANALYTICS <span style={{color:'#F7901D'}}>AWS</span> DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid orange'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
