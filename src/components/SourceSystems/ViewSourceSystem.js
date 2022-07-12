@@ -16,6 +16,7 @@ import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
 import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
 import { openSnackbar } from 'actions/notificationAction';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -91,8 +92,7 @@ const ViewSourceSystem = (props) => {
   return (
     <Dialog open={props.open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
-        {props.mode === 'view' && <> {props.fieldValues.src_sys_id ? <div>View ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''} </>}
-        {props.mode === 'delete' && <> {props.fieldValues.src_sys_id ? <div>Delete ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''} </>}
+        {props.fieldValues.src_sys_id ? <div>Source System ID : <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''}
         <Tooltip title="close">
           <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={handleClose} />
         </Tooltip>
