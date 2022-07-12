@@ -104,14 +104,14 @@ const ViewSourceSystem = (props) => {
               <Tab style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
-                borderBottom: tabIndex === 0 ? '10px solid #F7901D' : ''
+                borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
               { props.fieldValues.ingstn_pattern === 'database' &&
                 <Tab style={{
                 fontWeight: tabIndex === 1 ? 'bold' : '',
                 //margin: ' 0 20px',
                 border: 'none',
-                borderBottom: tabIndex === 1 ? '10px solid #F7901D' : ''
+                borderBottom: tabIndex === 1 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
               }
             </TabList>

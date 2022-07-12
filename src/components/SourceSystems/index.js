@@ -59,9 +59,9 @@ const SourceSystems = (props) => {
         .then(response => {
           if(response.data.responseStatus){
             props.updateSourceSysTableData(response.data.responseBody);
-            props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+           // props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
           }else{
-            props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+          //  props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
           }
           setLoading(false);
         })
@@ -69,7 +69,7 @@ const SourceSystems = (props) => {
           setLoading(false);
           console.log("error", error);
           props.updateSourceSysTableData([]);
-          props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
+        //  props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
         })
     }
   }, [props.dataFlag])
