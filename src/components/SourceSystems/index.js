@@ -37,10 +37,6 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiInput-underline:after": {
       borderBottom: 'none'
     },
-    // "& svg.MuiSvgIcon-root:first-child": {
-    //   fontSize: '1.75rem',
-    //   color: '#707070'
-    // }
   },
   button: {
     float: 'right',
@@ -49,18 +45,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '12px',
   },
 }));
-// search: {
-//   '& .MuiInput-underline:before': {
-//     borderBottomColor: '#fff8', // Semi-transparent underline
-//   },
-//   '& .MuiInput-underline:hover:before': {
-//     borderBottomColor: '#fff', // Solid underline on hover
-//   },
-//   '& .MuiInput-underline:after': {
-//     borderBottomColor: '#fff', // Solid underline on focus
-//   },
-// }
-
 
 const SourceSystems = (props) => {
   const classes = useStyles();
@@ -85,7 +69,7 @@ const SourceSystems = (props) => {
           setLoading(false);
           console.log("error", error);
           props.updateSourceSysTableData([]);
-          props.openSnackbar({ variant: 'error', message: `Failed to create the source system!` });
+          props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
         })
     }
   }, [props.dataFlag])
@@ -182,14 +166,14 @@ const SourceSystems = (props) => {
             }
           ]}
           options={{
-            selection: true,
-            showTextRowsSelected: false,
+            //selection: true,
+           // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false, 
             actionsColumnIndex: -1,
-            toolbarButtonAlignment: "left",
+           // toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -207,10 +191,10 @@ const SourceSystems = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-              padding: '0',
+             // padding: '0',
               textAlign: 'left'
             },
-            cellStyle: { padding: '5px 0' },
+           // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'
