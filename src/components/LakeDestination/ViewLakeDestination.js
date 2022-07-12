@@ -37,11 +37,20 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '7%',
     marginTop: '12px',
   },
+  primaryBtn: {
+    background: '#00B1E8',
+    '&:disabled': {
+        background: '#ccc',
+        color: 'white',
+    },
+    '&:hover': {
+      background: '#0192bf',
+    }
+  }
 }));
 
 const ViewLakeDestination = (props) => {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
@@ -54,24 +63,27 @@ const ViewLakeDestination = (props) => {
   }
 
   const handleDelete = async () => {
-    console.log("delete")
+    setDeletingFlag(true);
     try {
-      setDeletingFlag(true);
       const requestData = {
         target_config: {
           target_id: props.fieldValues.target_id
         }
       }
       const response = await defaultInstance.post('/targetsystem/delete', requestData)
-      setDeletingFlag(false);
-      props.openSnackbar({ variant: 'success', message: 'Successfully Deleted' });
-      props.updateFetchDataFlag(true);
+      if (response.data.responseStatus) {
+        props.updateFetchDataFlag(true);
+        props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
+      } else {
+        let message = response.data.responseMessage || `Failed to delete target system ID: ${props.fieldValues.target_id}!`
+        props.openSnackbar({ variant: 'error', message });
+      }            
     }
     catch (ex) {
-      setDeletingFlag(false);
-      props.openSnackbar({ variant: 'error', message: 'Error occurred while deleting' });
+      props.openSnackbar({ variant: 'error', message: `Failed to delete target system ID: ${props.fieldValues.target_id}!` });
 
     }
+    setDeletingFlag(false);
     props.updateMode('');
   }
 
@@ -81,11 +93,11 @@ const ViewLakeDestination = (props) => {
   }
 
   return (
-    <Dialog open={open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
+    <Dialog open={'true'} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
         <div>{props.mode === 'view' ? 'View' : 'Delete'} ID: <span style={{ fontWeight: 'bold' }}> {props.fieldValues.target_id}</span></div>
         <Tooltip title="close">
-          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={() => setOpen(false)} />
+          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={handleClose} />
         </Tooltip>
       </DialogTitle>
       <DialogContent>
@@ -166,10 +178,10 @@ const ViewLakeDestination = (props) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
-        {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Edit</Button>}
+        <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
+        {props.mode === 'view' && <Button onClick={handleEdit} className={[classes.button, classes.primaryBtn].join(' ')}>Edit</Button>}
         {props.mode === 'delete' &&
-          <Button onClick={handleDelete} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >
+          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
             {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
             {!deleting && 'Delete'}
           </Button>
