@@ -47,11 +47,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DataAssets = (props) => {
+const DataAssetDetails = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
-  const [backdrop, setBackdrop] = useState(false);
   const [data, setData] = useState([{
     "asset_id": "123456",
     "src_sys_id": "269271",
@@ -126,80 +125,23 @@ const DataAssets = (props) => {
   }
   ])
 
-  // useEffect(() => {
-  //   if (props.dataFlag) {
-  //     setBackdrop(true);
-  //     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
-  //       .then(response => {
-  //         props.updateSourceSysTableData(response.data.body.src_info);
-  //         //setData(response.data.body.src_info)
-  //         setBackdrop(false);
-  //       })
-  //       .catch(error => {
-  //         console.log("error", error)
-  //         props.updateSourceSysTableData([]);
-  //         setBackdrop(false);
-  //       })
-  //   }
-  // }, [])
-
   const columns = [
     {
-      title: "Data Asset ID", field: "asset_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.asset_id}</span>
-      }
+      title: "Data Asset ID", field: "asset_id"
     },
     { title: "Source System ID", field: "src_sys_id", },
     { title: "Data Asset Name", field: "asset_nm", },
     { title: "Target System ID", field: "target_id", },
     { title: "Asset Owner", field: "asset_owner", },
-    {
-      title: "Actions", field: "", render: (rowData) => {
-        return <>
-          <Tooltip placement='top' title="View"><img onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Edit"><img onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Clone"><img onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Delete"><img onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '12%', padding: '2%', marginRight: '2%' }} /></Tooltip>
-          <Tooltip placement='top' title="Url"><img onClick={() => { navigate("/data-asset-details") }} src={url} style={{ maxWidth: '13%', padding: '2%', marginRight: '2%' }} /></Tooltip>
-        </>
-      }
-    },
   ];
-
-  const handleCreate = () => {
-    props.updateMode('create');
-    props.resetDataAssetValues();
-  }
-
-  const handleEdit = (selectedRow) => {
-    props.updateMode('edit');
-    props.updateAllDataAssetValues({ ...selectedRow })
-    navigate("/create-data-asset")
-  }
-
-  const handleClone = (selectedRow) => {
-    props.updateMode('clone');
-    props.updateAllDataAssetValues({ ...selectedRow })
-    navigate("/create-data-asset")
-  }
-
-  const handleAction = (mode, selectedRow) => {
-    props.updateMode(mode);
-    props.openDataAssetDialogue();
-    props.updateAllDataAssetValues({ ...selectedRow })
-  }
 
   return (
     <>
-      <ViewDataAsset selectedRow={selectedRow} />
       <div className={classes.table}>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-data-asset" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
             ),
@@ -210,14 +152,11 @@ const DataAssets = (props) => {
           columns={columns}
           data={data}
           options={{
-            //selection: true,
-           // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false, 
             actionsColumnIndex: -1,
-           // toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -251,18 +190,8 @@ const DataAssets = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.dataAssetState.dialogue.flag,
-  fieldValues: state.dataAssetState.dataAssetValues,
-  mode: state.dataAssetState.updateMode.mode,
-  dataFlag: state.dataAssetState.updateDataFlag.dataFlag,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-  openDataAssetDialogue,
-  closeDataAssetDialogue,
-  updateMode,
-  updateAllDataAssetValues,
-  resetDataAssetValues,
-  updateDataAssetTableData
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataAssets);
+export default connect(mapStateToProps, mapDispatchToProps)(DataAssetDetails);
