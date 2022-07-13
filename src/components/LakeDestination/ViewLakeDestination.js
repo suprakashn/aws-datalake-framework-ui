@@ -107,7 +107,7 @@ const ViewLakeDestination = (props) => {
               <Tab style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
-                borderBottom: tabIndex === 0 ? '10px solid #F7901D' : ''
+                borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(0)}><span>Lake Destination Attributes</span></Tab>
             </TabList>
             <TabPanel>
