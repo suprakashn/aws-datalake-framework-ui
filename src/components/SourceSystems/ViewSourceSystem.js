@@ -46,6 +46,15 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: '#0192bf',
     }
+  },
+  "tabHeader": {
+    listStyleType: 'none',
+    marginRight: '20px',
+    paddingBottom: '8px',
+    cursor: 'pointer',
+    '&:focus:after': {
+      display: 'none'
+    }
   }
 }));
 
@@ -101,13 +110,13 @@ const ViewSourceSystem = (props) => {
         <div>
           <Tabs>
             <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
-              <Tab style={{
+              <Tab className={classes.tabHeader} style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
                 borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
               { props.fieldValues.ingstn_pattern === 'database' &&
-                <Tab style={{
+                <Tab className={classes.tabHeader} style={{
                 fontWeight: tabIndex === 1 ? 'bold' : '',
                 //margin: ' 0 20px',
                 border: 'none',
