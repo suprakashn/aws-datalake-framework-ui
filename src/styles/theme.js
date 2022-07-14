@@ -1,6 +1,9 @@
 export const themer = {
   typography: {
     "fontFamily": `Poppins`,
+    button: {
+      textTransform: 'none'
+    }
    },
     palette: {
       primary: {

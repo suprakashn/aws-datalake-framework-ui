@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  openSourceSystemSidebar, updateMode, closeSourceSystemSidebar, updateAllSourceSystemValues,
-  resetSourceSystemValues, updateSourceSysTableData, updateDataFlag
-} from 'actions/sourceSystemsAction';
-import defaultInstance from 'routes/defaultInstance';
+  resetLakeDestinationValues, updateMode, updateAllLakeDestinationValues,
+  updateFetchDataFlag, updateLakeDestinationTableData
+} from 'actions/lakeDestinationsAction';
 import show from 'images/Show.png';
 import edit from 'images/edit.png';
 import clone from 'images/clone.png';
 import remove from 'images/Remove.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import { Box, Button, Tooltip,LinearProgress } from '@material-ui/core';
+import { Box, Button, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
+import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
+import defaultInstance from 'routes/defaultInstance';
 import { openSnackbar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,81 +46,73 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SourceSystems = (props) => {
+const LakeDestination = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [selectedRow, setSelectedRow] = ([]);
-  const [loading, setLoading] = useState(false);  
-
+  const [loading, setLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  
   useEffect(() => {
-    if (props.dataFlag) {
+    if (props.fetchDataFlag) {
       setLoading(true);
-      defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
+      defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
         .then(response => {
-          if(response.data.responseStatus){
-            props.updateSourceSysTableData(response.data.responseBody);
-           // props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
-          }else{
-          //  props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
-          }
           setLoading(false);
+          if(response.data.responseStatus){
+            props.updateLakeDestinationTableData(response.data.responseBody);
+           // props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
+          }else{
+            props.updateLakeDestinationTableData([]);
+            // const message = response.data.responseMessage || 'Failed to load Target System data!'
+            // props.openSnackbar({ variant: 'error', message});
+          }
         })
         .catch(error => {
           setLoading(false);
-          console.log("error", error);
-          props.updateSourceSysTableData([]);
-        //  props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
-        })
+          // props.openSnackbar({ variant: 'error', message: 'Failed to load Target System data!' });
+          // console.log("error", error);
+          props.updateLakeDestinationTableData([]);
+        });
+      props.updateFetchDataFlag(false);
     }
-  }, [props.dataFlag])
+
+  }, [props.fetchDataFlag])
 
   const columns = [
     {
-      title: "Source System ID", field: "src_sys_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.src_sys_id}</span>
+      title: "Target ID", field: "target_id", render: (rowData) => {
+        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
       }
     },
-    { title: "Source System Name", field: "src_sys_nm", },
-    { title: "Bucket Name", field: "bucket_name", },    
+    { title: "Domain", field: "domain", },
+    { title: "Subdomain", field: "subdomain" },
   ];
 
   const handleCreate = () => {
-    props.updateDataFlag(false);
     props.updateMode('create');
-    props.resetSourceSystemValues();
-  }
-
-  const handleEdit = (selectedRow) => {
-    props.updateDataFlag(false);
-    props.updateMode('edit');
-    props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
-  }
-
-  const handleClone = (selectedRow) => {
-    props.updateDataFlag(false);
-    props.updateMode('clone');
-    props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
+    props.resetLakeDestinationValues();
   }
 
   const handleAction = (mode, selectedRow) => {
-    props.updateDataFlag(false);
     props.updateMode(mode);
-    props.openSourceSystemSidebar();
-    props.updateAllSourceSystemValues({ ...selectedRow })
+    setSelectedRow(selectedRow);
+    if (mode === 'create') {
+      props.resetLakeDestinationValues();
+    } else {
+      props.updateAllLakeDestinationValues(selectedRow)
+    }
   }
 
   return (
     <>
-      <ViewSourceSystem selectedRow={selectedRow} />
+      {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-       <LinearProgress hidden={!loading} color="secondary" /> 
+        <LinearProgress hidden={!loading} color="secondary" />
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-source-system" >
+                <Link to="/create-lake-destination" >
                   <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
@@ -128,9 +120,9 @@ const SourceSystems = (props) => {
             ),
           }}
           icons={tableIcons}
-          title="Source Systems"
+          title="Lake Destination"
           columns={columns}
-          data={props.data}
+          data={props.tableData}          
           actions={[
             {
               icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
@@ -145,7 +137,8 @@ const SourceSystems = (props) => {
               tooltip: 'Edit',
               position: 'row',
               onClick: (event, rowData) => {
-                handleEdit(rowData);
+                handleAction('edit', rowData);
+                navigate('/create-lake-destination')
               }
             },
             {
@@ -153,7 +146,8 @@ const SourceSystems = (props) => {
               tooltip: 'Clone',
               position: 'row',
               onClick: (event, rowData) => {
-                handleClone(rowData);
+                handleAction('clone', rowData)
+                navigate('/create-lake-destination')
               }
             },
             {
@@ -163,17 +157,27 @@ const SourceSystems = (props) => {
               onClick: (event, rowData) => {
                 handleAction('delete', rowData)
               }
+            },
+            {
+              icon: () => <img src={remove} alt="delete" style={{ maxWidth: '70%' }} />,
+              tooltip: 'Delete',
+              //isFreeAction: true,
+              position: 'toolbarOnSelect',
+              onClick: (event, rowData) => {
+                handleAction('delete', rowData)
+              }
             }
           ]}
+
           options={{
             //selection: true,
-           // showTextRowsSelected: false,
+            //showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false, 
+            draggable: false,
             actionsColumnIndex: -1,
-           // toolbarButtonAlignment: "left",
+            toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -207,22 +211,19 @@ const SourceSystems = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.sourceSystemState.sidebar.sidebarFlag,
-  fieldValues: state.sourceSystemState.sourceSystemValues,
-  mode: state.sourceSystemState.updateMode.mode,
-  data: state.sourceSystemState.updateSourceSysTableData.data,
-  dataFlag: state.sourceSystemState.updateDataFlag.dataFlag
-
+  fieldValues: state.lakeDestinationState.lakeDestinationValues,
+  mode: state.lakeDestinationState.updateMode.mode,
+  fetchDataFlag: state.lakeDestinationState.updateFetchDataFlag.dataFlag,
+  tableData: state.lakeDestinationState.updateLakeDestinationTableData.data,
 })
+
 const mapDispatchToProps = dispatch => bindActionCreators({
-  openSourceSystemSidebar,
-  closeSourceSystemSidebar,
+  resetLakeDestinationValues,
+  updateAllLakeDestinationValues,
+  updateLakeDestinationTableData,
+  updateFetchDataFlag,
   updateMode,
-  updateDataFlag,
-  updateAllSourceSystemValues,
-  resetSourceSystemValues,
-  updateSourceSysTableData,
   openSnackbar
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(SourceSystems);
+export default connect(mapStateToProps, mapDispatchToProps)(LakeDestination);

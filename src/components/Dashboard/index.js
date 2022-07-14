@@ -60,7 +60,7 @@ const Dashboard = (props) => {
                 </div>
             </div>
             <div className={classes.imageContainer}>
-                <Grid container md={12} lg={12}>
+                <Grid container>
                     <Grid item md={4} lg={4}>
                         <img src={sourceSystems} style={{maxWidth:'75%'}}/>
                         <h3 className={classes.labelStyle}>

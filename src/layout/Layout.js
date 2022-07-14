@@ -7,6 +7,7 @@ import { CssBaseline } from "@material-ui/core";
 import HeaderBackground from 'images/abstract-black.jpg'
 import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
+import logo from 'images/tigerLogo.png';
 
 const useStyles = makeStyles((theme) => ({
     logo: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     link: {
         textDecoration: "none",
         color: "white",
-        fontSize: "14px",
+        fontSize: "13px",
         margin: theme.spacing(2),
         "&:hover": {
             color: "#fffc"
@@ -45,13 +46,16 @@ const Layout = (props) => {
             <AppBar position="sticky">
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
-                <Toolbar style={{ backgroundColor: 'black' }}>
+                <Toolbar style={{ backgroundColor: 'black',display:'flex', justifyContent:'space-between' }}>
+                    {/* <div>
+                            <img src={logo}  style={{maxWidth: '5%'}}/>
+                        </div> */}
                     <Link to="/" className={classes.logo}>
-                        TIGER ANALYTICS AWS DATA LAKE
+                        TIGER ANALYTICS <span style={{color:'#F7901D'}}>AWS</span> DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 10, 'borderBottom':'6px solid orange'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
@@ -61,14 +65,14 @@ const Layout = (props) => {
                 <Main />
                 <SnackbarComponent />
             </main>
-            <AppBar position="static">
+            {/* <AppBar position="static">
                 <CssBaseline />
                 <Toolbar>
                     <div style={{ margin: 'auto'}}>
                     Copyright © 2022, Tiger Analytics Inc. All rights reserved.
                     </div>
                 </Toolbar>
-            </AppBar>
+            </AppBar> */}
         </div>
     );
 }
