@@ -172,6 +172,7 @@ const ViewSourceSystem = (props) => {
                 </div>
               </div>
             </TabPanel>
+            { props.fieldValues.ingstn_pattern === 'database' &&
             <TabPanel>
               <div style={{ border: '1px solid #CBCBCB' }}>
                 <div style={{ marginLeft: '3%', paddingTop: 10 }}>
@@ -214,6 +215,7 @@ const ViewSourceSystem = (props) => {
                 </div>
               </div>
             </TabPanel>
+            }
           </Tabs>
         </div>
       </DialogContent>
