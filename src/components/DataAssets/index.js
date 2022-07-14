@@ -8,10 +8,10 @@ import {
   resetDataAssetValues, updateDataAssetTableData
 } from 'actions/dataAssetActions';
 import defaultInstance from 'routes/defaultInstance';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import EditIcon from '@material-ui/icons/Edit';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
@@ -156,16 +156,16 @@ const DataAssets = (props) => {
       title: "Actions", field: "", render: (rowData) => {
         return <>
           <Tooltip placement='top' title="View">
-            <VisibilityIcon onClick={() => { handleAction('view', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityIcon>
+            <VisibilityOutlinedIcon onClick={() => { handleAction('view', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Edit">
-            <EditIcon onClick={() => { handleEdit(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditIcon>
+            <EditOutlinedIcon onClick={() => { handleEdit(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
           </Tooltip>
           <Tooltip placement='top' title="Clone">
-            <FileCopyIcon onClick={() => { handleClone(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyIcon>
+            <FileCopyOutlinedIcon onClick={() => { handleClone(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Delete">
-            <DeleteIcon onClick={() => { handleAction('delete', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteIcon>
+            <DeleteOutlineOutlinedIcon onClick={() => { handleAction('delete', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Url">
             <LaunchIcon onClick={() => { navigate("/data-asset-details") }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
@@ -220,13 +220,13 @@ const DataAssets = (props) => {
           data={data}
           options={{
             //selection: true,
-           // showTextRowsSelected: false,
+            // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false, 
+            draggable: false,
             actionsColumnIndex: -1,
-           // toolbarButtonAlignment: "left",
+            // toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -244,10 +244,10 @@ const DataAssets = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-             // padding: '0',
+              // padding: '0',
               textAlign: 'left'
             },
-           // cellStyle: { padding: '5px 0' },
+            // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'
