@@ -8,17 +8,16 @@ import {
   resetDataAssetValues, updateDataAssetTableData
 } from 'actions/dataAssetActions';
 import defaultInstance from 'routes/defaultInstance';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
-import url from 'images/Url.png';
+import DeleteIcon from '@material-ui/icons/Delete';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import EditIcon from '@material-ui/icons/Edit';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewDataAsset from 'components/DataAssets/ViewDataAsset';
-
+import LaunchIcon from '@material-ui/icons/Launch';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -156,11 +155,21 @@ const DataAssets = (props) => {
     {
       title: "Actions", field: "", render: (rowData) => {
         return <>
-          <Tooltip placement='top' title="View"><img onClick={() => { handleAction('view', rowData) }} src={show} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Edit"><img onClick={() => { handleEdit(rowData) }} src={edit} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Clone"><img onClick={() => { handleClone(rowData) }} src={clone} style={{ maxWidth: '13%', padding: '2%', marginRight: '5%' }} /></Tooltip>
-          <Tooltip placement='top' title="Delete"><img onClick={() => { handleAction('delete', rowData) }} src={remove} style={{ maxWidth: '12%', padding: '2%', marginRight: '2%' }} /></Tooltip>
-          <Tooltip placement='top' title="Url"><img onClick={() => { navigate("/data-asset-details") }} src={url} style={{ maxWidth: '13%', padding: '2%', marginRight: '2%' }} /></Tooltip>
+          <Tooltip placement='top' title="View">
+            <VisibilityIcon onClick={() => { handleAction('view', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityIcon>
+          </Tooltip>
+          <Tooltip placement='top' title="Edit">
+            <EditIcon onClick={() => { handleEdit(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditIcon>
+          </Tooltip>
+          <Tooltip placement='top' title="Clone">
+            <FileCopyIcon onClick={() => { handleClone(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyIcon>
+          </Tooltip>
+          <Tooltip placement='top' title="Delete">
+            <DeleteIcon onClick={() => { handleAction('delete', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteIcon>
+          </Tooltip>
+          <Tooltip placement='top' title="Url">
+            <LaunchIcon onClick={() => { navigate("/data-asset-details") }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
+          </Tooltip>
         </>
       }
     },
