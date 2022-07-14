@@ -15,6 +15,8 @@ import remove from 'images/Remove.png';
 import url from 'images/Url.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewDataAsset from 'components/DataAssets/ViewDataAsset';
@@ -39,13 +41,17 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
-  button: {
-    float: 'right',
-    margin: '15px',
-    color: 'white',
-    marginTop: '12px',
-  },
+  link: {
+    cursor: 'pointer',
+    display: 'flex',
+    color: 'black',
+    textDecoration: "none",
+    fontSize: "12px",
+    marginLeft: 0,
+},
 }));
+            
+          
 
 const DataAssetDetails = (props) => {
   const classes = useStyles();
@@ -134,10 +140,21 @@ const DataAssetDetails = (props) => {
     { title: "Target System ID", field: "target_id", },
     { title: "Asset Owner", field: "asset_owner", },
   ];
+  const handleBack = () => {
+    navigate("/data-assets");
+}
+
 
   return (
     <>
       <div className={classes.table}>
+        <CssBaseline />
+        <div onClick={handleBack}>
+          <Link style={{ display: 'flex', marginBottom: "15px" }} to="/data-assets" className={classes.link}>
+            <ArrowBackIosIcon fontSize='small' />
+            <span>Back</span>
+          </Link>
+        </div>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
