@@ -123,7 +123,7 @@ const CreateDataAsset = (props) => {
         })
     }
 
-    const handleValueChange = (field, errorField, value) => {
+    const handleValueChange = (field, errorField, value) => {        
         if (field === 'frequency') {
             setCronValue(value)
             if (cron(value).isValid()) {
@@ -277,6 +277,8 @@ const CreateDataAsset = (props) => {
             // if (props.mode === 'edit') {
             //     handleEdit();
             // }
+            let dqRules = props.fieldValues['modified_ts']
+            console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
             console.log("inside else save", props.fieldValues)
         }
         console.log("inside handle save", props.fieldValues)
@@ -618,6 +620,8 @@ const CreateDataAsset = (props) => {
                             <TextField
                                 disabled={disableButton}
                                 margin='dense'
+                                multiline
+                                maxRows={15}
                                 variant='outlined'
                                 value={props.fieldValues.modified_ts}
                                 id="modified_ts"
