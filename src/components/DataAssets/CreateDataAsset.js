@@ -615,7 +615,7 @@ const CreateDataAsset = (props) => {
                         <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <FormControl className={classes.formControl}>
+                        <FormControl className={classes.formControl} style={{minWidth: '400px'}}>
                             <div >DQ Rules</div>
                             <TextField
                                 disabled={disableButton}
