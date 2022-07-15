@@ -42,8 +42,13 @@ const useStyles = makeStyles((theme) => ({
   button: {
     float: 'right',
     margin: '15px',
-    color: 'white',
+    backgroundColor:'black',
+    color: '#F7901D',
     marginTop: '12px',
+    '&:hover': {
+      fontWeight: '600',
+      backgroundColor:'black',
+    }
   },
 }));
 
@@ -198,7 +203,7 @@ const DataAssets = (props) => {
             Toolbar: (toolbarProps) => (
               <Box >
                 <Link to="/create-data-asset" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>

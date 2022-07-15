@@ -12,6 +12,7 @@ import Select from '@material-ui/core/Select';
 import { openSnackbar, } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
 import {
+    assetFieldValue, ingestionFieldValue, columnFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
@@ -32,7 +33,6 @@ import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        //width: '100%',
         margin: theme.spacing(7),
         marginTop: theme.spacing(2)
     },
@@ -67,16 +67,23 @@ const useStyles = makeStyles((theme) => ({
     button: {
         float: 'right',
         margin: '1vh',
-        color: 'white',
+        backgroundColor:'black',
+        color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
+        '&:hover': {
+            fontWeight: '600',
+            backgroundColor:'black',
+          }
     },
 }));
 
 const CreateDataAsset = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const [expanded, setExpanded] = React.useState(1);
     const [sourceSysData, setSourceSysData] = useState([]);
+    const [targetSysData, setTargetSysData] = useState([]);
     const [disableButton, setDisableButton] = useState(false);
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
@@ -98,13 +105,13 @@ const CreateDataAsset = (props) => {
 
     useEffect(() => {
         getSourceSystemData();
-        // getTargetSystemData();
+        getTargetSystemData();
     }, [])
 
     const getSourceSystemData = () => {
         defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
             .then(response => {
-                setSourceSysData(response.data.body.src_info);
+                setSourceSysData(response.data.responseBody);
                 console.log("response", response)
             })
             .catch(error => {
@@ -113,9 +120,25 @@ const CreateDataAsset = (props) => {
             })
     }
 
-    const handleMaxCharacter = (field, errorField, value, number) => {
+    const getTargetSystemData = () => {
+        defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
+            .then(response => {
+                setTargetSysData(response.data.responseBody);
+                console.log("response", response)
+            })
+            .catch(error => {
+                console.log("error", error)
+                setTargetSysData([]);
+            })
+    }
+
+    const handleChange = id => (_, isExpanded) => {
+        setExpanded(isExpanded ? id : false)
+    };
+
+    const handleMaxCharacter = (type, field, errorField, value, number) => {
         if (value.length <= number) {
-            props.dataAssetFieldValue(field, value);
+            type(field, value);
         }
         setError({
             ...error,
@@ -123,15 +146,16 @@ const CreateDataAsset = (props) => {
         })
     }
 
-    const handleValueChange = (field, errorField, value) => {
+    const handleValueChange = (type, field, errorField, value) => {
+        console.log(type)
         if (field === 'frequency') {
             setCronValue(value)
             if (cron(value).isValid()) {
                 setError({ ...error, [errorField]: false });
                 setErrorValue('');
-                props.dataAssetFieldValue(field, value);
+                type(field, value);
             } else {
-                props.dataAssetFieldValue(field, '')
+                type(field, '')
                 setError({
                     ...error,
                     [errorField]: true
@@ -139,7 +163,7 @@ const CreateDataAsset = (props) => {
                 setErrorValue(cron(value).getError());
             }
         } else {
-            props.dataAssetFieldValue(field, value);
+            type(field, value);
             setError({
                 ...error,
                 [errorField]: value.toString().trim().length > 0 ? false : true
@@ -184,88 +208,6 @@ const CreateDataAsset = (props) => {
         return Object.values(errorObj).filter(item => item === true).length;
     }
 
-    const handleCreate = () => {
-        setDisableButton(true);
-        let payload = {
-            "src_config":
-            {
-                "src_sys_nm": props.fieldValues.src_sys_nm,
-                "src_sys_desc": props.fieldValues.src_sys_desc,
-                "mechanism": props.fieldValues.mechanism,
-                "data_owner": props.fieldValues.data_owner,
-                "support_cntct": props.fieldValues.support_cntct
-            },
-            "ingestion_config":
-            {
-                "ingstn_pattern": props.fieldValues.ingstn_pattern,
-                "db_type": props.fieldValues.db_type,
-                "db_hostname": props.fieldValues.db_hostname,
-                "db_username": props.fieldValues.db_username,
-                "db_schema": props.fieldValues.db_schema,
-                "db_name": props.fieldValues.db_name,
-                "db_port": props.fieldValues.ingstn_pattern === 'database' ? props.fieldValues.db_port : 0,
-                "db_pass": props.fieldValues.db_pass
-            }
-        }
-        defaultInstance.post('source_system/create?tasktype=create', payload)
-            .then((response) => {
-                console.log("response", response)
-                props.updateMode('');
-                props.resetDataAssetValues();
-                props.closeDataAssetDialogue();
-                props.updateDataFlag(true);
-                navigate("/source-systems");
-            })
-            .catch((error) => {
-                props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
-                setDisableButton(false);
-            })
-    }
-
-    const handleEdit = () => {
-        setDisableButton(true);
-        let payload = {
-            "src_config":
-            {
-                "src_sys_id": props.fieldValues.src_sys_id,
-                "update_data": {
-                    "src_sys_nm": props.fieldValues.src_sys_nm,
-                    "src_sys_desc": props.fieldValues.src_sys_desc,
-                    "mechanism": props.fieldValues.mechanism,
-                    "data_owner": props.fieldValues.data_owner,
-                    "support_cntct": props.fieldValues.support_cntct
-                }
-            },
-            "ingestion_config":
-            {
-                "src_sys_id": props.fieldValues.src_sys_id,
-                "update_data": {
-                    "ingstn_pattern": props.fieldValues.ingstn_pattern,
-                    "db_type": props.fieldValues.db_type,
-                    "db_hostname": props.fieldValues.db_hostname,
-                    "db_username": props.fieldValues.db_username,
-                    "db_schema": props.fieldValues.db_schema,
-                    "db_name": props.fieldValues.db_name,
-                    "db_port": props.fieldValues.ingstn_pattern === 'database' ? props.fieldValues.db_port : 0,
-                    // "db_pass": props.fieldValues.db_pass
-                }
-            }
-        }
-        defaultInstance.post('source_system/update', payload)
-            .then((response) => {
-                console.log("response", response)
-                props.updateMode('');
-                props.resetDataAssetValues();
-                props.closeDataAssetDialogue();
-                props.updateDataFlag(true);
-                navigate("/source-systems");
-            })
-            .catch((error) => {
-                console.log("error", error)
-                props.openSnackbar({ variant: 'error', message: `Encounterd error while editing source system ID: ${props.fieldValues.src_sys_id}!` });
-                setDisableButton(false);
-            })
-    }
     const handleSave = () => {
         let errorLength = validate();
         if (errorLength) {
@@ -302,7 +244,12 @@ const CreateDataAsset = (props) => {
                 </div>
             </div>
             <div >
-                <Accordion style={{ margin: "1% 0" }} defaultExpanded={true}>
+                <Accordion style={{ margin: "1% 0" }}
+                    key={1}
+                    onChange={handleChange(1)}
+                    expanded={expanded === 1}
+                    TransitionProps={{ unmountOnExit: true }}
+                >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
@@ -320,9 +267,9 @@ const CreateDataAsset = (props) => {
                                         disabled={props.mode !== 'create' || disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        value={props.fieldValues.asset_id}
+                                        value={props.assetFieldValues.asset_id}
                                         id="id_label"
-                                        onChange={(event) => handleValueChange('asset_id', 'assetIDError', event.target.value)}
+                                        onChange={(event) => handleValueChange(props.assetFieldValue, 'asset_id', 'assetIDError', event.target.value)}
                                     />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
@@ -333,8 +280,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="src_sys_id"
-                                    value={props.fieldValues.src_sys_id}
-                                    onChange={(event) => handleValueChange('src_sys_id', 'sourceSysIDError', event.target.value)}
+                                    value={props.assetFieldValues.src_sys_id}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'src_sys_id', 'sourceSysIDError', event.target.value)}
                                 >
                                     <MenuItem value="">
                                         <em>Select source system ID</em>
@@ -352,14 +299,14 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="target_id"
-                                    value={props.fieldValues.target_id}
-                                    onChange={(event) => handleValueChange('target_id', 'targetIDError', event.target.value)}
+                                    value={props.assetFieldValues.target_id}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'target_id', 'targetIDError', event.target.value)}
                                 >
                                     <MenuItem value="">
                                         <em>Select target ID</em>
                                     </MenuItem>
-                                    {sourceSysData.map(item => {
-                                        return <MenuItem key={item.src_sys_id} value={item.src_sys_id}>{item.src_sys_id}</MenuItem>
+                                    {targetSysData.map(item => {
+                                        return <MenuItem key={item.target_id} value={item.target_id}>{item.target_id}</MenuItem>
                                     })}
                                 </Select>
                             </FormControl>
@@ -371,8 +318,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="file_header"
-                                    value={props.fieldValues.file_header}
-                                    onChange={(event) => handleValueChange('file_header', 'fileHeaderError', event.target.value)}
+                                    value={props.assetFieldValues.file_header}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'file_header', 'fileHeaderError', event.target.value)}
                                 >
                                     {BOOLEAN_VALUES.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -387,8 +334,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="multipartition"
-                                    value={props.fieldValues.multipartition}
-                                    onChange={(event) => handleValueChange('multipartition', 'multiPartitionError', event.target.value)}
+                                    value={props.assetFieldValues.multipartition}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'multipartition', 'multiPartitionError', event.target.value)}
                                 >
                                     {BOOLEAN_VALUES.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -403,8 +350,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="file_type"
-                                    value={props.fieldValues.file_type}
-                                    onChange={(event) => handleValueChange('file_type', 'fileTypeError', event.target.value)}
+                                    value={props.assetFieldValues.file_type}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'file_type', 'fileTypeError', event.target.value)}
                                 >
                                     <MenuItem value="">
                                         <em>Select file type</em>
@@ -421,9 +368,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.asset_nm}
+                                    value={props.assetFieldValues.asset_nm}
                                     id="asset_nm"
-                                    onChange={(event) => handleMaxCharacter('asset_nm', 'assetNameError', event.target.value, 25)}
+                                    onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'asset_nm', 'assetNameError', event.target.value, 25)}
                                 />
                                 <FormHelperText>{error.assetNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : ''}</FormHelperText>
                             </FormControl>
@@ -434,9 +381,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.trigger_file_pattern}
+                                    value={props.assetFieldValues.trigger_file_pattern}
                                     id="trigger_file_pattern"
-                                    onChange={(event) => handleMaxCharacter('trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
+                                    onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
                                 />
                                 <FormHelperText>{error.triggerFilePtrnError ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : ''}</FormHelperText>
                             </FormControl>
@@ -447,9 +394,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.file_delim}
+                                    value={props.assetFieldValues.file_delim}
                                     id="file_delim"
-                                    onChange={(event) => handleMaxCharacter('file_delim', 'fileDelimiterError', event.target.value, 1)}
+                                    onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'file_delim', 'fileDelimiterError', event.target.value, 1)}
                                 />
                                 <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
                             </FormControl>
@@ -461,8 +408,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="file_encryption_ind"
-                                    value={props.fieldValues.file_encryption_ind}
-                                    onChange={(event) => handleValueChange('file_encryption_ind', 'fileEncryptIndError', event.target.value)}
+                                    value={props.assetFieldValues.file_encryption_ind}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
                                 >
 
                                     {BOOLEAN_VALUES.map(item => {
@@ -477,9 +424,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.asset_owner}
+                                    value={props.assetFieldValues.asset_owner}
                                     id="asset_owner"
-                                    onChange={(event) => handleValueChange('asset_owner', 'assetOwnerError', event.target.value)}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'asset_owner', 'assetOwnerError', event.target.value)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -488,9 +435,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.support_cntct}
+                                    value={props.assetFieldValues.support_cntct}
                                     id="support_cntct"
-                                    onChange={(event) => handleValueChange('support_cntct', 'supportContactError', event.target.value)}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'support_cntct', 'supportContactError', event.target.value)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -501,8 +448,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="rs_load_ind"
-                                    value={props.fieldValues.rs_load_ind}
-                                    onChange={(event) => handleValueChange('rs_load_ind', 'rsLoadError', event.target.value)}
+                                    value={props.assetFieldValues.rs_load_ind}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'rs_load_ind', 'rsLoadError', event.target.value)}
                                 >
                                     {BOOLEAN_VALUES.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -512,11 +459,16 @@ const CreateDataAsset = (props) => {
                         </div>
                     </AccordionDetails>
                 </Accordion>
-                <Accordion style={{ margin: "1% 0" }} defaultExpanded={true}>
+                <Accordion style={{ margin: "1% 0" }}
+                    key={2}
+                    onChange={handleChange(2)}
+                    expanded={expanded === 2}
+                    TransitionProps={{ unmountOnExit: true }}
+                >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+                        aria-controls="panel2a-content"
+                        id="panel2a-header"
                     >
                         <Typography className={classes.heading}>Ingestion Attributes</Typography>
                     </AccordionSummary>
@@ -529,9 +481,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.src_table_name}
+                                    value={props.ingestionFieldValues.src_table_name}
                                     id="src_table_name"
-                                    onChange={(event) => handleValueChange('src_table_name', 'sourceTableNameError', event.target.value)}
+                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -541,9 +493,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.src_sql_query}
+                                    value={props.ingestionFieldValues.src_sql_query}
                                     id="src_sql_query"
-                                    onChange={(event) => handleValueChange('src_sql_query', 'sourceSqlQueryError', event.target.value)}
+                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -553,9 +505,9 @@ const CreateDataAsset = (props) => {
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
-                                    value={props.fieldValues.ingstn_src_path}
+                                    value={props.ingestionFieldValues.ingstn_src_path}
                                     id="ingstn_src_path"
-                                    onChange={(event) => handleValueChange('ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
+                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
@@ -566,8 +518,8 @@ const CreateDataAsset = (props) => {
                                     margin="dense"
                                     variant="outlined"
                                     id="trigger_mechanism"
-                                    value={props.fieldValues.trigger_mechanism}
-                                    onChange={(event) => handleValueChange('trigger_mechanism', 'triggerMechanismError', event.target.value)}
+                                    value={props.ingestionFieldValues.trigger_mechanism}
+                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'trigger_mechanism', 'triggerMechanismError', event.target.value)}
                                 >
                                     {BOOLEAN_VALUES.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -584,19 +536,24 @@ const CreateDataAsset = (props) => {
                                         variant='outlined'
                                         id="frequency"
                                         helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
-                                        value={props.mode === 'create' ? cronValue : props.fieldValues.cron_tab}
-                                        onChange={(event) => handleValueChange('frequency', 'crontabError', event.target.value)}
+                                        value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
                                     />
                                 </FormControl>
                             </Tooltip>
                         </div>
                     </AccordionDetails>
                 </Accordion>
-                <Accordion style={{ margin: "1% 0" }} defaultExpanded={true}>
+                <Accordion style={{ margin: "1% 0" }}
+                    key={3}
+                    onChange={handleChange(3)}
+                    expanded={expanded === 3}
+                    TransitionProps={{ unmountOnExit: true }}
+                >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+                        aria-controls="panel3a-content"
+                        id="panel3a-header"
                     >
                         <Typography className={classes.heading}>Column Attributes</Typography>
                     </AccordionSummary>
@@ -604,11 +561,16 @@ const CreateDataAsset = (props) => {
                         <ColumnAttributes />
                     </AccordionDetails>
                 </Accordion>
-                <Accordion style={{ margin: "1% 0" }} defaultExpanded={true}>
+                <Accordion style={{ margin: "1% 0" }}
+                    key={4}
+                    onChange={handleChange(4)}
+                    expanded={expanded === 4}
+                    TransitionProps={{ unmountOnExit: true }}
+                >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+                        aria-controls="panel4a-content"
+                        id="panel4a-header"
                     >
                         <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
@@ -619,7 +581,7 @@ const CreateDataAsset = (props) => {
                                 disabled={disableButton}
                                 margin='dense'
                                 variant='outlined'
-                                value={props.fieldValues.modified_ts}
+                                //value={props.fieldValues.modified_ts}
                                 id="modified_ts"
                                 onChange={(event) => handleValueChange('modified_ts', 'modifiedtimeStampError', event.target.value)}
                             />
@@ -628,7 +590,7 @@ const CreateDataAsset = (props) => {
                 </Accordion>
             </div>
 
-            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={handleSave}>Save</Button>
+            <Button disabled={disableButton} className={classes.button}  onClick={handleSave}>Save</Button>
             <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </div>
 
@@ -637,7 +599,8 @@ const CreateDataAsset = (props) => {
 
 const mapStateToProps = state => ({
     open: state.dataAssetState.dialogue.flag,
-    fieldValues: state.dataAssetState.dataAssetValues,
+    assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
+    ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
     mode: state.dataAssetState.updateMode.mode,
     dataFlag: state.dataAssetState.updateDataFlag.dataFlag
 })
@@ -648,7 +611,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     dataAssetFieldValue,
     closeDataAssetDialogue,
     resetDataAssetValues,
-    updateAllDataAssetValues
+    updateAllDataAssetValues,
+    assetFieldValue,
+    ingestionFieldValue
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDataAsset);
