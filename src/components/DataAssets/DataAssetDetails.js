@@ -8,10 +8,6 @@ import {
   resetDataAssetValues, updateDataAssetTableData
 } from 'actions/dataAssetActions';
 import defaultInstance from 'routes/defaultInstance';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
