@@ -46,6 +46,15 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: '#0192bf',
     }
+  },
+  "tabHeader": {
+    listStyleType: 'none',
+    marginRight: '20px',
+    paddingBottom: '8px',
+    cursor: 'pointer',
+    '&:focus:after': {
+      display: 'none'
+    }
   }
 }));
 
@@ -104,7 +113,7 @@ const ViewLakeDestination = (props) => {
         <div>
           <Tabs>
             <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
-              <Tab style={{
+              <Tab className={classes.tabHeader} style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
                 borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
