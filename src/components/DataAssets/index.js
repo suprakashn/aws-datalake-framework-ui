@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
-  resetDataAssetValues, updateDataAssetTableData
+  resetDataAssetValues, updateDataAssetTableData,updateSelectedRow
 } from 'actions/dataAssetActions';
 import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
@@ -47,7 +47,10 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       fontWeight: '600',
       backgroundColor:'black',
-    }
+    },
+    '&:disabled': {
+      background: '#A3A3A390',
+    },
   },
 }));
 
@@ -132,17 +135,17 @@ const DataAssets = (props) => {
 
   // useEffect(() => {
   //   if (props.dataFlag) {
-  //     setBackdrop(true);
-  //     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
+  //    // setBackdrop(true);
+  //     defaultInstance.post('/dataasset/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
   //       .then(response => {
-  //         props.updateSourceSysTableData(response.data.body.src_info);
+  //         console.log("response for data assets read",response)
+  //        // props.updateSourceSysTableData(response.data.body.src_info);
   //         //setData(response.data.body.src_info)
-  //         setBackdrop(false);
+  //       //  setBackdrop(false);
   //       })
   //       .catch(error => {
   //         console.log("error", error)
-  //         props.updateSourceSysTableData([]);
-  //         setBackdrop(false);
+  //       //  setBackdrop(false);
   //       })
   //   }
   // }, [])
@@ -164,21 +167,26 @@ const DataAssets = (props) => {
             <VisibilityOutlinedIcon onClick={() => { handleAction('view', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Edit">
-            <EditOutlinedIcon onClick={() => { handleEdit(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
+            <EditOutlinedIcon onClick={() => handleEdit(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
           </Tooltip>
           <Tooltip placement='top' title="Clone">
-            <FileCopyOutlinedIcon onClick={() => { handleClone(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
+            <FileCopyOutlinedIcon onClick={() => handleClone(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Delete">
-            <DeleteOutlineOutlinedIcon onClick={() => { handleAction('delete', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
+            <DeleteOutlineOutlinedIcon onClick={() =>  handleAction('delete', rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Url">
-            <LaunchIcon onClick={() => { navigate("/data-asset-details") }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
+            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
           </Tooltip>
         </>
       }
     },
   ];
+
+  const handleUrlClick = (rowData) => {
+    props.updateSelectedRow(rowData);
+    navigate("/data-assets/data-asset-details")
+  }
 
   const handleCreate = () => {
     props.updateMode('create');
@@ -218,7 +226,7 @@ const DataAssets = (props) => {
               </Box>
             ),
           }}
-          // isLoading={backdrop}
+          isLoading={backdrop}
           icons={tableIcons}
           title="Data Assets"
           columns={columns}
@@ -276,7 +284,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllDataAssetValues,
   resetDataAssetValues,
-  updateDataAssetTableData
+  updateDataAssetTableData,
+  updateSelectedRow
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataAssets);

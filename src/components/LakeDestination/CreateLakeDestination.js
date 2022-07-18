@@ -47,21 +47,19 @@ const useStyles = makeStyles((theme) => ({
     },
     button: {
         float: 'right',
-        margin: '1vh',
-        color: 'white',
+        margin: '2vh',
+        backgroundColor: 'black',
+        color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
-    },
-    primaryBtn: {
-        background: '#00B1E8',
-        '&:disabled': {
-            background: '#ccc',
-            color: 'white',
-        },
         '&:hover': {
-          background: '#0192bf',
-        }
-      }
+            fontWeight: '600',
+            backgroundColor: 'black',
+        },
+        '&:disabled': {
+            background: '#A3A3A390',
+        },
+    },
 }));
 
 const CreateLakeDestination = (props) => {
@@ -72,7 +70,7 @@ const CreateLakeDestination = (props) => {
 
     const handleValueChange = (event) => {
         let { id, value, checked } = event.target;
-        if(event.target.type === 'checkbox'){
+        if (event.target.type === 'checkbox') {
             value = checked;
         }
 
@@ -177,18 +175,18 @@ const CreateLakeDestination = (props) => {
                     }
                 }
                 break;
-            default: throw(new Error("Invalid Mode"));
+            default: throw (new Error("Invalid Mode"));
         }
-        
+
         try {
             const response = await defaultInstance.post(url, requestData)
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.updateFetchDataFlag(true);
                 props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
-            }else{
+            } else {
                 let message = response.data.responseMessage || `Failed to create target system ID: ${props.fieldValues.target_id}!`
                 props.openSnackbar({ variant: 'error', message });
-            }            
+            }
         }
         catch (er) {
             props.openSnackbar({ variant: 'error', message: `Failed to create target system ID: ${props.fieldValues.target_id}!` });
@@ -305,7 +303,7 @@ const CreateLakeDestination = (props) => {
                     </div>
                 </div>
             </Paper>
-            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')}  >
+            <Button type='submit' disabled={saving} className={classes.button}  >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>

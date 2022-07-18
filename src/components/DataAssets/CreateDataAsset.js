@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import { openSnackbar, } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, FILE_TYPE, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
+import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
 import {
     assetFieldValue, ingestionFieldValue, columnFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
@@ -67,14 +67,14 @@ const useStyles = makeStyles((theme) => ({
     button: {
         float: 'right',
         margin: '1vh',
-        backgroundColor:'black',
+        backgroundColor: 'black',
         color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
         '&:hover': {
             fontWeight: '600',
-            backgroundColor:'black',
-          }
+            backgroundColor: 'black',
+        }
     },
 }));
 
@@ -84,29 +84,27 @@ const CreateDataAsset = (props) => {
     const [expanded, setExpanded] = React.useState(1);
     const [sourceSysData, setSourceSysData] = useState([]);
     const [targetSysData, setTargetSysData] = useState([]);
+    const [displayField, setDisplayField] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
-    const [error, setError] = useState({
-        // assetIDError: false,
-        // sourceSysIDError: false,
-        // targetIDError: false,
-        // fileHeaderError: false,
-        // multiPartitionError: false,
-        // fileTypeError: false,
-        // assetNameError: false,
-        // triggerFilePtrnError: false,
-        // fileDelimterError: false,
-        // fileEncryptIndError: false,
-        // assetOwnerError: false,
-        // supportContactError: false,
-        // rsLoadError: false
-    })
+    const [error, setError] = useState({})
 
     useEffect(() => {
         getSourceSystemData();
         getTargetSystemData();
     }, [])
+
+    useEffect(() => {
+        if (sourceSysData.length>0) {
+            let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
+            if (obj && obj['ingstn_pattern'] === 'database') {
+                setDisplayField(true);
+            }else{
+                setDisplayField(false);
+            }
+        }
+    }, [props.assetFieldValues.src_sys_id])
 
     const getSourceSystemData = () => {
         defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
@@ -189,23 +187,47 @@ const CreateDataAsset = (props) => {
         let errorObj = {}
         errorObj = {
             ...error,
-            sourceSysIDError: props.fieldValues.src_sys_id.length > 0 ? false : true,
-            targetIDError: props.fieldValues.target_id.length > 0 ? false : true,
-            fileTypeError: props.fieldValues.file_type.length > 0 ? false : true,
-            assetNameError: props.fieldValues.asset_nm.trim() ? false : true,
-            triggerFilePtrnError: props.fieldValues.trigger_file_pattern.trim() ? false : true,
-            fileDelimiterError: props.fieldValues.file_delim.trim() ? false : true,
-            assetOwnerError: props.fieldValues.asset_owner.trim() ? false : true,
-            supportContactError: props.fieldValues.support_cntct.trim() ? false : true,
-            sourceTableNameError: props.fieldValues.src_table_name.trim() ? false : true,
-            sourceSqlQueryError: props.fieldValues.src_sql_query.trim() ? false : true,
-            ingestionSourcePathError: props.fieldValues.ingstn_src_path.trim() ? false : true,
-            triggerMechanismError: props.fieldValues.trigger_mechanism.trim() ? false : true,
-            crontabError: props.fieldValues.frequency.length ? error.crontabError : true,
+            sourceSysIDError: props.assetFieldValues.src_sys_id  ? false : true,
+            targetIDError: props.assetFieldValues.target_id ? false : true,
+            fileTypeError: props.assetFieldValues.file_type.length > 0 ? false : true,
+            assetNameError: error.assetNameError ? true : props.assetFieldValues.asset_nm.trim() ? false : true,
+            triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
+            fileDelimiterError: props.assetFieldValues.file_delim.trim() ? false : true,
+            assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
+            supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
+            sourceTableNameError: displayField ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
+            sourceSqlQueryError: displayField ?  (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
+            ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
+            triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
+            crontabError: props.ingestionFieldValues.frequency.length ? error.crontabError : true,
         }
         setError(errorObj);
         console.log("error obj", errorObj)
         return Object.values(errorObj).filter(item => item === true).length;
+    }
+
+    const handleCreate = async () => {
+     //   setDisableButton(true);
+        let payload ={...props.fieldValues}
+
+        // try{
+        //     const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
+        //     if(response.data.responseStatus){
+        //         props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+        //         props.updateDataFlag(true);
+        //     }else{
+        //         props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+        //     }
+        //     props.updateMode('');
+        //     props.resetSourceSystemValues();
+        //     props.closeSourceSystemSidebar();
+        //     navigate("/source-systems");
+        // }
+        // catch(error){
+        //     console.log(error);
+        //     props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
+        //     setDisableButton(false);
+        // }
     }
 
     const handleSave = () => {
@@ -213,15 +235,15 @@ const CreateDataAsset = (props) => {
         if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         } else {
-            // if (props.mode === 'create' || props.mode === 'clone') {
-            //     handleCreate();
-            // }
-            // if (props.mode === 'edit') {
-            //     handleEdit();
-            // }
-            let dqRules = props.fieldValues['modified_ts']
-            console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
-            console.log("inside else save", props.fieldValues)
+            if (props.mode === 'create' || props.mode === 'clone') {
+                handleCreate();
+            }
+            if (props.mode === 'edit') {
+               // handleEdit();
+            }
+            // let dqRules = props.fieldValues['modified_ts']
+            // console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
+            // console.log("inside else save", props.fieldValues)
         }
         console.log("inside handle save", props.fieldValues)
     }
@@ -262,11 +284,11 @@ const CreateDataAsset = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
-                            {props.mode !== 'create' && props.mode !== 'clone' &&
+                            {props.mode === 'edit' &&
                                 <FormControl className={classes.formControl}>
                                     <div > ID* </div>
                                     <TextField
-                                        disabled={props.mode !== 'create' || disableButton}
+                                        disabled={props.mode === 'edit'}
                                         margin='dense'
                                         variant='outlined'
                                         value={props.assetFieldValues.asset_id}
@@ -374,7 +396,7 @@ const CreateDataAsset = (props) => {
                                     id="asset_nm"
                                     onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'asset_nm', 'assetNameError', event.target.value, 25)}
                                 />
-                                <FormHelperText>{error.assetNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : ''}</FormHelperText>
+                                <FormHelperText>{error.assetNameError ? (props.assetFieldValues.asset_nm.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : '') : ''}</FormHelperText>
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Trigger file pattern</div>
@@ -387,7 +409,7 @@ const CreateDataAsset = (props) => {
                                     id="trigger_file_pattern"
                                     onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
                                 />
-                                <FormHelperText>{error.triggerFilePtrnError ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : ''}</FormHelperText>
+                                <FormHelperText>{error.triggerFilePtrnError ? (props.assetFieldValues.trigger_file_pattern.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : '') : ''}</FormHelperText>
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Delimiter*</div>
@@ -476,8 +498,9 @@ const CreateDataAsset = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
+                            {displayField && 
                             <FormControl className={classes.formControl}>
-                                <div > Source Table Name</div>
+                                <div > Source Table Name*</div>
                                 <TextField
                                     error={error.sourceTableNameError}
                                     disabled={disableButton}
@@ -487,9 +510,10 @@ const CreateDataAsset = (props) => {
                                     id="src_table_name"
                                     onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
                                 />
-                            </FormControl>
+                            </FormControl>}
+                            {displayField && 
                             <FormControl className={classes.formControl}>
-                                <div > Source SQL Query </div>
+                                <div > Source SQL Query* </div>
                                 <TextField
                                     error={error.sourceSqlQueryError}
                                     disabled={disableButton}
@@ -499,9 +523,10 @@ const CreateDataAsset = (props) => {
                                     id="src_sql_query"
                                     onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
                                 />
-                            </FormControl>
+                            </FormControl>}
+                            {props.mode !== 'create' &&
                             <FormControl className={classes.formControl}>
-                                <div > Ingestion Source Path </div>
+                                <div > Ingestion Source Path* </div>
                                 <TextField
                                     error={error.ingestionSourcePathError}
                                     disabled={disableButton}
@@ -511,9 +536,9 @@ const CreateDataAsset = (props) => {
                                     id="ingstn_src_path"
                                     onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
                                 />
-                            </FormControl>
+                            </FormControl>}
                             <FormControl className={classes.formControl}>
-                                <div style={{ marginBottom: '3%' }}>Trigger Mechanism</div>
+                                <div style={{ marginBottom: '3%' }}>Trigger Mechanism*</div>
                                 <Select
                                     error={error.triggerMechanismError}
                                     disabled={disableButton}
@@ -523,25 +548,28 @@ const CreateDataAsset = (props) => {
                                     value={props.ingestionFieldValues.trigger_mechanism}
                                     onChange={(event) => handleValueChange(props.ingestionFieldValue, 'trigger_mechanism', 'triggerMechanismError', event.target.value)}
                                 >
-                                    {BOOLEAN_VALUES.map(item => {
+                                    <MenuItem value="">
+                                        <em>Select trigger mechanism</em>
+                                    </MenuItem>
+                                    {TRIGGER_MECHANISM.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
                             </FormControl>
                             <Tooltip title="This is a cron tab. Enter digits separated by space. Example: * * * * *" placement='top'>
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Frequency</div>
-                                    <TextField
-                                        error={error.crontabError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        id="frequency"
-                                        helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
-                                        value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
-                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
-                                    />
-                                </FormControl>
+                            <FormControl className={classes.formControl}>
+                            <div>Frequency*</div>
+                                <TextField
+                                    error={error.crontabError}
+                                    disabled={disableButton}
+                                    margin='dense'
+                                    variant='outlined'
+                                    helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
+                                    value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
+                                    id="frequency"
+                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
+                                />
+                            </FormControl>
                             </Tooltip>
                         </div>
                     </AccordionDetails>
@@ -577,7 +605,7 @@ const CreateDataAsset = (props) => {
                         <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <FormControl className={classes.formControl} style={{minWidth: '400px'}}>
+                        <FormControl className={classes.formControl} style={{ minWidth: '400px' }}>
                             <div >DQ Rules</div>
                             <TextField
                                 disabled={disableButton}
@@ -594,7 +622,7 @@ const CreateDataAsset = (props) => {
                 </Accordion>
             </div>
 
-            <Button disabled={disableButton} className={classes.button}  onClick={handleSave}>Save</Button>
+            <Button disabled={disableButton} className={classes.button} onClick={handleSave}>Save</Button>
             <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </div>
 
@@ -603,6 +631,7 @@ const CreateDataAsset = (props) => {
 
 const mapStateToProps = state => ({
     open: state.dataAssetState.dialogue.flag,
+    fieldValues: state.dataAssetState.dataAssetValues,
     assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
     ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
     mode: state.dataAssetState.updateMode.mode,

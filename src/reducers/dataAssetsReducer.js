@@ -109,12 +109,24 @@ const dataAssetValues = (state = { "asset_info": intialDataAttributes, "ingestio
     }
 }
 
+const updateSelectedRow = (state = {}, action) => {
+    switch (action.type) {
+        case Constants.UPDATE_SELECTED_ROW:
+            return {
+                ...state, ...action.row
+            }
+        default:
+            return { ...state }
+    }
+}
+
 const dataAssetsReducer = combineReducers({
     dialogue,
     updateMode,
     dataAssetValues,
     updateDataFlag,
-    updateDataAssetTableData
+    updateDataAssetTableData,
+    updateSelectedRow
 })
 
 export default dataAssetsReducer;

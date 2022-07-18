@@ -82,7 +82,8 @@ const ColumnAttributes = (props) => {
     const [disableButton, setDisableButton] = useState(false);
     const [error, setError] = useState({})
 
-    const handleChange = id => (_, isExpanded) => {
+    const handleChange = (row,id) => (_, isExpanded) => {
+        console.log("row and id",row,id)
         setExpanded(isExpanded ? id : false)
     };
 
@@ -194,7 +195,7 @@ const ColumnAttributes = (props) => {
                     return <Accordion
                         style={{ margin: "1% 0", backgroundColor: '#e2e2e278' }}
                         key={index}
-                        onChange={handleChange(index)}
+                        onChange={handleChange(row,index)}
                         expanded={expanded === index}
                         TransitionProps={{ unmountOnExit: true }}
                     >

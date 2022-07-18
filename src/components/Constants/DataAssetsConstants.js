@@ -22,3 +22,8 @@ export const DATA_CLASSIFICATION = [
     { name: 'Confidential', value: 'confidential' },
     { name: 'Restricted', value: 'restricted' }
 ]
+
+export const TRIGGER_MECHANISM = [
+    { name: 'Time Driven', value: 'time_driven' },
+    { name: 'Event Driven', value: 'event_driven' },
+]

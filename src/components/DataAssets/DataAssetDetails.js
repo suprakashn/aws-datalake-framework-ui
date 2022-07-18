@@ -2,27 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
-  resetDataAssetValues, updateDataAssetTableData
-} from 'actions/dataAssetActions';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import defaultInstance from 'routes/defaultInstance';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { Box, Button, Tooltip } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import ViewDataAsset from 'components/DataAssets/ViewDataAsset';
-
+import { Breadcrumbs, Typography, Link } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -43,112 +38,48 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     fontSize: "12px",
     marginLeft: 0,
-},
+  },
 }));
-            
-          
+
+
 
 const DataAssetDetails = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [selectedRow, setSelectedRow] = ([]);
-  const [data, setData] = useState([{
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  },
-  {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }
-  ])
+  const [data, setData] = useState([]);
 
   const columns = [
-    {
-      title: "Data Asset ID", field: "asset_id"
-    },
+    { title: "Data Asset ID", field: "asset_id" },
     { title: "Source System ID", field: "src_sys_id", },
     { title: "Data Asset Name", field: "asset_nm", },
     { title: "Target System ID", field: "target_id", },
     { title: "Asset Owner", field: "asset_owner", },
   ];
-  const handleBack = () => {
-    navigate("/data-assets");
-}
 
+  // useEffect(() => {
+  //   defaultInstance.post('/dataassetinfo/read', { "src_sys_id": props.selectedRow.src_sys_id })
+  //     .then(response => {
+  //       console.log("response for data assets read", response)
+  //     })
+  //     .catch(error => {
+  //       console.log("error", error)
+  //     })
+  // }, [])
 
   return (
     <>
+      <CssBaseline />
       <div className={classes.table}>
-        <CssBaseline />
-        <div onClick={handleBack}>
-          <Link style={{ display: 'flex', marginBottom: "15px" }} to="/data-assets" className={classes.link}>
-            <ArrowBackIosIcon fontSize='small' />
-            <span>Back</span>
-          </Link>
+        <div style={{ display: 'flex', marginBottom: "15px" }}>
+          <ArrowBackIosIcon fontSize='small' />
+          <Breadcrumbs aria-label='Breadcrumb'>
+            <Link component={RouterLink} to='/data-assets' style={{ color: 'blue' }}>
+              Data Assets
+            </Link>
+            <Link style={{ textDecoration: 'none', color: 'black' }}>
+              Data Asset Details - {props.selectedRow.src_sys_id}
+            </Link>
+          </Breadcrumbs>
         </div>
         <MaterialTable
           components={{
@@ -167,7 +98,7 @@ const DataAssetDetails = (props) => {
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false, 
+            draggable: false,
             actionsColumnIndex: -1,
             searchFieldStyle: {
               backgroundColor: '#FFF',
@@ -186,10 +117,8 @@ const DataAssetDetails = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-             // padding: '0',
               textAlign: 'left'
             },
-           // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'
@@ -202,6 +131,7 @@ const DataAssetDetails = (props) => {
 }
 
 const mapStateToProps = state => ({
+  selectedRow: state.dataAssetState.updateSelectedRow
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch)

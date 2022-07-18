@@ -79,3 +79,10 @@ export const updateDataAssetTableData = (data) => dispatch => {
         data: data
     })
 }
+
+export const updateSelectedRow = (row) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_SELECTED_ROW,
+        row : row,
+    })
+}
