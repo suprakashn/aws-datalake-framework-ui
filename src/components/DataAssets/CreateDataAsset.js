@@ -29,6 +29,9 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { EditorState, RichUtils } from 'draft-js';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -95,6 +98,30 @@ const CreateDataAsset = (props) => {
         // supportContactError: false,
         // rsLoadError: false
     })
+    
+    const [dqEditorState, setDqEditorState] = React.useState(
+        () => EditorState.createEmpty(),
+    );
+
+    const onDqEditorStateChange = (state, field) => {
+        console.log(dqEditorState.getCurrentContent().getPlainText().split('\n'))
+        if(RichUtils.getCurrentBlockType(state) !== 'ordered-list-item'){
+            setDqEditorState(RichUtils.toggleBlockType(
+                state,
+                'ordered-list-item'
+            ))
+        }else{
+            setDqEditorState(state);
+        }        
+        props.dataAssetFieldValue(field, dqEditorState.getCurrentContent().getPlainText())
+    }
+
+    const handleDqPastedText = (state) => {
+        setDqEditorState(RichUtils.toggleBlockType(
+            dqEditorState,
+            'ordered-list-item'
+        ))
+    }
 
     useEffect(() => {
         getSourceSystemData();
@@ -123,7 +150,7 @@ const CreateDataAsset = (props) => {
         })
     }
 
-    const handleValueChange = (field, errorField, value) => {        
+    const handleValueChange = (field, errorField, value) => {      
         if (field === 'frequency') {
             setCronValue(value)
             if (cron(value).isValid()) {
@@ -268,7 +295,7 @@ const CreateDataAsset = (props) => {
     }
     const handleSave = () => {
         let errorLength = validate();
-        if (errorLength) {
+        if (errorLength) {        
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         } else {
             // if (props.mode === 'create' || props.mode === 'clone') {
@@ -277,9 +304,6 @@ const CreateDataAsset = (props) => {
             // if (props.mode === 'edit') {
             //     handleEdit();
             // }
-            let dqRules = props.fieldValues['modified_ts']
-            console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
-            console.log("inside else save", props.fieldValues)
         }
         console.log("inside handle save", props.fieldValues)
     }
@@ -614,20 +638,25 @@ const CreateDataAsset = (props) => {
                     >
                         <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <FormControl className={classes.formControl} style={{minWidth: '400px'}}>
-                            <div >DQ Rules</div>
-                            <TextField
-                                disabled={disableButton}
-                                margin='dense'
-                                multiline
-                                maxRows={15}
-                                variant='outlined'
-                                value={props.fieldValues.modified_ts}
-                                id="modified_ts"
-                                onChange={(event) => handleValueChange('modified_ts', 'modifiedtimeStampError', event.target.value)}
-                            />
-                        </FormControl>
+                    <AccordionDetails style={{flexDirection: 'column'}}>
+                        <div style={{marginBottom: '10px'}}>DQ Rules</div>
+                        <Editor
+                            handlePastedText={handleDqPastedText}    
+                            editorState={dqEditorState}
+                            toolbarHidden={true}
+                            editorStyle={{ 
+                                minHeight: "300px", 
+                                minWidth: '100%',
+                                padding: '20px',
+                                border: '1px solid #bbb', 
+                                overflow: 'hidden',
+                                borderRadius: '5px'
+                             }}
+                            toolbar={{
+                                options: []
+                            }}
+                            onEditorStateChange={(e) => onDqEditorStateChange(e, 'modified_ts')}
+                        />                        
                     </AccordionDetails>
                 </Accordion>
             </div>
