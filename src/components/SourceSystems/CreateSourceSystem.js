@@ -53,21 +53,19 @@ const useStyles = makeStyles((theme) => ({
     },
     button: {
         float: 'right',
-        margin: '1vh',
-        color: 'white',
+        margin: '2vh',
+        backgroundColor: 'black',
+        color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
-    },
-    primaryBtn: {
-        background: '#00B1E8',
-        '&:disabled': {
-            background: '#ccc',
-            color: 'white',
-        },
         '&:hover': {
-          background: '#0192bf',
-        }
-      }
+            fontWeight: '600',
+            backgroundColor: 'black',
+        },
+        '&:disabled': {
+            background: '#A3A3A390',
+          },
+    },
 }));
 
 const CreateSourceSystem = (props) => {
@@ -554,7 +552,7 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
+            <Button type='submit' disabled={saving} className={classes.button} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>

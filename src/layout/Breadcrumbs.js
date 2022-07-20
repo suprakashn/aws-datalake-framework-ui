@@ -25,7 +25,6 @@ export default function () {
       {pathnames.map((value, index) => {
         const last = index === pathnames.length - 1
         const to = `/${pathnames.slice(0, index + 1).join('/')}`
-
         return last ? (
           <Typography color="inherit"  key={to}>
             {toTitleCase(value)}

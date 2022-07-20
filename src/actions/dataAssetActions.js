@@ -28,6 +28,30 @@ export const dataAssetFieldValue = (field,value) => dispatch => {
         }
     })
 }
+export const assetFieldValue = (field,value) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_ASSET_INFO_FIELD_VALUE,
+        payload: {
+            field,
+            value
+        }
+    })
+}
+export const ingestionFieldValue = (field,value) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_INGESTION_FIELD_VALUES,
+        payload: {
+            field,
+            value
+        }
+    })
+}
+export const columnFieldValue = (value) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_COLUMN_ATTRIBUTES_DATA,
+        payload: value
+    })
+}
 
 export const updateAllDataAssetValues = (row) => dispatch => {
     dispatch({
@@ -53,5 +77,12 @@ export const updateDataAssetTableData = (data) => dispatch => {
     dispatch({
         type: constants.UPDATE_DA_TABLE_DATA,
         data: data
+    })
+}
+
+export const updateSelectedRow = (row) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_SELECTED_ROW,
+        row : row,
     })
 }

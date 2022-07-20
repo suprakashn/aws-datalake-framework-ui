@@ -40,10 +40,16 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     float: 'right',
-    margin: '1%',
-    color: 'white',
+    margin: '2vh',
+    backgroundColor: 'black',
+    color: '#F7901D',
+    minWidth: '7%',
     marginTop: '12px',
-  },
+    '&:hover': {
+        fontWeight: '600',
+        backgroundColor: 'black',
+    }
+},
 }));
 
 const LakeDestination = (props) => {
@@ -107,13 +113,13 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-        <LinearProgress hidden={!loading} color="secondary" />
+        {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
                 <Link to="/create-lake-destination" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
@@ -168,7 +174,7 @@ const LakeDestination = (props) => {
               }
             }
           ]}
-
+          isLoading={loading}
           options={{
             //selection: true,
             //showTextRowsSelected: false,
