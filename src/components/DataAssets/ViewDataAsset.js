@@ -62,7 +62,7 @@ const ViewDataAsset = (props) => {
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllDataAssetValues({ ...props.selectedRow })
-    navigate("/create-data-asset")
+    navigate("/data-assets/create-data-asset")
   }
 
   const handleDelete = () => {

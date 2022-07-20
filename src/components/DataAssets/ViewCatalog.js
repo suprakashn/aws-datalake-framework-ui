@@ -37,12 +37,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DataAssetDetails = (props) => {
+const ViewCatalog = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
 
   return (
+    <Dialog open="true" fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
+      <DialogTitle >
+        {props.fieldValues.exec_id ? <div >Execution ID : <span style={{ fontWeight: 'bold' }}> {props.fieldValues.exec_id}</span></div> : ''}
+        <Tooltip title="close">
+          <Close style={{ position: 'absolute', top: 24, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={() => props.setOpen(false)} />
+        </Tooltip>
+      </DialogTitle>
+      <DialogContent>
         <Tabs>
           <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
             <Tab className={classes.tabHeader} style={{
@@ -130,6 +138,8 @@ const DataAssetDetails = (props) => {
             </div>
           </TabPanel>
         </Tabs>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -139,4 +149,4 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataAssetDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCatalog);

@@ -5,8 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
-  resetDataAssetValues, updateDataAssetTableData
+  resetDataAssetValues, updateDataAssetTableData, updateSelectedRow
 } from 'actions/dataAssetActions';
+import { openSnackbar } from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -41,8 +42,16 @@ const useStyles = makeStyles((theme) => ({
   button: {
     float: 'right',
     margin: '15px',
-    color: 'white',
+    backgroundColor: 'black',
+    color: '#F7901D',
     marginTop: '12px',
+    '&:hover': {
+      fontWeight: '600',
+      backgroundColor: 'black',
+    },
+    '&:disabled': {
+      background: '#A3A3A390',
+    },
   },
 }));
 
@@ -51,96 +60,22 @@ const DataAssets = (props) => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
   const [backdrop, setBackdrop] = useState(false);
-  const [data, setData] = useState([{
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  },
-  {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }, {
-    "asset_id": "123456",
-    "src_sys_id": "269271",
-    "target_id": "461725",
-    "file_header": "true",
-    "multipartition": "false",
-    "file_type": "csv",
-    "asset_nm": "demo_rankings",
-    "trigger_file_pattern": "null",
-    "file_delim": ",",
-    "file_encryption_ind": "true",
-    "asset_owner": "Sagar Das",
-    "support_cntct": "sagar.das@tigeranalytics.com",
-    "rs_load_ind": true
-  }
-  ])
+  const [data, setData] = useState([]);
 
-  // useEffect(() => {
-  //   if (props.dataFlag) {
-  //     setBackdrop(true);
-  //     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
-  //       .then(response => {
-  //         props.updateSourceSysTableData(response.data.body.src_info);
-  //         //setData(response.data.body.src_info)
-  //         setBackdrop(false);
-  //       })
-  //       .catch(error => {
-  //         console.log("error", error)
-  //         props.updateSourceSysTableData([]);
-  //         setBackdrop(false);
-  //       })
-  //   }
-  // }, [])
+  useEffect(() => {
+    setBackdrop(true);
+    defaultInstance.post('/dataassetinfo/read', { "src_sys_id": null })
+      .then(response => {
+        setData(response.data.responseBody);
+        setBackdrop(false);
+      })
+      .catch(error => {
+        console.log("error", error)
+        setData([]);
+        setBackdrop(false);
+      })
+  }, [])
+
 
   const columns = [
     {
@@ -156,40 +91,51 @@ const DataAssets = (props) => {
       title: "Actions", field: "", render: (rowData) => {
         return <>
           <Tooltip placement='top' title="View">
-            <VisibilityOutlinedIcon onClick={() => { handleAction('view', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityOutlinedIcon>
+            <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Edit">
-            <EditOutlinedIcon onClick={() => { handleEdit(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
+            <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
           </Tooltip>
           <Tooltip placement='top' title="Clone">
-            <FileCopyOutlinedIcon onClick={() => { handleClone(rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
+            <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Delete">
-            <DeleteOutlineOutlinedIcon onClick={() => { handleAction('delete', rowData) }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
+            <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
           </Tooltip>
-          <Tooltip placement='top' title="Url">
-            <LaunchIcon onClick={() => { navigate("/data-asset-details") }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
+          <Tooltip placement='top' title="Catalogs">
+            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
           </Tooltip>
         </>
       }
     },
   ];
 
+  const fetchDataAssetDetails = (rowData, mode) => {
+    defaultInstance.post('/dataasset/read', { "asset_id": rowData.asset_id, "src_sys_id": rowData.src_sys_id })
+      .then(response => {
+        props.updateAllDataAssetValues({ ...response.data.responseBody });
+        mode === 'view' || mode === 'delete' ? navigate("/data-assets/data-asset-details") : navigate("/data-assets/create-data-asset");
+      })
+      .catch(error => {
+        console.log("error", error)
+        props.openSnackbar({ variant: 'error', message: `Failed to load ${rowData.asset_id} data asset details!` });
+      })
+  }
+
+  const handleUrlClick = (rowData) => {
+    props.updateSelectedRow(rowData);
+    navigate("/data-assets/data-catalog-details")
+  }
+
   const handleCreate = () => {
     props.updateMode('create');
     props.resetDataAssetValues();
   }
 
-  const handleEdit = (selectedRow) => {
-    props.updateMode('edit');
-    props.updateAllDataAssetValues({ ...selectedRow })
-    navigate("/create-data-asset")
-  }
-
-  const handleClone = (selectedRow) => {
-    props.updateMode('clone');
-    props.updateAllDataAssetValues({ ...selectedRow })
-    navigate("/create-data-asset")
+  const handleActionClick = (selectedRow, mode) => {
+    props.resetDataAssetValues();
+    props.updateMode(mode);
+    fetchDataAssetDetails(selectedRow, mode);
   }
 
   const handleAction = (mode, selectedRow) => {
@@ -206,27 +152,24 @@ const DataAssets = (props) => {
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-data-asset" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                <Link to="/data-assets/create-data-asset" >
+                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
             ),
           }}
-          // isLoading={backdrop}
+          isLoading={backdrop}
           icons={tableIcons}
           title="Data Assets"
           columns={columns}
           data={data}
           options={{
-            //selection: true,
-            // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,
             actionsColumnIndex: -1,
-            // toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -244,10 +187,8 @@ const DataAssets = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-              // padding: '0',
               textAlign: 'left'
             },
-            // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'
@@ -271,7 +212,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllDataAssetValues,
   resetDataAssetValues,
-  updateDataAssetTableData
+  updateDataAssetTableData,
+  updateSelectedRow,
+  openSnackbar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataAssets);

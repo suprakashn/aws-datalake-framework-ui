@@ -40,10 +40,19 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     float: 'right',
-    margin: '1%',
-    color: 'white',
+    margin: '2vh',
+    backgroundColor: 'black',
+    color: '#F7901D',
+    minWidth: '7%',
     marginTop: '12px',
-  },
+    '&:hover': {
+        fontWeight: '600',
+        backgroundColor: 'black',
+    },
+    '&:disabled': {
+      background: '#A3A3A390',
+    },
+},
 }));
 
 const SourceSystems = (props) => {
@@ -115,13 +124,13 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
-       <LinearProgress hidden={!loading} color="secondary" /> 
+       {/* <LinearProgress hidden={!loading} color="secondary" />  */}
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
                 <Link to="/create-source-system" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
@@ -165,6 +174,7 @@ const SourceSystems = (props) => {
               }
             }
           ]}
+          isLoading={loading}
           options={{
             //selection: true,
            // showTextRowsSelected: false,
