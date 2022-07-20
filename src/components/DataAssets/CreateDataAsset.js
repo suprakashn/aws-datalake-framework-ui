@@ -32,7 +32,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, RichUtils } from 'draft-js';
+import { ContentState, EditorState, RichUtils } from 'draft-js';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -94,7 +94,7 @@ const CreateDataAsset = (props) => {
     const [error, setError] = useState({})
     
     const [dqEditorState, setDqEditorState] = React.useState(
-        () => EditorState.createEmpty(),
+        () => EditorState.createWithContent(ContentState.createFromText(props.fieldValues['modified_ts']?.join('\n') || "" ))
     );
 
     const onDqEditorStateChange = (state, field) => {
@@ -107,7 +107,8 @@ const CreateDataAsset = (props) => {
         }else{
             setDqEditorState(state);
         }        
-        props.dataAssetFieldValue(field, dqEditorState.getCurrentContent().getPlainText())
+        const dqList = dqEditorState.getCurrentContent().getPlainText()?.split('\n').filter(c => c.length > 0) || [];
+        props.dataAssetFieldValue(field, dqList)
     }
 
     useEffect(() => {
@@ -235,18 +236,15 @@ const CreateDataAsset = (props) => {
 
     const handleSave = () => {
         let errorLength = validate();
-        if (errorLength) {        
+        if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         } else {
             if (props.mode === 'create' || props.mode === 'clone') {
                 handleCreate();
-        }
+            }
             if (props.mode === 'edit') {
                 handleEdit();
             }
-            // let dqRules = props.fieldValues['modified_ts']
-            // console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
-            // console.log("inside else save", props.fieldValues)
         }
         console.log("inside handle save", props.fieldValues)
     }
