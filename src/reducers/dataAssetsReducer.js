@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import * as Constants from 'components/Constants/Constants'
 
-const intialDataAttributes = {
+const initialDataAttributes = {
     "asset_id": "",
     "src_sys_id": "",
     "target_id": "",
@@ -81,7 +81,7 @@ const updateDataAssetTableData = (state = { data: [] }, action) => {
     }
 }
 
-const dataAssetValues = (state = { "asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes }, action) => {
+const dataAssetValues = (state = { "asset_info": initialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes }, action) => {
     switch (action.type) {
         case Constants.UPDATE_ASSET_INFO_FIELD_VALUE:
             return { ...state, "asset_info": { ...state.asset_info, [action.payload.field]: action.payload.value } };
@@ -92,7 +92,7 @@ const dataAssetValues = (state = { "asset_info": intialDataAttributes, "ingestio
         case Constants.UPDATE_ALL_DATA_ASSET_FIELD_VALUES:
             return { ...action.row }
         case Constants.RESET_DATA_ASSET_FIELD_VALUES:
-            return { "asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes };
+            return { "asset_info": initialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes };
         default:
             return { ...state }
     }

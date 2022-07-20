@@ -114,7 +114,7 @@ const DataAssets = (props) => {
     defaultInstance.post('/dataasset/read', { "asset_id": rowData.asset_id, "src_sys_id": rowData.src_sys_id })
       .then(response => {
         props.updateAllDataAssetValues({ ...response.data.responseBody });
-        mode === 'view' || mode === 'delete' ? navigate("/data-assets/create-data-asset") : navigate("/data-assets/data-asset-details")
+        mode === 'view' || mode === 'delete' ? navigate("/data-assets/data-asset-details") : navigate("/data-assets/create-data-asset");
       })
       .catch(error => {
         console.log("error", error)

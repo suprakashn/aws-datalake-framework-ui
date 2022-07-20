@@ -151,7 +151,7 @@ const CreateDataAsset = (props) => {
                 setErrorValue('');
                 type(field, value);
             } else {
-                type(field, '')
+                type(field, value)
                 setError({
                     ...error,
                     [errorField]: true
@@ -195,9 +195,9 @@ const CreateDataAsset = (props) => {
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
             sourceTableNameError: displayField ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
             sourceSqlQueryError: displayField ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
-            ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
+            ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
-            crontabError: props.ingestionFieldValues.frequency.length ? error.crontabError : true,
+            crontabError: props.ingestionFieldValues.frequency.trim() ? error.crontabError : true,
         }
         setError(errorObj);
         console.log("error obj", errorObj)
@@ -205,27 +205,12 @@ const CreateDataAsset = (props) => {
     }
 
     const handleCreate = async () => {
-        //   setDisableButton(true);
         let payload = { ...props.fieldValues }
+    }
 
-        // try{
-        //     const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
-        //     if(response.data.responseStatus){
-        //         props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
-        //         props.updateDataFlag(true);
-        //     }else{
-        //         props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
-        //     }
-        //     props.updateMode('');
-        //     props.resetSourceSystemValues();
-        //     props.closeSourceSystemSidebar();
-        //     navigate("/source-systems");
-        // }
-        // catch(error){
-        //     console.log(error);
-        //     props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
-        //     setDisableButton(false);
-        // }
+    const handleEdit = async () => {
+        let payload = { ...props.fieldValues }
+        console.log("inside edit",payload);
     }
 
     const handleSave = () => {
@@ -237,7 +222,7 @@ const CreateDataAsset = (props) => {
                 handleCreate();
             }
             if (props.mode === 'edit') {
-                // handleEdit();
+                handleEdit();
             }
             // let dqRules = props.fieldValues['modified_ts']
             // console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
@@ -562,7 +547,7 @@ const CreateDataAsset = (props) => {
                                         margin='dense'
                                         variant='outlined'
                                         helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
-                                        value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
+                                        value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.frequency}
                                         id="frequency"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
                                     />
