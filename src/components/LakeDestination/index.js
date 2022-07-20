@@ -113,7 +113,7 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-        <LinearProgress hidden={!loading} color="secondary" />
+        {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
@@ -174,7 +174,7 @@ const LakeDestination = (props) => {
               }
             }
           ]}
-
+          isLoading={loading}
           options={{
             //selection: true,
             //showTextRowsSelected: false,

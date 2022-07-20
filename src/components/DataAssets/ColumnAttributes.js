@@ -83,7 +83,6 @@ const ColumnAttributes = (props) => {
     const [error, setError] = useState({})
 
     const handleChange = (row,id) => (_, isExpanded) => {
-        console.log("row and id",row,id)
         setExpanded(isExpanded ? id : false)
     };
 

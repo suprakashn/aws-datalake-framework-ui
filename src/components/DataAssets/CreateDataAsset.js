@@ -10,9 +10,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import { openSnackbar, } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
+import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
-    assetFieldValue, ingestionFieldValue, columnFieldValue,
+    assetFieldValue, ingestionFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
@@ -96,11 +96,11 @@ const CreateDataAsset = (props) => {
     }, [])
 
     useEffect(() => {
-        if (sourceSysData.length>0) {
+        if (sourceSysData.length > 0) {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
             if (obj && obj['ingstn_pattern'] === 'database') {
                 setDisplayField(true);
-            }else{
+            } else {
                 setDisplayField(false);
             }
         }
@@ -110,7 +110,6 @@ const CreateDataAsset = (props) => {
         defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
             .then(response => {
                 setSourceSysData(response.data.responseBody);
-                console.log("response", response)
             })
             .catch(error => {
                 console.log("error", error)
@@ -122,7 +121,6 @@ const CreateDataAsset = (props) => {
         defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
             .then(response => {
                 setTargetSysData(response.data.responseBody);
-                console.log("response", response)
             })
             .catch(error => {
                 console.log("error", error)
@@ -187,7 +185,7 @@ const CreateDataAsset = (props) => {
         let errorObj = {}
         errorObj = {
             ...error,
-            sourceSysIDError: props.assetFieldValues.src_sys_id  ? false : true,
+            sourceSysIDError: props.assetFieldValues.src_sys_id ? false : true,
             targetIDError: props.assetFieldValues.target_id ? false : true,
             fileTypeError: props.assetFieldValues.file_type.length > 0 ? false : true,
             assetNameError: error.assetNameError ? true : props.assetFieldValues.asset_nm.trim() ? false : true,
@@ -196,7 +194,7 @@ const CreateDataAsset = (props) => {
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
             sourceTableNameError: displayField ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
-            sourceSqlQueryError: displayField ?  (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
+            sourceSqlQueryError: displayField ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
             ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
             crontabError: props.ingestionFieldValues.frequency.length ? error.crontabError : true,
@@ -207,8 +205,8 @@ const CreateDataAsset = (props) => {
     }
 
     const handleCreate = async () => {
-     //   setDisableButton(true);
-        let payload ={...props.fieldValues}
+        //   setDisableButton(true);
+        let payload = { ...props.fieldValues }
 
         // try{
         //     const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
@@ -239,7 +237,7 @@ const CreateDataAsset = (props) => {
                 handleCreate();
             }
             if (props.mode === 'edit') {
-               // handleEdit();
+                // handleEdit();
             }
             // let dqRules = props.fieldValues['modified_ts']
             // console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
@@ -280,7 +278,6 @@ const CreateDataAsset = (props) => {
                         id="panel1a-header"
                     >
                         <Typography className={classes.heading}>Asset Attributes</Typography>
-                        {/* <div style={{ fontWeight: 'bold', marginBottom: '2%' }}>Asset Attributes</div> */}
                     </AccordionSummary>
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
@@ -498,45 +495,45 @@ const CreateDataAsset = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
-                            {displayField && 
-                            <FormControl className={classes.formControl}>
-                                <div > Source Table Name*</div>
-                                <TextField
-                                    error={error.sourceTableNameError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.ingestionFieldValues.src_table_name}
-                                    id="src_table_name"
-                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
-                                />
-                            </FormControl>}
-                            {displayField && 
-                            <FormControl className={classes.formControl}>
-                                <div > Source SQL Query* </div>
-                                <TextField
-                                    error={error.sourceSqlQueryError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.ingestionFieldValues.src_sql_query}
-                                    id="src_sql_query"
-                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
-                                />
-                            </FormControl>}
+                            {displayField &&
+                                <FormControl className={classes.formControl}>
+                                    <div > Source Table Name*</div>
+                                    <TextField
+                                        error={error.sourceTableNameError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={props.ingestionFieldValues.src_table_name}
+                                        id="src_table_name"
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
+                                    />
+                                </FormControl>}
+                            {displayField &&
+                                <FormControl className={classes.formControl}>
+                                    <div > Source SQL Query* </div>
+                                    <TextField
+                                        error={error.sourceSqlQueryError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={props.ingestionFieldValues.src_sql_query}
+                                        id="src_sql_query"
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
+                                    />
+                                </FormControl>}
                             {props.mode !== 'create' &&
-                            <FormControl className={classes.formControl}>
-                                <div > Ingestion Source Path* </div>
-                                <TextField
-                                    error={error.ingestionSourcePathError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.ingestionFieldValues.ingstn_src_path}
-                                    id="ingstn_src_path"
-                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
-                                />
-                            </FormControl>}
+                                <FormControl className={classes.formControl}>
+                                    <div > Ingestion Source Path* </div>
+                                    <TextField
+                                        error={error.ingestionSourcePathError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={props.ingestionFieldValues.ingstn_src_path}
+                                        id="ingstn_src_path"
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
+                                    />
+                                </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Trigger Mechanism*</div>
                                 <Select
@@ -557,19 +554,19 @@ const CreateDataAsset = (props) => {
                                 </Select>
                             </FormControl>
                             <Tooltip title="This is a cron tab. Enter digits separated by space. Example: * * * * *" placement='top'>
-                            <FormControl className={classes.formControl}>
-                            <div>Frequency*</div>
-                                <TextField
-                                    error={error.crontabError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
-                                    value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
-                                    id="frequency"
-                                    onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
-                                />
-                            </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div>Frequency*</div>
+                                    <TextField
+                                        error={error.crontabError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        helperText={error.crontabError ? <span style={{ color: 'red' }}>{errorValue}</span> : ''}
+                                        value={props.mode === 'create' ? cronValue : props.ingestionFieldValues.cron_tab}
+                                        id="frequency"
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
+                                    />
+                                </FormControl>
                             </Tooltip>
                         </div>
                     </AccordionDetails>
@@ -621,7 +618,6 @@ const CreateDataAsset = (props) => {
                     </AccordionDetails>
                 </Accordion>
             </div>
-
             <Button disabled={disableButton} className={classes.button} onClick={handleSave}>Save</Button>
             <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
         </div>

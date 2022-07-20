@@ -81,19 +81,6 @@ const updateDataAssetTableData = (state = { data: [] }, action) => {
     }
 }
 
-// const dataAssetValues1= (state = {"asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes}, action) => {
-//     switch (action.type) {
-//         case Constants.UPDATE_DATA_ASSET_FIELD_VALUE:
-//             return { ...state, [action.payload.field]: action.payload.value };
-//         case Constants.UPDATE_ALL_DATA_ASSET_FIELD_VALUES:
-//             return { ...state, ...action.row }
-//         case Constants.RESET_DATA_ASSET_FIELD_VALUES:
-//             return {"asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes};
-//         default:
-//             return { ...state }
-//     }
-// }
-
 const dataAssetValues = (state = { "asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes }, action) => {
     switch (action.type) {
         case Constants.UPDATE_ASSET_INFO_FIELD_VALUE:
@@ -102,6 +89,8 @@ const dataAssetValues = (state = { "asset_info": intialDataAttributes, "ingestio
             return { ...state, "ingestion_attributes": { ...state.ingestion_attributes, [action.payload.field]: action.payload.value } }
         case Constants.UPDATE_COLUMN_ATTRIBUTES_DATA:
             return { ...state, "asset_attributes": [...action.payload] }
+        case Constants.UPDATE_ALL_DATA_ASSET_FIELD_VALUES:
+            return { ...action.row }
         case Constants.RESET_DATA_ASSET_FIELD_VALUES:
             return { "asset_info": intialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes };
         default:
