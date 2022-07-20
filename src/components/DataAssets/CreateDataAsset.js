@@ -116,13 +116,6 @@ const CreateDataAsset = (props) => {
         props.dataAssetFieldValue(field, dqEditorState.getCurrentContent().getPlainText())
     }
 
-    const handleDqPastedText = (state) => {
-        setDqEditorState(RichUtils.toggleBlockType(
-            dqEditorState,
-            'ordered-list-item'
-        ))
-    }
-
     useEffect(() => {
         getSourceSystemData();
         // getTargetSystemData();
@@ -640,10 +633,10 @@ const CreateDataAsset = (props) => {
                     </AccordionSummary>
                     <AccordionDetails style={{flexDirection: 'column'}}>
                         <div style={{marginBottom: '10px'}}>DQ Rules</div>
-                        <Editor
-                            handlePastedText={handleDqPastedText}    
+                        <Editor  
                             editorState={dqEditorState}
                             toolbarHidden={true}
+                            stripPastedStyles = {true}
                             editorStyle={{ 
                                 minHeight: "300px", 
                                 minWidth: '100%',
