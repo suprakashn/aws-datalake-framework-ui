@@ -53,6 +53,13 @@ export const columnFieldValue = (value) => dispatch => {
     })
 }
 
+export const dqRulesFieldValue = (value) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_DQ_RULES_FIELD,
+        payload: value
+    })
+}
+
 export const updateAllDataAssetValues = (row) => dispatch => {
     dispatch({
         type: constants.UPDATE_ALL_DATA_ASSET_FIELD_VALUES,

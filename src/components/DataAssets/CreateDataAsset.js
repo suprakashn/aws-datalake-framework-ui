@@ -12,17 +12,15 @@ import Select from '@material-ui/core/Select';
 import { openSnackbar, } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
-    assetFieldValue, ingestionFieldValue,
+    assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { TextField } from '@material-ui/core';
-import { Button } from '@material-ui/core';
+import { Button,CircularProgress,TextField,Tooltip } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import cron from 'cron-validate';
-import { Tooltip, Fab } from '@material-ui/core';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -77,14 +75,17 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             fontWeight: '600',
             backgroundColor: 'black',
-        }
+        },
+        '&:disabled': {
+            background: '#A3A3A390',
+          },
     },
 }));
 
 const CreateDataAsset = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
-    const [expanded, setExpanded] = React.useState(1);
+    const [expanded, setExpanded] = useState(1);
     const [sourceSysData, setSourceSysData] = useState([]);
     const [targetSysData, setTargetSysData] = useState([]);
     const [displayField, setDisplayField] = useState(false);
@@ -92,27 +93,27 @@ const CreateDataAsset = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
-    
-    const [dqEditorState, setDqEditorState] = React.useState(
+    const [dqEditorState, setDqEditorState] = useState(
         () => EditorState.createEmpty(),
     );
 
-    const onDqEditorStateChange = (state, field) => {
+    const onDqEditorStateChange = (state) => {
         console.log(dqEditorState.getCurrentContent().getPlainText().split('\n'))
-        if(RichUtils.getCurrentBlockType(state) !== 'ordered-list-item'){
+        if (RichUtils.getCurrentBlockType(state) !== 'ordered-list-item') {
             setDqEditorState(RichUtils.toggleBlockType(
                 state,
                 'ordered-list-item'
             ))
-        }else{
+        } else {
             setDqEditorState(state);
-        }        
-        props.dataAssetFieldValue(field, dqEditorState.getCurrentContent().getPlainText())
+        }
+        props.dqRulesFieldValue(dqEditorState.getCurrentContent().getPlainText().split('\n'))
     }
 
     useEffect(() => {
         getSourceSystemData();
         getTargetSystemData();
+        if (props.mode != 'create') { }
     }, [])
 
     useEffect(() => {
@@ -209,7 +210,7 @@ const CreateDataAsset = (props) => {
             targetIDError: props.assetFieldValues.target_id ? false : true,
             fileTypeError: props.assetFieldValues.file_type.length > 0 ? false : true,
             assetNameError: error.assetNameError ? true : props.assetFieldValues.asset_nm.trim() ? false : true,
-            triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
+            triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern && props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
             fileDelimiterError: props.assetFieldValues.file_delim.trim() ? false : true,
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
@@ -224,29 +225,32 @@ const CreateDataAsset = (props) => {
         return Object.values(errorObj).filter(item => item === true).length;
     }
 
-    const handleCreate = async () => {
-        let payload = { ...props.fieldValues }
-            }
-
-    const handleEdit = async () => {
-        let payload = { ...props.fieldValues }
-        console.log("inside edit",payload);
-        }
-
-    const handleSave = () => {
+    const handleSave = async () => {
         let errorLength = validate();
-        if (errorLength) {        
+        if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         } else {
-            if (props.mode === 'create' || props.mode === 'clone') {
-                handleCreate();
-        }
-            if (props.mode === 'edit') {
-                handleEdit();
+            setDisableButton(true);
+            let payload = props.mode === 'edit' ? {...props.fieldValues, asset_id:props.assetFieldValues.asset_id, src_sys_id:props.assetFieldValues.src_sys_id}:{ ...props.fieldValues }
+            // let payload = { ...props.fieldValues }
+            let url = props.mode === 'edit' ? '/dataasset/update' : 'dataasset/create'
+            try {
+                const response = await defaultInstance.post(url, payload)
+                if (response.data.responseStatus) {
+                    props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+                    // props.updateDataFlag(true);
+                } else {
+                    props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+                }
+                props.updateMode('');
+                props.resetDataAssetValues();
+                navigate("/data-assets");
             }
-            // let dqRules = props.fieldValues['modified_ts']
-            // console.log('DQ Rules in Array form', dqRules?.split('\n').filter(v => v?.trim().length > 0))
-            // console.log("inside else save", props.fieldValues)
+            catch (error) {
+                console.log(error);
+                props.openSnackbar({ variant: 'error', message: `Failed to create Data Asset ID!` });
+                setDisableButton(false);
+            }
         }
         console.log("inside handle save", props.fieldValues)
     }
@@ -302,7 +306,7 @@ const CreateDataAsset = (props) => {
                                 <div style={{ marginBottom: '3%' }}>Source system ID*</div>
                                 <Select
                                     error={error.sourceSysIDError}
-                                    disabled={disableButton}
+                                    disabled={props.mode === 'edit'}
                                     margin="dense"
                                     variant="outlined"
                                     id="src_sys_id"
@@ -321,7 +325,7 @@ const CreateDataAsset = (props) => {
                                 <div style={{ marginBottom: '3%' }}>Target ID*</div>
                                 <Select
                                     error={error.targetIDError}
-                                    disabled={disableButton}
+                                    disabled={props.mode === 'edit'}
                                     margin="dense"
                                     variant="outlined"
                                     id="target_id"
@@ -501,43 +505,43 @@ const CreateDataAsset = (props) => {
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
                             {displayField &&
-                            <FormControl className={classes.formControl}>
+                                <FormControl className={classes.formControl}>
                                     <div > Source Table Name*</div>
-                                <TextField
-                                    error={error.sourceTableNameError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
+                                    <TextField
+                                        error={error.sourceTableNameError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
                                         value={props.ingestionFieldValues.src_table_name}
-                                    id="src_table_name"
+                                        id="src_table_name"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
-                                />
+                                    />
                                 </FormControl>}
                             {displayField &&
-                            <FormControl className={classes.formControl}>
+                                <FormControl className={classes.formControl}>
                                     <div > Source SQL Query* </div>
-                                <TextField
-                                    error={error.sourceSqlQueryError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
+                                    <TextField
+                                        error={error.sourceSqlQueryError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
                                         value={props.ingestionFieldValues.src_sql_query}
-                                    id="src_sql_query"
+                                        id="src_sql_query"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
-                                />
+                                    />
                                 </FormControl>}
                             {props.mode !== 'create' &&
-                            <FormControl className={classes.formControl}>
+                                <FormControl className={classes.formControl}>
                                     <div > Ingestion Source Path* </div>
-                                <TextField
-                                    error={error.ingestionSourcePathError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
+                                    <TextField
+                                        error={error.ingestionSourcePathError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
                                         value={props.ingestionFieldValues.ingstn_src_path}
-                                    id="ingstn_src_path"
+                                        id="ingstn_src_path"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
-                                />
+                                    />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Trigger Mechanism*</div>
@@ -606,32 +610,36 @@ const CreateDataAsset = (props) => {
                     >
                         <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
-                    <AccordionDetails style={{flexDirection: 'column'}}>
-                        <div style={{marginBottom: '10px'}}>DQ Rules</div>
-                        <Editor  
+                    <AccordionDetails style={{ flexDirection: 'column' }}>
+                        <div style={{ marginBottom: '10px' }}>DQ Rules</div>
+                        <Editor
                             editorState={dqEditorState}
                             toolbarHidden={true}
-                            stripPastedStyles = {true}
-                            editorStyle={{ 
-                                minHeight: "300px", 
+                            stripPastedStyles={true}
+                            editorStyle={{
+                                minHeight: "300px",
                                 minWidth: '100%',
                                 padding: '20px',
-                                border: '1px solid #bbb', 
+                                border: '1px solid #bbb',
                                 overflow: 'hidden',
                                 borderRadius: '5px'
-                             }}
+                            }}
                             toolbar={{
                                 options: []
                             }}
-                            onEditorStateChange={(e) => onDqEditorStateChange(e, 'modified_ts')}
-                        />                        
+                            onEditorStateChange={(event) => onDqEditorStateChange(event)}
+                        />
                     </AccordionDetails>
                 </Accordion>
             </div>
-            <Button disabled={disableButton} className={classes.button} onClick={handleSave}>Save</Button>
-            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+            <Button disabled={disableButton} className={classes.button} onClick={handleSave} >
+                {disableButton && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
+                {!disableButton && 'Save'}
+            </Button>
+            <Button className={classes.button} disabled={disableButton} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
+            {/* <Button disabled={disableButton} className={classes.button} onClick={handleSave}>Save</Button>
+            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button> */}
         </div>
-
     );
 }
 
@@ -652,7 +660,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     resetDataAssetValues,
     updateAllDataAssetValues,
     assetFieldValue,
-    ingestionFieldValue
+    ingestionFieldValue,
+    dqRulesFieldValue,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDataAsset);

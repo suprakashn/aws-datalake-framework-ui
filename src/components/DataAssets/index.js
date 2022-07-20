@@ -91,19 +91,19 @@ const DataAssets = (props) => {
       title: "Actions", field: "", render: (rowData) => {
         return <>
           <Tooltip placement='top' title="View">
-            <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px' }}></VisibilityOutlinedIcon>
+            <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Edit">
-            <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></EditOutlinedIcon >
+            <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></EditOutlinedIcon >
           </Tooltip>
           <Tooltip placement='top' title="Clone">
-            <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></FileCopyOutlinedIcon>
+            <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></FileCopyOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Delete">
-            <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></DeleteOutlineOutlinedIcon>
+            <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>
           </Tooltip>
           <Tooltip placement='top' title="Catalogs">
-            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px' }}></LaunchIcon>
+            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
           </Tooltip>
         </>
       }
