@@ -159,7 +159,7 @@ const ColumnAttributes = (props) => {
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
-            //"col_id": '',
+            "col_id": props.columnAttributesData.length,
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
@@ -168,7 +168,7 @@ const ColumnAttributes = (props) => {
             "col_length": '',
             "req_tokenization": false,
             "pk_ind": false,
-            // "null_ind": false,
+            "null_ind": false,
             "data_type": "",
             // "modified_ts": ""
         }]);

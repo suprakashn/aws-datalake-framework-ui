@@ -180,17 +180,17 @@ const CreateDataAsset = (props) => {
             ...error,
             sourceSysIDError: props.assetFieldValues.src_sys_id ? false : true,
             targetIDError: props.assetFieldValues.target_id ? false : true,
-            fileTypeError: props.assetFieldValues.file_type.length > 0 ? false : true,
+            fileTypeError: displayField ? (props.assetFieldValues.file_type.length > 0 ? false : true) : false,
             assetNameError: error.assetNameError ? true : props.assetFieldValues.asset_nm.trim() ? false : true,
             triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern && props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
-            fileDelimiterError: props.assetFieldValues.file_delim.trim() ? false : true,
+            fileDelimiterError: displayField? (props.assetFieldValues.file_delim.trim() ? false : true) :false,
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
             sourceTableNameError: displayField ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
             sourceSqlQueryError: displayField ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
-            ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
+           // ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
-            crontabError: props.ingestionFieldValues.frequency.trim() ? error.crontabError : true,
+            crontabError: props.ingestionFieldValues.trigger_mechanism === 'time_driven' ? (props.ingestionFieldValues.frequency.trim() ? error.crontabError : true) : false,
         }
         setError(errorObj);
         console.log("error obj", errorObj)
@@ -198,6 +198,7 @@ const CreateDataAsset = (props) => {
     }
 
     const handleSave = async () => {
+        console.log("field values", {...props.fieldValues})
         let errorLength = validate();
         if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
@@ -312,6 +313,7 @@ const CreateDataAsset = (props) => {
                                     })}
                                 </Select>
                             </FormControl>
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Header*</div>
                                 <Select
@@ -327,7 +329,8 @@ const CreateDataAsset = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
-                            </FormControl>
+                            </FormControl>}
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Multi-part file*</div>
                                 <Select
@@ -343,7 +346,8 @@ const CreateDataAsset = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
-                            </FormControl>
+                            </FormControl>}
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>File type*</div>
                                 <Select
@@ -362,7 +366,7 @@ const CreateDataAsset = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
-                            </FormControl>
+                            </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div >Name*</div>
                                 <TextField
@@ -376,6 +380,7 @@ const CreateDataAsset = (props) => {
                                 />
                                 <FormHelperText>{error.assetNameError ? (props.assetFieldValues.asset_nm.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : '') : ''}</FormHelperText>
                             </FormControl>
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div > Trigger file pattern</div>
                                 <TextField
@@ -388,7 +393,8 @@ const CreateDataAsset = (props) => {
                                     onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
                                 />
                                 <FormHelperText>{error.triggerFilePtrnError ? (props.assetFieldValues.trigger_file_pattern.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : '') : ''}</FormHelperText>
-                            </FormControl>
+                            </FormControl>}
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div > Delimiter*</div>
                                 <TextField
@@ -401,7 +407,8 @@ const CreateDataAsset = (props) => {
                                     onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'file_delim', 'fileDelimiterError', event.target.value, 1)}
                                 />
                                 <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
-                            </FormControl>
+                            </FormControl>}
+                            {displayField &&
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
                                 <Select
@@ -418,7 +425,7 @@ const CreateDataAsset = (props) => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })}
                                 </Select>
-                            </FormControl>
+                            </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div > Asset Owner* </div>
                                 <TextField
@@ -434,6 +441,7 @@ const CreateDataAsset = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div >Support contact*</div>
                                 <TextField
+                                    error={error.supportContactError}
                                     disabled={disableButton}
                                     margin='dense'
                                     variant='outlined'
@@ -507,7 +515,7 @@ const CreateDataAsset = (props) => {
                                     <div > Ingestion Source Path* </div>
                                 <TextField
                                     error={error.ingestionSourcePathError}
-                                    disabled={disableButton}
+                                    disabled={disableButton || props.mode === 'edit'}
                                     margin='dense'
                                     variant='outlined'
                                         value={props.ingestionFieldValues.ingstn_src_path}
@@ -534,6 +542,7 @@ const CreateDataAsset = (props) => {
                                     })}
                                 </Select>
                             </FormControl>
+                            {props.ingestionFieldValues.trigger_mechanism === 'time_driven' && 
                             <Tooltip title="This is a cron tab. Enter digits separated by space. Example: * * * * *" placement='top'>
                                 <FormControl className={classes.formControl}>
                                     <div>Frequency*</div>
@@ -548,7 +557,7 @@ const CreateDataAsset = (props) => {
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'frequency', 'crontabError', event.target.value)}
                                     />
                                 </FormControl>
-                            </Tooltip>
+                            </Tooltip>}
                         </div>
                     </AccordionDetails>
                 </Accordion>

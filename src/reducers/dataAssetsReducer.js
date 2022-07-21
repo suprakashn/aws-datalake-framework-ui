@@ -24,7 +24,7 @@ const initialIngestionAttributes = {
     "frequency": "",
 }
 const initialColumnAttributes = [{
-    // "col_id"   : "",
+    "col_id": 1,
     "col_nm": "",
     "tgt_col_nm": "",
     "tgt_data_type": "",
@@ -34,7 +34,7 @@ const initialColumnAttributes = [{
     "req_tokenization": false,
     "pk_ind": false,
     "data_type": "",
-    //"modified_ts" : null
+    "null_ind": false
 }]
 
 const dialogue = (state = { flag: false }, action) => {
