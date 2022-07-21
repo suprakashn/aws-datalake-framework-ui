@@ -89,7 +89,7 @@ const dataAssetValues = (state = { "asset_info": initialDataAttributes, "ingesti
             return { ...state, "ingestion_attributes": { ...state.ingestion_attributes, [action.payload.field]: action.payload.value } }
         case Constants.UPDATE_COLUMN_ATTRIBUTES_DATA:
             return { ...state, "asset_attributes": [...action.payload] }
-        case Constants.UPDATE_DQ_RULES_ATTRIBUTES_DATA:
+        case Constants.UPDATE_DQ_RULES_FIELD:
             return { ...state, "adv_dq_rules": [...action.payload] }
         case Constants.UPDATE_ALL_DATA_ASSET_FIELD_VALUES:
             return { ...action.row }
