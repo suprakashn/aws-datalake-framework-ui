@@ -37,14 +37,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: theme.typography.pxToRem(15),
         fontWeight: "bold",
     },
-    paper: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 0,
-        position: 'relative',
-        margin: theme.spacing(1),
-        marginLeft: 0
-    },
     link: {
         cursor: 'pointer',
         display: 'flex',
@@ -82,7 +74,13 @@ const ColumnAttributes = (props) => {
     const [disableButton, setDisableButton] = useState(false);
     const [error, setError] = useState({})
 
-    const handleChange = (row,id) => (_, isExpanded) => {
+    useEffect(() => {
+        if (props.mode === 'view' || props.mode === 'delete'){
+            setDisableButton(true);
+        }
+    }, []);
+
+    const handleChange = (row, id) => (_, isExpanded) => {
         setExpanded(isExpanded ? id : false)
     };
 
@@ -186,15 +184,16 @@ const ColumnAttributes = (props) => {
 
     return (
         <>
-            <div style={{ position: 'absolute', top: '1%', right: '5%' }}>
-                <Button variant="contained" className={classes.button} onClick={handleAddNew}>Add New +</Button>
-            </div>
+            {!disableButton &&
+                <div style={{ position: 'absolute', top: '1%', right: '5%' }}>
+                    <Button variant="contained" className={classes.button} onClick={handleAddNew}>Add New +</Button>
+                </div>}
             <div>
                 {props.columnAttributesData.map((row, index) => {
                     return <Accordion
-                        style={{ margin: "1% 0", backgroundColor: '#e2e2e278' }}
+                        style={{ margin: "1% 0", backgroundColor: '#e2e2e278', minWidth: '85vw' }}
                         key={index}
-                        onChange={handleChange(row,index)}
+                        onChange={handleChange(row, index)}
                         expanded={expanded === index}
                         TransitionProps={{ unmountOnExit: true }}
                     >
@@ -205,21 +204,10 @@ const ColumnAttributes = (props) => {
                             style={{ backgroundColor: '#0000000f' }}
                         >
                             <Typography >{row.col_nm}</Typography>
-                            <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>
+                            {!disableButton && <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                         </AccordionSummary>
                         <AccordionDetails>
                             <div style={{ padding: "1%" }}>
-                                {/* <FormControl className={classes.formControl}>
-                                        <div > ID* </div>
-                                        <TextField
-                                            //disabled={true}
-                                            margin='dense'
-                                            variant='outlined'
-                                            value={row.col_id}
-                                            id="col_id"
-                                            onChange={(event) => handleChange(row, 'col_id', 'colIDError', event.target.value)}
-                                        />
-                                    </FormControl> */}
                                 <FormControl className={classes.formControl}>
                                     <div >Name*</div>
                                     <TextField
@@ -227,7 +215,6 @@ const ColumnAttributes = (props) => {
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        // value={props.fieldValues.col_nm}
                                         value={row.col_nm}
                                         id="col_nm"
                                         onChange={(event) => handleMaxCharacter(row, 'col_nm', 'colNameError', event.target.value, 30)}
@@ -241,7 +228,6 @@ const ColumnAttributes = (props) => {
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        // value={props.fieldValues.tgt_col_nm}
                                         value={row.tgt_col_nm}
                                         id="tgt_col_nm"
                                         onChange={(event) => handleMaxCharacter(row, 'tgt_col_nm', 'targetColumnNameError', event.target.value, 30)}
@@ -256,7 +242,6 @@ const ColumnAttributes = (props) => {
                                         margin="dense"
                                         variant="outlined"
                                         id="tgt_data_type"
-                                        // value={props.fieldValues.tgt_data_type}
                                         value={row.tgt_data_type}
                                         onChange={(event) => handleValueChange(row, 'tgt_data_type', 'targetDataTypeError', event.target.value)}
                                     >
@@ -275,7 +260,6 @@ const ColumnAttributes = (props) => {
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        // value={props.fieldValues.col_desc}
                                         value={row.col_desc}
                                         id="col_desc"
                                         onChange={(event) => handleValueChange(row, 'col_desc', 'colDescriptionError', event.target.value)}
@@ -289,7 +273,6 @@ const ColumnAttributes = (props) => {
                                         margin="dense"
                                         variant="outlined"
                                         id="data_classification"
-                                        // value={props.fieldValues.data_classification}
                                         value={row.data_classification}
                                         onChange={(event) => handleValueChange(row, 'data_classification', 'dataClassificationError', event.target.value)}
                                     >
@@ -299,14 +282,13 @@ const ColumnAttributes = (props) => {
                                     </Select>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
-                                    <div > Trigger file pattern</div>
+                                    <div >Column Length</div>
                                     <TextField
                                         type={"number"}
                                         error={error.columnLengthError}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
-                                        // value={props.fieldValues.col_length}
                                         value={row.col_length}
                                         id="col_length"
                                         onChange={(event) => handleValueChange(row, 'col_length', 'columnLengthError', event.target.value)}
@@ -320,7 +302,6 @@ const ColumnAttributes = (props) => {
                                         margin="dense"
                                         variant="outlined"
                                         id="req_tokenization"
-                                        // value={props.fieldValues.req_tokenization}
                                         value={row.req_tokenization}
                                         onChange={(event) => handleValueChange(row, 'req_tokenization', 'tokenizationError', event.target.value)}
                                     >
@@ -337,7 +318,6 @@ const ColumnAttributes = (props) => {
                                         margin="dense"
                                         variant="outlined"
                                         id="pk_ind"
-                                        // value={props.fieldValues.pk_ind}
                                         value={row.pk_ind}
                                         onChange={(event) => handleValueChange(row, 'pk_ind', 'primaryKeyIndicatorError', event.target.value)}
                                     >
@@ -354,7 +334,6 @@ const ColumnAttributes = (props) => {
                                         margin="dense"
                                         variant="outlined"
                                         id="data_type"
-                                        // value={props.fieldValues.data_type}
                                         value={row.data_type}
                                         onChange={(event) => handleValueChange(row, 'data_type', 'dataTypeError', event.target.value)}
                                     >
@@ -366,19 +345,6 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                {/* {props.mode === 'view' &&
-                                    <FormControl className={classes.formControl}>
-                                        <div >Last Modified On</div>
-                                        <TextField
-                                            disabled={disableButton}
-                                            margin='dense'
-                                            variant='outlined'
-                                            // value={props.fieldValues.modified_ts}
-                                            value={row.modified_ts}
-                                            id="modified_ts"
-                                            onChange={(event) => handleValueChange('modified_ts', 'modifiedtimeStampError', event.target.value)}
-                                        />
-                                    </FormControl>} */}
                             </div>
                         </AccordionDetails>
                     </Accordion>
