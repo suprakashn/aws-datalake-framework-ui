@@ -14,7 +14,7 @@ import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constan
 import {
     assetFieldValue, ingestionFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
-    updateDataFlag, updateMode, updateAllDataAssetValues
+    updateDataFlag, updateMode, updateAllDataAssetValues, dqRulesColumnFieldValue
 } from 'actions/dataAssetActions'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
@@ -30,9 +30,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { ContentState, EditorState, RichUtils } from 'draft-js';
+import Editor from "react-prism-editor";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -92,25 +90,6 @@ const CreateDataAsset = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
-    
-    const [dqEditorState, setDqEditorState] = React.useState(
-        () => EditorState.createWithContent(ContentState.createFromText(props.fieldValues['modified_ts']?.join('\n') || "" ))
-    );
-
-    const onDqEditorStateChange = (state, field) => {
-        console.log(dqEditorState.getCurrentContent().getPlainText().split('\n'))
-        if(RichUtils.getCurrentBlockType(state) !== 'ordered-list-item'){
-            setDqEditorState(RichUtils.toggleBlockType(
-                state,
-                'ordered-list-item'
-            ))
-        }else{
-            setDqEditorState(state);
-        }        
-        const dqList = dqEditorState.getCurrentContent().getPlainText()?.split('\n').filter(c => c.length > 0) || [];
-        props.dataAssetFieldValue(field, dqList)
-    }
-
     useEffect(() => {
         getSourceSystemData();
         getTargetSystemData();
@@ -234,7 +213,7 @@ const CreateDataAsset = (props) => {
         console.log("inside edit",payload);
         }
 
-    const handleSave = () => {
+    const handleSave = () => {            
         let errorLength = validate();
         if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
@@ -602,27 +581,23 @@ const CreateDataAsset = (props) => {
                         aria-controls="panel4a-content"
                         id="panel4a-header"
                     >
-                        <Typography className={classes.heading}>DQ Rules Attributes</Typography>
+                    <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails style={{flexDirection: 'column'}}>
                         <div style={{marginBottom: '10px'}}>DQ Rules</div>
-                        <Editor  
-                            editorState={dqEditorState}
-                            toolbarHidden={true}
-                            stripPastedStyles = {true}
-                            editorStyle={{ 
-                                minHeight: "300px", 
-                                minWidth: '100%',
-                                padding: '20px',
-                                border: '1px solid #bbb', 
-                                overflow: 'hidden',
-                                borderRadius: '5px'
-                             }}
-                            toolbar={{
-                                options: []
+                        <Editor
+                            language={'jsx'}
+                            theme={'default'}
+                            code={props.dqRulesColumnFieldValues?.join('\n') || ""}
+                            lineNumber={true}
+                            readOnly={false}
+                            clipboard={true}
+                            showLanguage={true}
+                            changeCode={code => {
+                                props.dqRulesColumnFieldValue(code?.split('\n').filter(c => c?.trim().length > 0) || [])
+                                //console.log(code)
                             }}
-                            onEditorStateChange={(e) => onDqEditorStateChange(e, 'modified_ts')}
-                        />                        
+                        />
                     </AccordionDetails>
                 </Accordion>
             </div>
@@ -638,6 +613,7 @@ const mapStateToProps = state => ({
     fieldValues: state.dataAssetState.dataAssetValues,
     assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
     ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
+    dqRulesColumnFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
     mode: state.dataAssetState.updateMode.mode,
     dataFlag: state.dataAssetState.updateDataFlag.dataFlag
 })
@@ -650,6 +626,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     resetDataAssetValues,
     updateAllDataAssetValues,
     assetFieldValue,
+    dqRulesColumnFieldValue,
     ingestionFieldValue
 }, dispatch)
 

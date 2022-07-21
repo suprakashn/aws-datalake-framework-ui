@@ -46,6 +46,14 @@ export const ingestionFieldValue = (field,value) => dispatch => {
         }
     })
 }
+
+export const dqRulesColumnFieldValue = (value) => dispatch => {
+    dispatch({
+        type: constants.UPDATE_DQ_RULES_ATTRIBUTES_DATA,
+        payload: value
+    })
+}
+
 export const columnFieldValue = (value) => dispatch => {
     dispatch({
         type: constants.UPDATE_COLUMN_ATTRIBUTES_DATA,
