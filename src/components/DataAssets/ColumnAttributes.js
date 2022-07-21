@@ -37,14 +37,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: theme.typography.pxToRem(15),
         fontWeight: "bold",
     },
-    paper: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 0,
-        position: 'relative',
-        margin: theme.spacing(1),
-        marginLeft: 0
-    },
     link: {
         cursor: 'pointer',
         display: 'flex',
@@ -192,7 +184,7 @@ const ColumnAttributes = (props) => {
             <div>
                 {props.columnAttributesData.map((row, index) => {
                     return <Accordion
-                        style={{ margin: "1% 0", backgroundColor: '#e2e2e278' }}
+                        style={{ margin: "1% 0", backgroundColor: '#e2e2e278', minWidth:'85vw' }}
                         key={index}
                         onChange={handleChange(row,index)}
                         expanded={expanded === index}
