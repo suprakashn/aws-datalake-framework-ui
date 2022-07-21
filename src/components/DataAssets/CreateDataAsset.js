@@ -483,7 +483,7 @@ const CreateDataAsset = (props) => {
                         <Typography className={classes.heading}>Ingestion Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <div style={{ padding: "0 2%" }}>
+                        <div style={{ padding: "0 2%", width: '100%' }}>
                             {displayField &&
                             <FormControl className={classes.formControl}>
                                     <div > Source Table Name*</div>
