@@ -46,6 +46,7 @@ export const ingestionFieldValue = (field,value) => dispatch => {
         }
     })
 }
+
 export const columnFieldValue = (value) => dispatch => {
     dispatch({
         type: constants.UPDATE_COLUMN_ATTRIBUTES_DATA,

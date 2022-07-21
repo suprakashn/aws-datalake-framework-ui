@@ -27,9 +27,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, RichUtils } from 'draft-js';
+import Editor from "react-prism-editor";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -66,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             fontWeight: '600',
             backgroundColor: 'black',
-        },
+    },
         '&:disabled': {
             background: '#A3A3A390',
           },
@@ -84,23 +82,6 @@ const CreateDataAsset = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
-    const [dqEditorState, setDqEditorState] = useState(
-        () => EditorState.createEmpty(),
-    );
-
-    const onDqEditorStateChange = (state) => {
-        console.log(dqEditorState.getCurrentContent().getPlainText().split('\n'))
-        if (RichUtils.getCurrentBlockType(state) !== 'ordered-list-item') {
-            setDqEditorState(RichUtils.toggleBlockType(
-                state,
-                'ordered-list-item'
-            ))
-        } else {
-            setDqEditorState(state);
-        }
-        props.dqRulesFieldValue(dqEditorState.getCurrentContent().getPlainText().split('\n'))
-    }
-
     useEffect(() => {
         getSourceSystemData();
         getTargetSystemData();
@@ -241,7 +222,7 @@ const CreateDataAsset = (props) => {
                 console.log(error);
                 props.openSnackbar({ variant: 'error', message: `Failed to create Data Asset ID!` });
                 setDisableButton(false);
-            }
+        }
         }
         console.log("inside handle save", props.fieldValues)
     }
@@ -496,43 +477,43 @@ const CreateDataAsset = (props) => {
                     <AccordionDetails>
                         <div style={{ padding: "0 2%" }}>
                             {displayField &&
-                                <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}>
                                     <div > Source Table Name*</div>
-                                    <TextField
-                                        error={error.sourceTableNameError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
+                                <TextField
+                                    error={error.sourceTableNameError}
+                                    disabled={disableButton}
+                                    margin='dense'
+                                    variant='outlined'
                                         value={props.ingestionFieldValues.src_table_name}
-                                        id="src_table_name"
+                                    id="src_table_name"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
-                                    />
+                                />
                                 </FormControl>}
                             {displayField &&
-                                <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}>
                                     <div > Source SQL Query* </div>
-                                    <TextField
-                                        error={error.sourceSqlQueryError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
+                                <TextField
+                                    error={error.sourceSqlQueryError}
+                                    disabled={disableButton}
+                                    margin='dense'
+                                    variant='outlined'
                                         value={props.ingestionFieldValues.src_sql_query}
-                                        id="src_sql_query"
+                                    id="src_sql_query"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
-                                    />
+                                />
                                 </FormControl>}
                             {props.mode !== 'create' &&
-                                <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}>
                                     <div > Ingestion Source Path* </div>
-                                    <TextField
-                                        error={error.ingestionSourcePathError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
+                                <TextField
+                                    error={error.ingestionSourcePathError}
+                                    disabled={disableButton}
+                                    margin='dense'
+                                    variant='outlined'
                                         value={props.ingestionFieldValues.ingstn_src_path}
-                                        id="ingstn_src_path"
+                                    id="ingstn_src_path"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ingstn_src_path', 'ingestionSourcePathError', event.target.value)}
-                                    />
+                                />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Trigger Mechanism*</div>
@@ -599,26 +580,22 @@ const CreateDataAsset = (props) => {
                         aria-controls="panel4a-content"
                         id="panel4a-header"
                     >
-                        <Typography className={classes.heading}>DQ Rules Attributes</Typography>
+                    <Typography className={classes.heading}>DQ Rules Attributes</Typography>
                     </AccordionSummary>
-                    <AccordionDetails style={{ flexDirection: 'column' }}>
-                        <div style={{ marginBottom: '10px' }}>DQ Rules</div>
+                    <AccordionDetails style={{flexDirection: 'column'}}>
+                        <div style={{marginBottom: '10px'}}>DQ Rules</div>
                         <Editor
-                            editorState={dqEditorState}
-                            toolbarHidden={true}
-                            stripPastedStyles={true}
-                            editorStyle={{
-                                minHeight: "300px",
-                                minWidth: '100%',
-                                padding: '20px',
-                                border: '1px solid #bbb',
-                                overflow: 'hidden',
-                                borderRadius: '5px'
+                            language={'jsx'}
+                            theme={'default'}
+                            code={props.dqRulesFieldValues?.join('\n') || ""}
+                            lineNumber={true}
+                            readOnly={false}
+                            clipboard={true}
+                            showLanguage={true}
+                            changeCode={code => {
+                                props.dqRulesFieldValue(code?.split('\n').filter(c => c?.trim().length > 0) || [])
+                                //console.log(code)
                             }}
-                            toolbar={{
-                                options: []
-                            }}
-                            onEditorStateChange={(event) => onDqEditorStateChange(event)}
                         />
                     </AccordionDetails>
                 </Accordion>
@@ -639,6 +616,7 @@ const mapStateToProps = state => ({
     fieldValues: state.dataAssetState.dataAssetValues,
     assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
     ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
+    dqRulesFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
     mode: state.dataAssetState.updateMode.mode,
     dataFlag: state.dataAssetState.updateDataFlag.dataFlag
 })
