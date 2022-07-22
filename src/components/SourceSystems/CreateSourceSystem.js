@@ -22,6 +22,10 @@ import { TextField, CircularProgress, FormHelperText, Tooltip } from '@material-
 import { Button } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import IconButton from "@material-ui/core/IconButton";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Visibility from "@material-ui/icons/Visibility";
+import { InputAdornment } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "none",
         fontSize: "12px",
         marginLeft: 0,
+        '&:hover': {
+            fontWeight: 'bold',
+        },
     },
     formControl: {
         minWidth: 250,
@@ -64,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
         },
         '&:disabled': {
             background: '#A3A3A390',
-          },
+        },
     },
 }));
 
@@ -74,6 +81,7 @@ const CreateSourceSystem = (props) => {
     const [disableButton, setDisableButton] = useState(false);
     const [error, setError] = useState({})
     const [saving, setSavingFlag] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleValueChange = (event) => {
         var { id, value, name } = event.target;
@@ -187,12 +195,12 @@ const CreateSourceSystem = (props) => {
             }
         }
 
-        try{
+        try {
             const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-            }else{
+            } else {
                 props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
             }
             props.updateMode('');
@@ -200,7 +208,7 @@ const CreateSourceSystem = (props) => {
             props.closeSourceSystemSidebar();
             navigate("/source-systems");
         }
-        catch(error){
+        catch (error) {
             console.log(error);
             props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
             setDisableButton(false);
@@ -237,24 +245,23 @@ const CreateSourceSystem = (props) => {
             }
         }
 
-        try{
+        try {
             const response = await defaultInstance.post('source_system/update', payload);
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-            }else{
+            } else {
                 props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
             }
             props.updateMode('');
             props.resetSourceSystemValues();
             props.closeSourceSystemSidebar();
             navigate("/source-systems");
-    
-        }catch(error){
+        } catch (error) {
             console.log("error", error)
             props.openSnackbar({ variant: 'error', message: `Failed to update source system ID: ${props.fieldValues.src_sys_id}!` });
             setDisableButton(false);
-        }        
+        }
     }
 
     const handleSave = async (e) => {
@@ -390,7 +397,7 @@ const CreateSourceSystem = (props) => {
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <div >Support Contact  </div>
+                                <div >Support Contact* </div>
                                 <TextField
                                     disabled={disableButton}
                                     margin='dense'
@@ -534,10 +541,11 @@ const CreateSourceSystem = (props) => {
                                 {props.mode === 'create' &&
                                     <FormControl className={classes.formControl}>
                                         <Tooltip open={error.db_pass === 'Weak Password'} placement="top-start" title="Password should be 8 to 16 characters long and contains atleast one digit and one special charater(!@#$%^&*)">
-                                            <div >DB Password <HelpOutlineIcon style={{ fontSize: '14px' }} color='secondary'></HelpOutlineIcon></div>
+                                            <div >DB Password*</div>
                                         </Tooltip>
                                         <TextField
                                             disabled={disableButton}
+                                            type= {showPassword ? 'text' : 'password'}
                                             margin='dense'
                                             variant='outlined'
                                             value={props.fieldValues.db_pass}
@@ -545,6 +553,16 @@ const CreateSourceSystem = (props) => {
                                             error={Boolean(error.db_pass)}
                                             helperText={error.db_pass}
                                             onChange={(event) => handleValueChange(event)}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                        >
+                                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>)
+                                            }}
                                         />
                                     </FormControl>}
                             </div>

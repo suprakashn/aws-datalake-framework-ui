@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
 import {
@@ -37,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "none",
         fontSize: "12px",
         marginLeft: 0,
+        '&:hover': {
+            fontWeight: 'bold',
+        },
     },
     formControl: {
         minWidth: 250,
@@ -61,6 +65,20 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
+
+const ThemeSwitch = withStyles({
+    switchBase: {
+      color: 'black',
+      '&$checked': {
+        color: '#F7901D',
+      },
+      '&$checked + $track': {
+        backgroundColor: '#F7901D',
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
 
 const CreateLakeDestination = (props) => {
     const classes = useStyles();
@@ -287,9 +305,8 @@ const CreateLakeDestination = (props) => {
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <div> Enable Redshift Load </div>
-                                <Switch
-                                    color="primary"
+                                <div> Enable Redshift Stage Load </div>
+                                <ThemeSwitch
                                     name="rs_load_ind"
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                     margin='dense'
