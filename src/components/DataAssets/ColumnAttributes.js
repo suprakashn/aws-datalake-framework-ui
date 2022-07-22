@@ -203,7 +203,7 @@ const ColumnAttributes = (props) => {
                             id={`panel${index}a-header`}
                             style={{ backgroundColor: '#0000000f' }}
                         >
-                            <Typography >{row.col_nm}</Typography>
+                            <Typography >{`${row.col_nm} : ${row.col_desc}`}</Typography>
                             {!disableButton && <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                         </AccordionSummary>
                         <AccordionDetails>

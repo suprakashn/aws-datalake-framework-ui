@@ -38,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      textDecoration: 'underline'
+    },
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -87,7 +95,7 @@ const LakeDestination = (props) => {
   const columns = [
     {
       title: "Target ID", field: "target_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
+        return <span className={classes.idHeader} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
       }
     },
     { title: "Domain", field: "domain", },

@@ -150,13 +150,13 @@ const DataAssetDetails = (props) => {
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Header
                   </div>
-                  <div>{props.assetFieldValues.file_header && props.assetFieldValues.file_header.toString()}</div>
+                  <div>{props.assetFieldValues.file_header.toString()}</div>
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Multi part file
                   </div>
-                  <div>{props.assetFieldValues.multipartition && props.assetFieldValues.multipartition.toString()}</div>
+                  <div>{props.assetFieldValues.multipartition.toString()}</div>
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
@@ -186,7 +186,7 @@ const DataAssetDetails = (props) => {
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Enable file encryption
                   </div>
-                  <div>{props.assetFieldValues.file_encryption_ind && props.assetFieldValues.file_encryption_ind.toString()}</div>
+                  <div>{ props.assetFieldValues.file_encryption_ind.toString()}</div>
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>

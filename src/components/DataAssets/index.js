@@ -39,6 +39,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      textDecoration: 'underline'
+    },
+  },
   button: {
     float: 'right',
     margin: '15px',
@@ -80,7 +88,7 @@ const DataAssets = (props) => {
   const columns = [
     {
       title: "Data Asset ID", field: "asset_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.asset_id}</span>
+        return <span className={classes.idHeader} onClick={() => { handleActionClick(rowData, 'view') }}>{rowData.asset_id}</span>
       }
     },
     { title: "Source System ID", field: "src_sys_id", },
