@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
 
 const DataCatalogDetails = (props) => {
   const classes = useStyles();
@@ -64,7 +65,7 @@ const DataCatalogDetails = (props) => {
 
   useEffect(() => {
     setBackdrop(true);
-    defaultInstance.post('/dataassetcatalog/read', { "src_sys_id": props.selectedRow.src_sys_id, "asset_id": props.selectedRow.asset_id })
+    defaultInstance.post('/dataassetcatalog/read', { "src_sys_id": params.src_sys_id, "asset_id": params.asset_id })
       .then(response => {
         setData(response.data.responseBody);
         setBackdrop(false);

@@ -124,7 +124,8 @@ const DataAssets = (props) => {
 
   const handleUrlClick = (rowData) => {
     props.updateSelectedRow(rowData);
-    navigate("/data-assets/data-catalog-details")
+    window.open(`/data-assets/data-catalog-details?src_sys_id=${rowData.src_sys_id}&asset_id=${rowData.asset_id}`, '_blank', 'noopener,noreferrer');
+    //navigate("/data-assets/data-catalog-details")
   }
 
   const handleCreate = () => {
