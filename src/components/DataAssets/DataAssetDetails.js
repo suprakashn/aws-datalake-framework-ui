@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     fontSize: "12px",
     marginLeft: 0,
+    '&:hover': {
+      fontWeight: 'bold',
+  },
   },
   formControl: {
     minWidth: '28%',

@@ -30,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      color: '#ff8700',
+    },
+  },
   link: {
     cursor: 'pointer',
     display: 'flex',
@@ -53,7 +61,7 @@ const DataCatalogDetails = (props) => {
   const columns = [
     {
       title: "Execution ID", field: "exec_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction(rowData)}>{rowData.exec_id}</span>
+        return <span className={classes.idHeader} onClick={() => handleAction(rowData)}>{rowData.exec_id}</span>
       }
     },
     { title: "Asset ID", field: "asset_id" },
@@ -90,7 +98,7 @@ const DataCatalogDetails = (props) => {
         <div style={{ display: 'flex', marginBottom: "15px" }}>
           <ArrowBackIosIcon fontSize='small' />
           <Breadcrumbs aria-label='Breadcrumb'>
-            <Link component={RouterLink} to='/data-assets' style={{ color: 'blue' }}>
+            <Link component={RouterLink} to='/data-assets' style={{ color: '#00B1E8' }}>
               Data Assets
             </Link>
             <Link style={{ textDecoration: 'none', color: 'black' }}>

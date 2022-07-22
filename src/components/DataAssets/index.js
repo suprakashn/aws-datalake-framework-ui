@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     paddingLeft: '5%',
     '&:hover': {
-      textDecoration: 'underline'
+      color: '#ff8700',
     },
   },
   button: {
