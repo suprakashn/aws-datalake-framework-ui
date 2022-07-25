@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
     editableForm: {
         '& div.MuiInputBase-formControl': {
             backgroundColor: 'white'
+        },
+        '& .MuiSelect-select:focus': {
+            backgroundColor: 'white'
         }
     },
     formControl: {
