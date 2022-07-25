@@ -7,14 +7,14 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from '@material-ui/core/Paper';
 import Close from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { Button, CircularProgress } from '@material-ui/core';
+import { Button, CircularProgress, Backdrop } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { updateMode, dqRulesFieldValue } from 'actions/dataAssetActions'
+import { updateMode, dqRulesFieldValue,updateAllDataAssetValues } from 'actions/dataAssetActions'
 import { openSnackbar } from 'actions/notificationAction';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import Editor from "react-prism-editor";
@@ -53,6 +53,11 @@ const useStyles = makeStyles((theme) => ({
     wordBreak: 'break-word',
     maxWidth: '28%'
   },
+  backdrop: {
+    backdropFilter: 'blur(1px)',
+    zIndex: theme.zIndex.drawer + 1,
+    color: 'black',
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -76,9 +81,11 @@ const DataAssetDetails = (props) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
   const [displayField, setDisplayField] = useState(false);
+  const [backdrop, setBackdrop] = useState(false);
 
   useEffect(() => {
     getSourceSystemData();
+    fetchDataAssetDetails();
   }, [])
 
   const getSourceSystemData = () => {
@@ -96,6 +103,20 @@ const DataAssetDetails = (props) => {
       })
   }
 
+  const fetchDataAssetDetails = () => {
+    setBackdrop(true);
+    defaultInstance.post('/dataasset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
+      .then(response => {
+        props.updateAllDataAssetValues({ ...response.data.responseBody });
+        setBackdrop(false);
+      })
+      .catch(error => {
+        console.log("error", error)
+        setBackdrop(false);
+        props.openSnackbar({ variant: 'error', message: `Failed to load ${props.selectedRow.asset_id} data asset details!` });
+        navigate('/data-assets');
+      })
+  }
 
   const handleEdit = () => {
     props.updateMode('edit');
@@ -130,6 +151,9 @@ const DataAssetDetails = (props) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <Backdrop className={classes.backdrop} open={backdrop} >
+                    <CircularProgress color="inherit" />
+      </Backdrop>
       <div style={{ display: 'flex' }} onClick={handleClose}>
         <Link to="/data-assets" className={classes.link}>
           <ArrowBackIosIcon fontSize='small' />
@@ -314,11 +338,13 @@ const mapStateToProps = state => ({
   assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
   ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
   dqRulesFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
+  selectedRow: state.dataAssetState.updateSelectedRow
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   openSnackbar,
   dqRulesFieldValue,
+  updateAllDataAssetValues
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataAssetDetails);

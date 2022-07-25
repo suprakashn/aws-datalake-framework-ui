@@ -14,12 +14,12 @@ import { openSnackbar, } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
     assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
-    dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
+    dataAssetFieldValue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { Button, CircularProgress, TextField, Tooltip } from '@material-ui/core';
+import { Button, CircularProgress, TextField, Tooltip, Backdrop } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import cron from 'cron-validate';
 import AddSharpIcon from '@material-ui/icons/AddSharp';
@@ -58,6 +58,11 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250
+    },
+    backdrop: {
+        backdropFilter: 'blur(1px)',
+        zIndex: theme.zIndex.drawer + 1,
+        color: 'black',
     },
     button: {
         float: 'right',
@@ -98,11 +103,15 @@ const CreateDataAsset = (props) => {
     const [targetSysData, setTargetSysData] = useState([]);
     const [displayField, setDisplayField] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
+    const [backdrop,setBackdrop] = useState(false);
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
 
     useEffect(() => {
+        if(props.mode !=='create'){
+            fetchDataAssetDetails();
+        }
         getSourceSystemData();
         getTargetSystemData();
     }, [])
@@ -118,10 +127,14 @@ const CreateDataAsset = (props) => {
         }
     }, [props.assetFieldValues.src_sys_id])
 
-    const getSourceSystemData = () => {
+    const getSourceSystemData = () => {  
         defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
             .then(response => {
-                setSourceSysData(response.data.responseBody);
+                if (response.data.responseBody) {
+                    setSourceSysData(response.data.responseBody);
+                } else {
+                    setSourceSysData([]);
+                }
             })
             .catch(error => {
                 console.log("error", error)
@@ -132,11 +145,30 @@ const CreateDataAsset = (props) => {
     const getTargetSystemData = () => {
         defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
             .then(response => {
-                setTargetSysData(response.data.responseBody);
+                if (response.data.responseBody) {
+                    setTargetSysData(response.data.responseBody);
+                } else {
+                    setTargetSysData([]);
+                }
             })
             .catch(error => {
                 console.log("error", error)
                 setTargetSysData([]);
+            })
+    }
+
+    const fetchDataAssetDetails = () => {
+        setBackdrop(true);
+        defaultInstance.post('/dataasset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
+            .then(response => {
+                props.updateAllDataAssetValues({ ...response.data.responseBody });
+                setBackdrop(false);
+            })
+            .catch(error => {
+                console.log("error", error)
+                setBackdrop(false);
+                props.openSnackbar({ variant: 'error', message: `Failed to load ${props.selectedRow.asset_id} data asset details!` });
+                navigate('/data-assets');
             })
     }
 
@@ -197,7 +229,6 @@ const CreateDataAsset = (props) => {
     const handleCancel = () => {
         props.updateMode('');
         props.resetDataAssetValues();
-        props.closeDataAssetDialogue();
         navigate("/data-assets");
     }
 
@@ -255,14 +286,10 @@ const CreateDataAsset = (props) => {
         console.log("inside handle save", props.fieldValues)
     }
 
-    const handleBack = () => {
-        props.closeDataAssetDialogue();
-    }
-
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <div style={{ display: 'flex' }} onClick={handleBack}>
+            <div style={{ display: 'flex' }}>
                 <Link to="/data-assets" className={classes.link}>
                     <ArrowBackIosIcon fontSize='small' />
                     <span>Back</span>
@@ -649,8 +676,9 @@ const CreateDataAsset = (props) => {
                 {!disableButton && 'Save'}
             </Button>
             <Button className={classes.button} disabled={disableButton} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
-            {/* <Button disabled={disableButton} className={classes.button} onClick={handleSave}>Save</Button>
-            <Button disabled={disableButton} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button> */}
+            <Backdrop className={classes.backdrop} open={backdrop} >
+                    <CircularProgress color="inherit" />
+            </Backdrop>
         </div>
     );
 }
@@ -662,14 +690,14 @@ const mapStateToProps = state => ({
     ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
     dqRulesFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
     mode: state.dataAssetState.updateMode.mode,
-    dataFlag: state.dataAssetState.updateDataFlag.dataFlag
+    dataFlag: state.dataAssetState.updateDataFlag.dataFlag,
+    selectedRow: state.dataAssetState.updateSelectedRow
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
     openSnackbar,
     updateMode,
     updateDataFlag,
     dataAssetFieldValue,
-    closeDataAssetDialogue,
     resetDataAssetValues,
     updateAllDataAssetValues,
     assetFieldValue,

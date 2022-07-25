@@ -104,7 +104,7 @@ const updateSelectedRow = (state = {}, action) => {
     switch (action.type) {
         case Constants.UPDATE_SELECTED_ROW:
             return {
-                ...state, ...action.row
+                ...action.row
             }
         default:
             return { ...state }
