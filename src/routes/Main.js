@@ -14,13 +14,17 @@ const Page = props =>(
     <Routes>
         <Route exact path="/" element={<Dashboard/>}/>
         <Route path="/source-systems" element={<SourceSystems/>}/>
-        <Route path="/create-source-system" element={<CreateSourceSystem/>}/>
+        <Route path="/source-systems/create" element={<CreateSourceSystem/>}/>
+        <Route path="/source-systems/edit" element={<CreateSourceSystem/>}/>
         <Route path="/data-assets" element={<DataAssets/>}/>
-        <Route path="/data-assets/create-data-asset" element={<CreateDataAsset/>}/>
-        <Route path="/data-assets/data-asset-details" element={<DataAssetDetails/>}/>
-        <Route path="/data-assets/data-catalog-details" element={<DataCatalogDetails/>}/>
-        <Route path="/create-lake-destination" element={<CreateLakeDestination/>}/>
+        <Route path="/data-assets/create" element={<CreateDataAsset/>}/>
+        <Route path="/data-assets/edit" element={<CreateDataAsset/>}/>
+        <Route path="/data-assets/details" element={<DataAssetDetails/>}/>
+        <Route path="/data-assets/delete" element={<DataAssetDetails/>}/>
+        <Route path="/data-assets/catalog-details" element={<DataCatalogDetails/>}/>
         <Route path="/lake-destinations" element={<LakeDestination/>}/>
+        <Route path="/lake-destinations/create" element={<CreateLakeDestination/>}/>
+        <Route path="/lake-destinations/edit" element={<CreateLakeDestination/>}/>
     </Routes>
 )
 

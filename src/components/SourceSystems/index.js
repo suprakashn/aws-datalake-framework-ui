@@ -112,14 +112,14 @@ const SourceSystems = (props) => {
     props.updateDataFlag(false);
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
+    navigate("./edit")
   }
 
   const handleClone = (selectedRow) => {
     props.updateDataFlag(false);
     props.updateMode('clone');
     props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
+    navigate("./create")
   }
 
   const handleAction = (mode, selectedRow) => {
@@ -138,7 +138,7 @@ const SourceSystems = (props) => {
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-source-system" >
+                <Link to="./create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />

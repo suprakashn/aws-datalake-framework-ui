@@ -65,7 +65,7 @@ const ViewSourceSystem = (props) => {
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...props.selectedRow })
-    navigate("/create-source-system")
+    navigate("./edit")
   }
 
   const handleDelete = async () => {

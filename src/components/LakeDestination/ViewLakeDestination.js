@@ -81,7 +81,7 @@ const ViewLakeDestination = (props) => {
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllLakeDestinationValues(props.selectedRow)
-    navigate("/create-lake-destination")
+    navigate("./edit")
   }
 
   const handleDelete = async () => {

@@ -99,7 +99,7 @@ const DataAssetDetails = (props) => {
 
   const handleEdit = () => {
     props.updateMode('edit');
-    navigate("/data-assets/create-data-asset")
+    navigate("/data-assets/edit")
   }
 
   const handleDelete = async () => {

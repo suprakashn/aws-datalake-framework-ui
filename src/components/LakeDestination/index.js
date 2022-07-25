@@ -126,7 +126,7 @@ const LakeDestination = (props) => {
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-lake-destination" >
+                <Link to="./create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
@@ -152,7 +152,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('edit', rowData);
-                navigate('/create-lake-destination')
+                navigate('./edit')
               }
             },
             {
@@ -161,7 +161,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('clone', rowData)
-                navigate('/create-lake-destination')
+                navigate('./create')
               }
             },
             {

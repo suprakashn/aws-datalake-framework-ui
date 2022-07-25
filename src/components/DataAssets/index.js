@@ -121,7 +121,22 @@ const DataAssets = (props) => {
     defaultInstance.post('/dataasset/read', { "asset_id": rowData.asset_id, "src_sys_id": rowData.src_sys_id })
       .then(response => {
         props.updateAllDataAssetValues({ ...response.data.responseBody });
-        mode === 'view' || mode === 'delete' ? navigate("/data-assets/data-asset-details") : navigate("/data-assets/create-data-asset");
+        switch (mode) {
+          case 'view':
+            navigate("/data-assets/details");
+            break;
+          case 'delete':
+            navigate("/data-assets/delete");
+            break;
+          case 'create':
+          case 'clone':
+            navigate("/data-assets/create");
+            break;
+          case 'edit':
+            navigate("/data-assets/edit");
+            break;
+          default:
+        }
       })
       .catch(error => {
         console.log("error", error)
@@ -131,8 +146,7 @@ const DataAssets = (props) => {
 
   const handleUrlClick = (rowData) => {
     props.updateSelectedRow(rowData);
-    window.open(`/data-assets/data-catalog-details?src_sys_id=${rowData.src_sys_id}&asset_id=${rowData.asset_id}`, '_blank', 'noopener,noreferrer');
-    //navigate("/data-assets/data-catalog-details")
+    window.open(`/data-assets/catalog-details?src_sys_id=${rowData.src_sys_id}&asset_id=${rowData.asset_id}`, '_blank', 'noopener,noreferrer');
   }
 
   const handleCreate = () => {
@@ -159,7 +173,7 @@ const DataAssets = (props) => {
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/data-assets/create-data-asset" >
+                <Link to="/data-assets/create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
