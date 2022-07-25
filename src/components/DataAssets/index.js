@@ -17,7 +17,6 @@ import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import ViewDataAsset from 'components/DataAssets/ViewDataAsset';
 import LaunchIcon from '@material-ui/icons/Launch';
 
 const useStyles = makeStyles((theme) => ({
@@ -155,7 +154,6 @@ const DataAssets = (props) => {
 
   return (
     <>
-      <ViewDataAsset selectedRow={selectedRow} />
       <div className={classes.table}>
         <MaterialTable
           components={{

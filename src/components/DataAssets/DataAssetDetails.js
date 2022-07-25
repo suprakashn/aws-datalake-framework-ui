@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     '&:hover': {
       fontWeight: 'bold',
-  },
+    },
   },
   formControl: {
     minWidth: '28%',
@@ -75,6 +75,27 @@ const DataAssetDetails = (props) => {
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
+  const [displayField, setDisplayField] = useState(false);
+
+  useEffect(() => {
+    getSourceSystemData();
+  }, [])
+
+  const getSourceSystemData = () => {
+    defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": null, "src_config": { "src_sys_id": props.assetFieldValues.src_sys_id } })
+      .then(response => {
+        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'database') {
+          setDisplayField(true);
+        } else {
+          setDisplayField(false);
+        }
+      })
+      .catch(error => {
+        console.log("error", error)
+        setDisplayField(false);
+      })
+  }
+
 
   const handleEdit = () => {
     props.updateMode('edit');
@@ -98,7 +119,6 @@ const DataAssetDetails = (props) => {
       setDeletingFlag(false);
       props.openSnackbar({ variant: 'error', message: `Failed to delete the source system!` });
     }
-
   }
 
   const handleClose = () => {
@@ -151,46 +171,49 @@ const DataAssetDetails = (props) => {
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Header
-                  </div>
-                  <div>{props.assetFieldValues.file_header.toString()}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Multi part file
-                  </div>
-                  <div>{props.assetFieldValues.multipartition.toString()}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    File type
-                  </div>
-                  <div>{props.assetFieldValues.file_type}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Name
                   </div>
                   <div>{props.assetFieldValues.asset_nm}</div>
                 </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Trigger file pattern
-                  </div>
-                  <div>{props.assetFieldValues.trigger_file_pattern}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Delimiter
-                  </div>
-                  <div>{props.assetFieldValues.file_delim}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Enable file encryption
-                  </div>
-                  <div>{ props.assetFieldValues.file_encryption_ind.toString()}</div>
-                </FormControl>
+                {displayField &&
+                  <>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Header
+                      </div>
+                      <div>{(props.assetFieldValues.file_header !== null && props.assetFieldValues.file_header !== undefined) && props.assetFieldValues.file_header.toString()}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Multi part file
+                      </div>
+                      <div>{(props.assetFieldValues.multipartition !== null && props.assetFieldValues.multipartition !== undefined) && props.assetFieldValues.multipartition.toString()}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        File type
+                      </div>
+                      <div>{props.assetFieldValues.file_type}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Trigger file pattern
+                      </div>
+                      <div>{props.assetFieldValues.trigger_file_pattern}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Delimiter
+                      </div>
+                      <div>{props.assetFieldValues.file_delim}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Enable file encryption
+                      </div>
+                      <div>{(props.assetFieldValues.file_encryption_ind !== null && props.assetFieldValues.file_encryption_ind !== undefined) && props.assetFieldValues.file_encryption_ind.toString()}</div>
+                    </FormControl>
+                  </>}
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Asset Owner
@@ -207,27 +230,30 @@ const DataAssetDetails = (props) => {
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Enable Redshift stage load
                   </div>
-                  <div>{props.assetFieldValues.rs_load_ind}</div>
+                  <div>{props.assetFieldValues.rs_load_ind.toString()}</div>
                 </FormControl>
-
               </div>
             </div>
           </TabPanel>
           <TabPanel>
             <div style={{ border: '1px solid #CBCBCB' }}>
               <div style={{ marginLeft: '3%', paddingTop: 10 }}>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Source Table Name
-                  </div>
-                  <div>{props.ingestionFieldValues.src_table_name}</div>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Source SQL Query
-                  </div>
-                  <div>{props.ingestionFieldValues.src_sql_query}</div>
-                </FormControl>
+                {displayField &&
+                  <>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Source Table Name
+                      </div>
+                      <div>{props.ingestionFieldValues.src_table_name}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Source SQL Query
+                      </div>
+                      <div>{props.ingestionFieldValues.src_sql_query}</div>
+                    </FormControl>
+                  </>
+                }
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Ingestion Source Path
@@ -263,7 +289,6 @@ const DataAssetDetails = (props) => {
               showLanguage={true}
               changeCode={code => {
                 props.dqRulesFieldValue(code?.split('\n').filter(c => c?.trim().length > 0) || [])
-                //console.log(code)
               }}
             />
           </TabPanel>

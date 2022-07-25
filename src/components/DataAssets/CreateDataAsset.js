@@ -78,17 +78,17 @@ const useStyles = makeStyles((theme) => ({
 
 const ThemeSwitch = withStyles({
     switchBase: {
-      color: 'black',
-      '&$checked': {
-        color: '#F7901D',
-      },
-      '&$checked + $track': {
-        backgroundColor: '#F7901D',
-      },
+        color: 'black',
+        '&$checked': {
+            color: '#F7901D',
+        },
+        '&$checked + $track': {
+            backgroundColor: '#F7901D',
+        },
     },
     checked: {},
     track: {},
-  })(Switch);
+})(Switch);
 
 const CreateDataAsset = (props) => {
     const classes = useStyles();
@@ -101,11 +101,10 @@ const CreateDataAsset = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
-    
+
     useEffect(() => {
         getSourceSystemData();
         getTargetSystemData();
-        if (props.mode != 'create') { }
     }, [])
 
     useEffect(() => {
@@ -341,60 +340,6 @@ const CreateDataAsset = (props) => {
                                     })}
                                 </Select>
                             </FormControl>
-                            {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Header*</div>
-                                    <Select
-                                        error={error.fileHeaderError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="file_header"
-                                        value={props.assetFieldValues.file_header}
-                                        onChange={(event) => handleValueChange(props.assetFieldValue, 'file_header', 'fileHeaderError', event.target.value)}
-                                    >
-                                        {BOOLEAN_VALUES.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
-                            {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Multi-part file*</div>
-                                    <Select
-                                        error={error.targetError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="multipartition"
-                                        value={props.assetFieldValues.multipartition}
-                                        onChange={(event) => handleValueChange(props.assetFieldValue, 'multipartition', 'multiPartitionError', event.target.value)}
-                                    >
-                                        {BOOLEAN_VALUES.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
-                            {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>File type*</div>
-                                    <Select
-                                        error={error.fileTypeError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="file_type"
-                                        value={props.assetFieldValues.file_type}
-                                        onChange={(event) => handleValueChange(props.assetFieldValue, 'file_type', 'fileTypeError', event.target.value)}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Select file type</em>
-                                        </MenuItem>
-                                        {FILE_TYPE.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
                             <FormControl className={classes.formControl}>
                                 <div >Name*</div>
                                 <TextField
@@ -409,51 +354,101 @@ const CreateDataAsset = (props) => {
                                 <FormHelperText>{error.assetNameError ? (props.assetFieldValues.asset_nm.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : '') : ''}</FormHelperText>
                             </FormControl>
                             {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div > Trigger file pattern</div>
-                                    <TextField
-                                        error={error.triggerFilePtrnError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        value={props.assetFieldValues.trigger_file_pattern}
-                                        id="trigger_file_pattern"
-                                        onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
-                                    />
-                                    <FormHelperText>{error.triggerFilePtrnError ? (props.assetFieldValues.trigger_file_pattern.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : '') : ''}</FormHelperText>
-                                </FormControl>}
-                            {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div > Delimiter*</div>
-                                    <TextField
-                                        error={error.fileDelimiterError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        value={props.assetFieldValues.file_delim}
-                                        id="file_delim"
-                                        onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'file_delim', 'fileDelimiterError', event.target.value, 1)}
-                                    />
-                                    <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
-                                </FormControl>}
-                            {displayField &&
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
-                                    <Select
-                                        error={error.fileEncryptIndError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="file_encryption_ind"
-                                        value={props.assetFieldValues.file_encryption_ind}
-                                        onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
-                                    >
-
-                                        {BOOLEAN_VALUES.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
+                                <>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Header*</div>
+                                        <Select
+                                            error={error.fileHeaderError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="file_header"
+                                            value={props.assetFieldValues.file_header}
+                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_header', 'fileHeaderError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Multi-part file*</div>
+                                        <Select
+                                            error={error.targetError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="multipartition"
+                                            value={props.assetFieldValues.multipartition}
+                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'multipartition', 'multiPartitionError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>File type*</div>
+                                        <Select
+                                            error={error.fileTypeError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="file_type"
+                                            value={props.assetFieldValues.file_type}
+                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_type', 'fileTypeError', event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select file type</em>
+                                            </MenuItem>
+                                            {FILE_TYPE.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div > Trigger file pattern</div>
+                                        <TextField
+                                            error={error.triggerFilePtrnError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            value={props.assetFieldValues.trigger_file_pattern}
+                                            id="trigger_file_pattern"
+                                            onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
+                                        />
+                                        <FormHelperText>{error.triggerFilePtrnError ? (props.assetFieldValues.trigger_file_pattern.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : '') : ''}</FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div > Delimiter*</div>
+                                        <TextField
+                                            error={error.fileDelimiterError}
+                                            disabled={disableButton}
+                                            margin='dense'
+                                            variant='outlined'
+                                            value={props.assetFieldValues.file_delim}
+                                            id="file_delim"
+                                            onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'file_delim', 'fileDelimiterError', event.target.value, 1)}
+                                        />
+                                        <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
+                                    </FormControl>
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
+                                        <Select
+                                            error={error.fileEncryptIndError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="file_encryption_ind"
+                                            value={props.assetFieldValues.file_encryption_ind}
+                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                </>}
                             <FormControl className={classes.formControl}>
                                 <div > Asset Owner* </div>
                                 <TextField
