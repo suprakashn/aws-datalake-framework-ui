@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -56,6 +57,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const ThemeSwitch = withStyles({
+  switchBase: {
+    color: 'black',
+    '&$checked': {
+      color: '#F7901D',
+    },
+    '&$checked + $track': {
+      backgroundColor: '#F7901D',
+    },
+  },
+  checked: {},
+  track: {},
+})(Switch);
+
 const ViewLakeDestination = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -66,7 +81,7 @@ const ViewLakeDestination = (props) => {
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllLakeDestinationValues(props.selectedRow)
-    navigate("/create-lake-destination")
+    navigate("./edit")
   }
 
   const handleDelete = async () => {
@@ -158,9 +173,9 @@ const ViewLakeDestination = (props) => {
                   </FormControl>
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      Enable Redshift Load
+                      Enable Redshift Stage Load
                     </div>
-                    <div><Switch disabled checked={props.fieldValues.rs_load_ind} inputProps={{ 'aria-label': 'primary checkbox' }} /></div>
+                    <div><ThemeSwitch checked={props.fieldValues.rs_load_ind} inputProps={{ 'aria-label': 'primary checkbox' }} /></div>
                   </FormControl>
                   {props.fieldValues.rs_load_ind &&
                     <>

@@ -14,7 +14,7 @@ import clone from 'images/clone.png';
 import remove from 'images/Remove.png';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import { Box, Button, Tooltip,LinearProgress } from '@material-ui/core';
+import { Box, Button, Tooltip, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
 import { openSnackbar } from 'actions/notificationAction';
@@ -38,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      color: '#ff8700',
+    },
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -46,31 +54,32 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '7%',
     marginTop: '12px',
     '&:hover': {
-        fontWeight: '600',
-        backgroundColor: 'black',
+      fontWeight: '600',
+      backgroundColor: 'black',
     },
     '&:disabled': {
       background: '#A3A3A390',
     },
-},
+  },
+
 }));
 
 const SourceSystems = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (props.dataFlag) {
       setLoading(true);
       defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
         .then(response => {
-          if(response.data.responseStatus){
+          if (response.data.responseStatus) {
             props.updateSourceSysTableData(response.data.responseBody);
-           // props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
-          }else{
-          //  props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
+            // props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
+          } else {
+            //  props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
           }
           setLoading(false);
         })
@@ -78,7 +87,7 @@ const SourceSystems = (props) => {
           setLoading(false);
           console.log("error", error);
           props.updateSourceSysTableData([]);
-        //  props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
+          //  props.openSnackbar({ variant: 'error', message: `Failed to load the source system data!` });
         })
     }
   }, [props.dataFlag])
@@ -86,11 +95,11 @@ const SourceSystems = (props) => {
   const columns = [
     {
       title: "Source System ID", field: "src_sys_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.src_sys_id}</span>
+        return <span className={classes.idHeader} onClick={() => handleAction('view', rowData)}>{rowData.src_sys_id}</span>
       }
     },
     { title: "Source System Name", field: "src_sys_nm", },
-    { title: "Bucket Name", field: "bucket_name", },    
+    { title: "Bucket Name", field: "bucket_name", },
   ];
 
   const handleCreate = () => {
@@ -103,14 +112,14 @@ const SourceSystems = (props) => {
     props.updateDataFlag(false);
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
+    navigate("./edit")
   }
 
   const handleClone = (selectedRow) => {
     props.updateDataFlag(false);
     props.updateMode('clone');
     props.updateAllSourceSystemValues({ ...selectedRow })
-    navigate("/create-source-system")
+    navigate("./create")
   }
 
   const handleAction = (mode, selectedRow) => {
@@ -124,12 +133,12 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
-       {/* <LinearProgress hidden={!loading} color="secondary" />  */}
+        {/* <LinearProgress hidden={!loading} color="secondary" />  */}
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-source-system" >
+                <Link to="./create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
@@ -177,13 +186,13 @@ const SourceSystems = (props) => {
           isLoading={loading}
           options={{
             //selection: true,
-           // showTextRowsSelected: false,
+            // showTextRowsSelected: false,
             paging: false,
             searchFieldAlignment: 'left',
             showTitle: false,
-            draggable: false, 
+            draggable: false,
             actionsColumnIndex: -1,
-           // toolbarButtonAlignment: "left",
+            // toolbarButtonAlignment: "left",
             searchFieldStyle: {
               backgroundColor: '#FFF',
               color: 'black',
@@ -201,10 +210,10 @@ const SourceSystems = (props) => {
               top: 0,
               backgroundColor: '#F5F5F5',
               fontWeight: 'bold',
-             // padding: '0',
+              // padding: '0',
               textAlign: 'left'
             },
-           // cellStyle: { padding: '5px 0' },
+            // cellStyle: { padding: '5px 0' },
             actionsCellStyle: {
               minWidth: '200px',
               textAlign: 'left'

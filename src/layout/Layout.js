@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -8,6 +8,7 @@ import HeaderBackground from 'images/abstract-black.jpg'
 import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
 import logo from 'images/tigerLogo.png';
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
     logo: {
@@ -31,15 +32,28 @@ const useStyles = makeStyles((theme) => ({
 
 const Layout = (props) => {
     const classes = useStyles();
-    const [number, setNumber] = useState(0);
+    const [activePageIndex, setActivePageIndex] = useState(0);
+    
+    const location = useLocation();
+    const { pathname } = location;
     const handleOnclick = (index) => {
-        setNumber(index);
+        setActivePageIndex(index);
     }
     const listOfNavItems = [
         { name: 'Home', icon: <i class="fas fa-layer-group fa-lg"></i>, url: '/' },
         { name: 'Source Systems', icon: <i class="fas fa-layer-group fa-lg"></i>, url: '/source-systems' },
         { name: 'Data Assets', icon: <i class="fas fa-database fa-lg"></i>, url: '/data-assets' },
-        { name: 'Lake Destinations', icon: <i class="fas fa-warehouse fa-lg"></i>, url: '/lake-destinations' }]
+        { name: 'Lake Destinations', icon: <i class="fas fa-warehouse fa-lg"></i>, url: '/lake-destinations' }
+    ]
+    
+    useEffect(() => {
+        listOfNavItems.forEach((nav, i) => {
+            if(pathname.includes(nav.url)){
+                setActivePageIndex(i);
+            }
+        })
+    });
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -55,7 +69,7 @@ const Layout = (props) => {
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>

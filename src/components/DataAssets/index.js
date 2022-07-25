@@ -17,7 +17,6 @@ import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
-import ViewDataAsset from 'components/DataAssets/ViewDataAsset';
 import LaunchIcon from '@material-ui/icons/Launch';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      color: '#ff8700',
+    },
+  },
   button: {
     float: 'right',
     margin: '15px',
@@ -58,7 +65,6 @@ const useStyles = makeStyles((theme) => ({
 const DataAssets = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [selectedRow, setSelectedRow] = ([]);
   const [backdrop, setBackdrop] = useState(false);
   const [data, setData] = useState([]);
 
@@ -80,7 +86,7 @@ const DataAssets = (props) => {
   const columns = [
     {
       title: "Data Asset ID", field: "asset_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer', paddingLeft: '5%' }} onClick={() => handleAction('view', rowData)}>{rowData.asset_id}</span>
+        return <span className={classes.idHeader} onClick={() => { handleActionClick(rowData, 'view') }}>{rowData.asset_id}</span>
       }
     },
     { title: "Source System ID", field: "src_sys_id", },
@@ -110,21 +116,9 @@ const DataAssets = (props) => {
     },
   ];
 
-  const fetchDataAssetDetails = (rowData, mode) => {
-    defaultInstance.post('/dataasset/read', { "asset_id": rowData.asset_id, "src_sys_id": rowData.src_sys_id })
-      .then(response => {
-        props.updateAllDataAssetValues({ ...response.data.responseBody });
-        mode === 'view' || mode === 'delete' ? navigate("/data-assets/data-asset-details") : navigate("/data-assets/create-data-asset");
-      })
-      .catch(error => {
-        console.log("error", error)
-        props.openSnackbar({ variant: 'error', message: `Failed to load ${rowData.asset_id} data asset details!` });
-      })
-  }
-
   const handleUrlClick = (rowData) => {
     props.updateSelectedRow(rowData);
-    navigate("/data-assets/data-catalog-details")
+    window.open(`/data-assets/catalog-details?src_sys_id=${rowData.src_sys_id}&asset_id=${rowData.asset_id}`, '_blank', 'noopener,noreferrer');
   }
 
   const handleCreate = () => {
@@ -135,24 +129,32 @@ const DataAssets = (props) => {
   const handleActionClick = (selectedRow, mode) => {
     props.resetDataAssetValues();
     props.updateMode(mode);
-    fetchDataAssetDetails(selectedRow, mode);
-  }
-
-  const handleAction = (mode, selectedRow) => {
-    props.updateMode(mode);
-    props.openDataAssetDialogue();
-    props.updateAllDataAssetValues({ ...selectedRow })
+    props.updateSelectedRow({...selectedRow});
+    switch (mode) {
+      case 'view':
+        navigate("/data-assets/details");
+        break;
+      case 'delete':
+        navigate("/data-assets/delete");
+        break;
+      case 'clone':
+        navigate("/data-assets/create");
+        break;
+      case 'edit':
+        navigate("/data-assets/edit");
+        break;
+      default:
+    }
   }
 
   return (
     <>
-      <ViewDataAsset selectedRow={selectedRow} />
       <div className={classes.table}>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/data-assets/create-data-asset" >
+                <Link to="/data-assets/create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />

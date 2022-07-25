@@ -38,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      color: '#ff8700',
+    },
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -87,7 +95,7 @@ const LakeDestination = (props) => {
   const columns = [
     {
       title: "Target ID", field: "target_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
+        return <span className={classes.idHeader} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
       }
     },
     { title: "Domain", field: "domain", },
@@ -118,7 +126,7 @@ const LakeDestination = (props) => {
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-lake-destination" >
+                <Link to="./create" >
                   <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
@@ -144,7 +152,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('edit', rowData);
-                navigate('/create-lake-destination')
+                navigate('./edit')
               }
             },
             {
@@ -153,7 +161,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('clone', rowData)
-                navigate('/create-lake-destination')
+                navigate('./create')
               }
             },
             {

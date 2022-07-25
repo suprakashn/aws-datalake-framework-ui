@@ -159,7 +159,7 @@ const ColumnAttributes = (props) => {
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
-            //"col_id": '',
+            "col_id": props.columnAttributesData.length,
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
@@ -168,7 +168,7 @@ const ColumnAttributes = (props) => {
             "col_length": '',
             "req_tokenization": false,
             "pk_ind": false,
-            // "null_ind": false,
+            "null_ind": false,
             "data_type": "",
             // "modified_ts": ""
         }]);
@@ -203,7 +203,7 @@ const ColumnAttributes = (props) => {
                             id={`panel${index}a-header`}
                             style={{ backgroundColor: '#0000000f' }}
                         >
-                            <Typography >{row.col_nm}</Typography>
+                            <Typography >{`${row.col_nm} : ${row.col_desc}`}</Typography>
                             {!disableButton && <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                         </AccordionSummary>
                         <AccordionDetails>

@@ -53,14 +53,14 @@ const ViewCatalog = (props) => {
       <DialogContent>
         <Tabs>
           <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
-            <Tab className={classes.tabHeader} style={{
+            <Tab style={{
               fontWeight: tabIndex === 0 ? 'bold' : '',
               border: 'none',
               borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
             }} onClick={() => setTabIndex(0)}><span>Execution Information</span></Tab>
           </TabList>
-          <TabPanel>
-            <div style={{ border: '1px solid #CBCBCB' }}>
+          <TabPanel style={{paddingBottom:'3%' }}>
+            <div style={{ border: '1px solid #CBCBCB'}}>
               <div style={{ marginLeft: '3%', paddingTop: 10 }}>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
