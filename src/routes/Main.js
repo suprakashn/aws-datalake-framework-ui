@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes} from 'react-router-dom';
 import Dashboard from 'components/Dashboard';
 import SourceSystems from 'components/SourceSystems';
 import CreateSourceSystem from 'components/SourceSystems/CreateSourceSystem';
@@ -25,6 +25,7 @@ const Page = props =>(
         <Route path="/lake-destinations" element={<LakeDestination/>}/>
         <Route path="/lake-destinations/create" element={<CreateLakeDestination/>}/>
         <Route path="/lake-destinations/edit" element={<CreateLakeDestination/>}/>
+        <Route path="*" element={<Navigate to="/" />}/>
     </Routes>
 )
 
