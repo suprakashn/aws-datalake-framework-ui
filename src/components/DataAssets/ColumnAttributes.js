@@ -45,13 +45,21 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "12px",
         marginLeft: 0,
     },
+    editableForm: {
+        '& div.MuiInputBase-formControl': {
+            backgroundColor: 'white'
+        },
+        '& .MuiSelect-select:focus': {
+            backgroundColor: 'white'
+        }
+    },
     formControl: {
         margin: theme.spacing(1),
         minWidth: 250,
         margin: '0px 3% 1% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
-        maxWidth: 250
+        maxWidth: 250,
     },
     button: {
         float: 'right',
@@ -207,7 +215,7 @@ const ColumnAttributes = (props) => {
                             {!disableButton && <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                         </AccordionSummary>
                         <AccordionDetails>
-                            <div style={{ padding: "1%" }}>
+                            <div style={{ padding: "1%" }} className={disableButton || classes.editableForm}>
                                 <FormControl className={classes.formControl}>
                                     <div >Name*</div>
                                     <TextField
