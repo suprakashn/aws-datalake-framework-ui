@@ -65,9 +65,9 @@ const DataCatalogDetails = (props) => {
       }
     },
     { title: "Asset ID", field: "asset_id" },
-    { title: "DQ Indicator", field: "dq_validation", },
-    { title: "Publish Indicator", field: "data_publish", },
-    { title: "Masking", field: "data_masking", },
+    { title: "Data Quality", field: "dq_validation", },
+    { title: "Data Masking", field: "data_masking", },
+    { title: "Data Publish", field: "data_publish", },
     { title: "Start Time", field: "proc_start_ts", },
   ];
 
