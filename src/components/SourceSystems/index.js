@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  openSourceSystemSidebar, updateMode, closeSourceSystemSidebar, updateAllSourceSystemValues,
+  openSourceSystemDialog, updateMode, closeSourceSystemDialog, updateAllSourceSystemValues,
   resetSourceSystemValues, updateSourceSysTableData, updateDataFlag
 } from 'actions/sourceSystemsAction';
 import defaultInstance from 'routes/defaultInstance';
@@ -17,7 +17,7 @@ import MaterialTable from "material-table";
 import { Box, Button, Tooltip, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar, openSideBar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -125,7 +125,7 @@ const SourceSystems = (props) => {
   const handleAction = (mode, selectedRow) => {
     props.updateDataFlag(false);
     props.updateMode(mode);
-    props.openSourceSystemSidebar();
+    props.openSourceSystemDialog();
     props.updateAllSourceSystemValues({ ...selectedRow })
   }
 
@@ -133,6 +133,10 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
+        <div className='page-header'>
+          <h2>Source System</h2>
+          <span className="info" onClick={() => props.openSideBar({heading: 'Source System', content: 'Source System Content'})}>Info</span>
+        </div>
         {/* <LinearProgress hidden={!loading} color="secondary" />  */}
         <MaterialTable
           components={{
@@ -226,7 +230,7 @@ const SourceSystems = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.sourceSystemState.sidebar.sidebarFlag,
+  open: state.sourceSystemState.dialog.dialogFlag,
   fieldValues: state.sourceSystemState.sourceSystemValues,
   mode: state.sourceSystemState.updateMode.mode,
   data: state.sourceSystemState.updateSourceSysTableData.data,
@@ -234,14 +238,15 @@ const mapStateToProps = state => ({
 
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-  openSourceSystemSidebar,
-  closeSourceSystemSidebar,
+  openSourceSystemDialog,
+  closeSourceSystemDialog,
   updateMode,
   updateDataFlag,
   updateAllSourceSystemValues,
   resetSourceSystemValues,
   updateSourceSysTableData,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SourceSystems);

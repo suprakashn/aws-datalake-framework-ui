@@ -15,7 +15,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { CircularProgress, Switch, TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
@@ -219,7 +219,10 @@ const CreateLakeDestination = (props) => {
                 <span>Back</span>
             </Link>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>  {props.mode === 'edit' ? 'Edit' : 'New'} Destination </span>
+                <div className='page-header' style={{ paddingBottom: '10px' }}>
+                    <h2>{props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}</h2>
+                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Lake Destination', content: 'Create Lake Destination Content' })}>Info</span>
+                </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -340,7 +343,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     updateAllLakeDestinationValues,
     resetLakeDestinationValues,
     updateFetchDataFlag,
-    openSnackbar
+    openSnackbar,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateLakeDestination);

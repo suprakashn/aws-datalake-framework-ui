@@ -10,10 +10,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
-import { openSnackbar, } from 'actions/notificationAction'
+import { openSnackbar, openSideBar} from 'actions/notificationAction'
 import { MECHANISM, INGESTION_PATTERN, DB_TYPE } from 'components/Constants/SourceSystemConstants'
 import {
-    sourceSystemFieldValue, closeSourceSystemSidebar, resetSourceSystemValues,
+    sourceSystemFieldValue, closeSourceSystemDialog, resetSourceSystemValues,
     updateDataFlag, updateMode, updateAllSourceSystemValues
 } from 'actions/sourceSystemsAction'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
@@ -26,6 +26,7 @@ import IconButton from "@material-ui/core/IconButton";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
 import { InputAdornment } from '@material-ui/core';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -167,7 +168,7 @@ const CreateSourceSystem = (props) => {
     const handleCancel = () => {
         props.updateMode('');
         props.resetSourceSystemValues();
-        props.closeSourceSystemSidebar();
+        props.closeSourceSystemDialog();
         navigate("/source-systems");
     }
 
@@ -205,7 +206,7 @@ const CreateSourceSystem = (props) => {
             }
             props.updateMode('');
             props.resetSourceSystemValues();
-            props.closeSourceSystemSidebar();
+            props.closeSourceSystemDialog();
             navigate("/source-systems");
         }
         catch (error) {
@@ -255,7 +256,7 @@ const CreateSourceSystem = (props) => {
             }
             props.updateMode('');
             props.resetSourceSystemValues();
-            props.closeSourceSystemSidebar();
+            props.closeSourceSystemDialog();
             navigate("/source-systems");
         } catch (error) {
             console.log("error", error)
@@ -300,19 +301,24 @@ const CreateSourceSystem = (props) => {
 
     const handleBack = () => {
         //  props.updateDataFlag(false);
-        props.closeSourceSystemSidebar();
+        props.closeSourceSystemDialog();
     }
 
     return (
-        <form className={classes.root} onSubmit={handleSave}>
+        <form className={classes.root} onSubmit={handleSave}>        
             <CssBaseline />
             <div style={{ display: 'flex' }} onClick={handleBack}>
                 <Link to="/source-systems" className={classes.link}>
                     <ArrowBackIosIcon fontSize='small' />
                     <span>Back</span>
-                </Link></div>
+                </Link>
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}> {props.mode === 'edit' ? 'Edit Source System' : 'New Source System'} </span>
+                <div className='page-header' style={{ paddingBottom: '10px' }}>
+                    <h2>{props.mode === 'edit' ? 'Edit Source System' : 'New Source System'}</h2>
+                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>Info</span>
+                </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -581,7 +587,7 @@ const CreateSourceSystem = (props) => {
 }
 
 const mapStateToProps = state => ({
-    open: state.sourceSystemState.sidebar.sidebarFlag,
+    open: state.sourceSystemState.dialog.dialogFlag,
     fieldValues: state.sourceSystemState.sourceSystemValues,
     mode: state.sourceSystemState.updateMode.mode,
     dataFlag: state.sourceSystemState.updateDataFlag.dataFlag
@@ -591,9 +597,10 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     updateMode,
     updateDataFlag,
     sourceSystemFieldValue,
-    closeSourceSystemSidebar,
+    closeSourceSystemDialog,
     resetSourceSystemValues,
-    updateAllSourceSystemValues
+    updateAllSourceSystemValues,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSourceSystem);

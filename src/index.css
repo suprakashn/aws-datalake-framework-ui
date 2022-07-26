@@ -18,7 +18,9 @@ body {
   margin: 0;
   padding: 0;
 }
-
+html, body{
+  height: 100%;
+}
 .background-theme {
   background-color : #f8f8ff;
   /* overflow: hidden; */
@@ -26,4 +28,23 @@ body {
 
 .font-link {
   font-family: 'Poppins', sans-serif;
+}
+.page-header{
+  display: flex;
+  flex-flow: row;
+  padding-bottom: 20px;
+  align-items: flex-end;
+}
+.page-header h2, .page-header h1{
+  font-size: 24px;
+  line-height: 30px;
+  margin: 0;
+}
+.page-header .info{
+  color: #00B1E8;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 25px;
+  margin-left: 10px;
 }

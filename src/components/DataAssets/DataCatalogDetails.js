@@ -10,6 +10,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { Breadcrumbs, Link } from '@material-ui/core';
 import ViewCatalog from 'components/DataAssets/ViewCatalog';
+import {openSideBar } from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -106,6 +107,10 @@ const DataCatalogDetails = (props) => {
             </Link>
           </Breadcrumbs>
         </div>
+        <div className='page-header'>
+          <h2>Data Catalog Details</h2>
+          <span className="info" onClick={() => props.openSideBar({ heading: 'Data Catalog Details', content: 'Data Catalog Details Content' })}>Info</span>
+        </div>
         <MaterialTable
           isLoading={backdrop}
           icons={tableIcons}
@@ -151,6 +156,7 @@ const mapStateToProps = state => ({
   selectedRow: state.dataAssetState.updateSelectedRow
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataCatalogDetails);
