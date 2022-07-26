@@ -186,8 +186,9 @@ const ColumnAttributes = (props) => {
     const handleDelete = (row) => {
         let info = props.columnAttributesData;
         let indexValue = findIndexofObject(row);
-        info.splice(indexValue, 1)
-        props.columnFieldValue([...info]);
+        info.splice(indexValue, 1);
+        let data = info.map((item, index) => { return { ...item, col_id: index + 1 } })
+        props.columnFieldValue([...data]);
     }
 
     return (
