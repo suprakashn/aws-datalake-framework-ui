@@ -91,7 +91,7 @@ const DataAssetDetails = (props) => {
   const getSourceSystemData = () => {
     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": null, "src_config": { "src_sys_id": props.assetFieldValues.src_sys_id } })
       .then(response => {
-        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'database') {
+        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'file') {
           setDisplayField(true);
         } else {
           setDisplayField(false);
@@ -236,13 +236,13 @@ const DataAssetDetails = (props) => {
                       </div>
                       <div>{props.assetFieldValues.file_delim}</div>
                     </FormControl>
-                    <FormControl className={classes.formControl}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                        Enable file encryption
-                      </div>
-                      <div>{(props.assetFieldValues.file_encryption_ind !== null && props.assetFieldValues.file_encryption_ind !== undefined) && props.assetFieldValues.file_encryption_ind.toString()}</div>
-                    </FormControl>
                   </>}
+                <FormControl className={classes.formControl}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                    Enable file encryption
+                  </div>
+                  <div>{(props.assetFieldValues.file_encryption_ind !== null && props.assetFieldValues.file_encryption_ind !== undefined) && props.assetFieldValues.file_encryption_ind.toString()}</div>
+                </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Asset Owner

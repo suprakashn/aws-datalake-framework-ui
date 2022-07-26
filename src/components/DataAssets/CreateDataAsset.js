@@ -119,7 +119,7 @@ const CreateDataAsset = (props) => {
     useEffect(() => {
         if (sourceSysData.length > 0) {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
-            if (obj && obj['ingstn_pattern'] === 'database') {
+            if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
             } else {
                 setDisplayField(false);
@@ -467,23 +467,23 @@ const CreateDataAsset = (props) => {
                                         />
                                         <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
                                     </FormControl>
-                                    <FormControl className={classes.formControl}>
-                                        <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
-                                        <Select
-                                            error={error.fileEncryptIndError}
-                                            disabled={disableButton}
-                                            margin="dense"
-                                            variant="outlined"
-                                            id="file_encryption_ind"
-                                            value={props.assetFieldValues.file_encryption_ind}
-                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
-                                        >
-                                            {BOOLEAN_VALUES.map(item => {
-                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                            })}
-                                        </Select>
-                                    </FormControl>
                                 </>}
+                            <FormControl className={classes.formControl}>
+                                <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
+                                <Select
+                                    error={error.fileEncryptIndError}
+                                    disabled={disableButton}
+                                    margin="dense"
+                                    variant="outlined"
+                                    id="file_encryption_ind"
+                                    value={props.assetFieldValues.file_encryption_ind}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
+                                >
+                                    {BOOLEAN_VALUES.map(item => {
+                                        return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Asset Owner* </div>
                                 <TextField
