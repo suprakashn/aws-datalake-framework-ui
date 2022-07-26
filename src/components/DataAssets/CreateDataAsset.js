@@ -137,8 +137,8 @@ const CreateDataAsset = (props) => {
                 }
             })
             .catch(error => {
-                console.log("error", error)
                 setSourceSysData([]);
+                console.log("error", error)   
             })
     }
 
@@ -152,8 +152,8 @@ const CreateDataAsset = (props) => {
                 }
             })
             .catch(error => {
-                console.log("error", error)
                 setTargetSysData([]);
+                console.log("error", error)      
             })
     }
 
@@ -165,10 +165,10 @@ const CreateDataAsset = (props) => {
                 setBackdrop(false);
             })
             .catch(error => {
-                console.log("error", error)
                 setBackdrop(false);
                 props.openSnackbar({ variant: 'error', message: `Failed to load ${props.selectedRow.asset_id} data asset details!` });
                 navigate('/data-assets');
+                console.log("error", error)
             })
     }
 
@@ -216,8 +216,13 @@ const CreateDataAsset = (props) => {
                 ...error,
                 [errorField]: value.toString().trim().length > 0 ? false : true
             })
+            if(field === 'trigger_mechanism' && value==="event_driven"){
+                type('frequency', "")
+                setCronValue("")
+                setErrorValue('');
+                setError({...error,crontabError: false})
+            }
         }
-
     }
 
     const handleReset = () => {
@@ -278,12 +283,11 @@ const CreateDataAsset = (props) => {
                 navigate("/data-assets");
             }
             catch (error) {
-                console.log(error);
                 props.openSnackbar({ variant: 'error', message: `Failed to create Data Asset ID!` });
                 setDisableButton(false);
+                console.log(error);
             }
         }
-        console.log("inside handle save", props.fieldValues)
     }
 
     return (
