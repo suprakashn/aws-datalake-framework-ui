@@ -10,7 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import { withStyles } from '@material-ui/core/styles';
-import { openSnackbar, } from 'actions/notificationAction'
+import { openSnackbar,openSideBar } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
     assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
@@ -297,9 +297,13 @@ const CreateDataAsset = (props) => {
                 <Link to="/data-assets" className={classes.link}>
                     <ArrowBackIosIcon fontSize='small' />
                     <span>Back</span>
-                </Link></div>
+                </Link>
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}> {props.mode === 'edit' ? 'Edit Data Asset' : 'New Data Asset'} </span>
+                <div className='page-header' style={{ paddingBottom: '10px' }}>
+                    <h2>{props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}</h2>
+                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Create Data Asset Content' })}>Info</span>
+                </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -707,6 +711,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     assetFieldValue,
     ingestionFieldValue,
     dqRulesFieldValue,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDataAsset);

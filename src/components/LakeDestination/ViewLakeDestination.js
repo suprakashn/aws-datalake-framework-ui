@@ -223,7 +223,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllLakeDestinationValues,
   updateFetchDataFlag,
-  openSnackbar
+  openSnackbar,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewLakeDestination);

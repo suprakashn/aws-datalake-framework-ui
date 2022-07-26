@@ -17,7 +17,7 @@ import { Box, Button, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
 import defaultInstance from 'routes/defaultInstance';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -121,6 +121,10 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
+        <div className='page-header'>
+          <h2>Lake Destination</h2>
+          <span className="info" onClick={() => props.openSideBar({ heading: 'Lake Destination', content: 'Lake Destination Content' })}>Info</span>
+        </div>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
@@ -237,7 +241,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateLakeDestinationTableData,
   updateFetchDataFlag,
   updateMode,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(LakeDestination);

@@ -7,7 +7,7 @@ import {
   openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
   resetDataAssetValues, updateDataAssetTableData, updateSelectedRow
 } from 'actions/dataAssetActions';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar,openSideBar } from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -95,7 +95,7 @@ const DataAssets = (props) => {
     { title: "Asset Owner", field: "asset_owner", },
     {
       title: "Actions", field: "", render: (rowData) => {
-        return <>
+        return <div style={{minWidth: '200px'}}>
           <Tooltip placement='top' title="View">
             <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
           </Tooltip>
@@ -111,7 +111,7 @@ const DataAssets = (props) => {
           <Tooltip placement='top' title="Catalogs">
             <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
           </Tooltip>
-        </>
+        </div>
       }
     },
   ];
@@ -150,6 +150,10 @@ const DataAssets = (props) => {
   return (
     <>
       <div className={classes.table}>
+        <div className='page-header'>
+          <h2>Data Assets</h2>
+          <span className="info" onClick={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Asset Content' })}>Info</span>
+        </div>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
@@ -216,7 +220,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   resetDataAssetValues,
   updateDataAssetTableData,
   updateSelectedRow,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataAssets);

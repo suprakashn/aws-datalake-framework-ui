@@ -16,15 +16,15 @@ const initialSourceSystemValues = {
     db_username: '',
     db_pass: '',
 }
-const sidebar = (state = { sidebarFlag: false }, action) => {
+const dialog = (state = { dialogFlag: false }, action) => {
     switch (action.type) {
-        case Constants.OPEN_SIDEBAR:
+        case Constants.OPEN_DIALOG:
             return {
-                ...state, sidebarFlag: true
+                ...state, dialogFlag: true
             }
-        case Constants.CLOSE_SIDEBAR:
+        case Constants.CLOSE_DIALOG:
             return {
-                ...state, sidebarFlag: false
+                ...state, dialogFlag: false
             }
         default:
             return { ...state }
@@ -74,7 +74,7 @@ const sourceSystemValues = (state = initialSourceSystemValues, action) => {
 }
 
 const sourceSystemsReducer = combineReducers({
-    sidebar,
+    dialog,
     updateMode,
     sourceSystemValues,
     updateDataFlag,
