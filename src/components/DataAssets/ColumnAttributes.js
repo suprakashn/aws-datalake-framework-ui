@@ -170,13 +170,13 @@ const ColumnAttributes = (props) => {
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
-            "col_id": props.columnAttributesData.length,
+            "col_id": props.columnAttributesData.length+1,
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
             "col_desc": "",
             "data_classification": "",
-            "col_length": '',
+            "col_length": 0,
             "req_tokenization": false,
             "pk_ind": false,
             "null_ind": false,
