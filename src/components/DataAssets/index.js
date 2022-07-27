@@ -7,7 +7,7 @@ import {
   openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
   resetDataAssetValues, updateDataAssetTableData, updateSelectedRow
 } from 'actions/dataAssetActions';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar,openSideBar } from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -18,13 +18,14 @@ import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import LaunchIcon from '@material-ui/icons/Launch';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -95,7 +96,7 @@ const DataAssets = (props) => {
     { title: "Asset Owner", field: "asset_owner", },
     {
       title: "Actions", field: "", render: (rowData) => {
-        return <>
+        return <div style={{minWidth: '200px'}}>
           <Tooltip placement='top' title="View">
             <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
           </Tooltip>
@@ -111,7 +112,7 @@ const DataAssets = (props) => {
           <Tooltip placement='top' title="Catalogs">
             <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
           </Tooltip>
-        </>
+        </div>
       }
     },
   ];
@@ -150,6 +151,9 @@ const DataAssets = (props) => {
   return (
     <>
       <div className={classes.table}>
+        <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
+          Data Assets
+        </PageTitle>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
@@ -216,7 +220,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   resetDataAssetValues,
   updateDataAssetTableData,
   updateSelectedRow,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataAssets);

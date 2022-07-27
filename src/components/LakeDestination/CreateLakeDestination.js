@@ -15,8 +15,9 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { CircularProgress, Switch, TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -214,12 +215,15 @@ const CreateLakeDestination = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>
             <CssBaseline />
-            <Link to="/lake-destinations" className={classes.link}>
-                <ArrowBackIosIcon fontSize='small' />
-                <span>Back</span>
-            </Link>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored' })}>
+                {props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}
+            </PageTitle>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>  {props.mode === 'edit' ? 'Edit' : 'New'} Destination </span>
+                <Link to="/lake-destinations" className={classes.link}>
+                    <ArrowBackIosIcon fontSize='small' />
+                    <span>Back</span>
+                </Link>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -340,7 +344,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     updateAllLakeDestinationValues,
     resetLakeDestinationValues,
     updateFetchDataFlag,
-    openSnackbar
+    openSnackbar,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateLakeDestination);

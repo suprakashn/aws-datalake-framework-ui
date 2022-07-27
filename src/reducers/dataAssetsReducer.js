@@ -5,16 +5,16 @@ const initialDataAttributes = {
     "asset_id": "",
     "src_sys_id": "",
     "target_id": "",
-    "file_header": true,
-    "multipartition": false,
+    "file_header": "", //default true
+    "multipartition": "", //default false
     "file_type": "",
     "asset_nm": "",
     "trigger_file_pattern": "",
-    "file_delim": ",",
-    "file_encryption_ind": false,
+    "file_delim": "", //default ,
+    "file_encryption_ind": false, //default false
     "asset_owner": "",
     "support_cntct": "",
-    "rs_load_ind": false,
+    "rs_load_ind": "", //default false
 }
 const initialIngestionAttributes = {
     "src_table_name": "",

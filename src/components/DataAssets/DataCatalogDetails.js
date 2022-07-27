@@ -10,6 +10,8 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { Breadcrumbs, Link } from '@material-ui/core';
 import ViewCatalog from 'components/DataAssets/ViewCatalog';
+import {openSideBar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -95,17 +97,26 @@ const DataCatalogDetails = (props) => {
       <CssBaseline />
      {open && <ViewCatalog open={open} setOpen={setOpen} fieldValues={selectedRow}/>} 
       <div className={classes.table}>
+        {/* <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Catalog Details', content: 'Data Catalog Details Content' })}>
+          Data Catalog Details
+        </PageTitle> */}
+         <div>
+            <h2 >
+                <span style={{fontSize: '25px',lineHeight: '30px',margin: 0,color:'#646262eb' }}>Data Catalog Details</span>
+            </h2>
+        </div>
         <div style={{ display: 'flex', marginBottom: "15px" }}>
           <ArrowBackIosIcon fontSize='small' />
           <Breadcrumbs aria-label='Breadcrumb'>
-            <Link component={RouterLink} to='/data-assets' style={{ color: '#00B1E8' }}>
+            <Link component={RouterLink} to='/data-assets' style={{ color: '#00B1E8', fontSize:'16px' }}>
               Data Assets
             </Link>
-            <Link style={{ textDecoration: 'none', color: 'black' }}>
+            <Link style={{ textDecoration: 'none', color: 'black',fontSize:'16px' }}>
               Data Catalog Details
             </Link>
           </Breadcrumbs>
         </div>
+        
         <MaterialTable
           isLoading={backdrop}
           icons={tableIcons}
@@ -151,6 +162,7 @@ const mapStateToProps = state => ({
   selectedRow: state.dataAssetState.updateSelectedRow
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataCatalogDetails);

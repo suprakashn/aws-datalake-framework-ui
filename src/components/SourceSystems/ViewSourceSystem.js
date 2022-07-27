@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
+import { sourceSystemFieldValue, closeSourceSystemDialog, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
 import { openSnackbar } from 'actions/notificationAction';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
@@ -72,7 +72,7 @@ const ViewSourceSystem = (props) => {
     try {
       setDeletingFlag(true);
       const response = await defaultInstance.post('source_system/delete?tasktype=delete', { "src_config": { "src_sys_id": props.fieldValues.src_sys_id } })
-      props.closeSourceSystemSidebar();
+      props.closeSourceSystemDialog();
       setDeletingFlag(false);
       if (response.data.responseStatus) {
         props.updateDataFlag(true);
@@ -93,10 +93,11 @@ const ViewSourceSystem = (props) => {
   const handleClose = () => {
     setTabIndex(0);
     props.updateMode('');
-    props.closeSourceSystemSidebar();
+    props.closeSourceSystemDialog();
   }
 
   return (
+    
     <Dialog open={props.open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
         {props.fieldValues.src_sys_id ? <div>Source System ID : <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''}
@@ -241,7 +242,7 @@ const ViewSourceSystem = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.sourceSystemState.sidebar.sidebarFlag,
+  open: state.sourceSystemState.dialog.dialogFlag,
   fieldValues: state.sourceSystemState.sourceSystemValues,
   mode: state.sourceSystemState.updateMode.mode,
 
@@ -250,7 +251,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllSourceSystemValues,
   sourceSystemFieldValue,
-  closeSourceSystemSidebar,
+  closeSourceSystemDialog,
   updateDataFlag,
   openSnackbar,
 }, dispatch)

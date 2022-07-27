@@ -17,14 +17,15 @@ import { Box, Button, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
 import defaultInstance from 'routes/defaultInstance';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -121,6 +122,7 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
@@ -237,7 +239,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateLakeDestinationTableData,
   updateFetchDataFlag,
   updateMode,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(LakeDestination);

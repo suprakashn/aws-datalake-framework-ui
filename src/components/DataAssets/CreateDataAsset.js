@@ -10,7 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import { withStyles } from '@material-ui/core/styles';
-import { openSnackbar, } from 'actions/notificationAction'
+import { openSnackbar,openSideBar } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
     assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
@@ -30,6 +30,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import Editor from "react-prism-editor";
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -119,10 +120,12 @@ const CreateDataAsset = (props) => {
     useEffect(() => {
         if (sourceSysData.length > 0) {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
-            if (obj && obj['ingstn_pattern'] === 'database') {
+            if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": true, "multipartition": false, "file_delim": "," }})
             } else {
                 setDisplayField(false);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": "", "multipartition": "", "file_delim": "" }})
             }
         }
     }, [props.assetFieldValues.src_sys_id])
@@ -137,8 +140,8 @@ const CreateDataAsset = (props) => {
                 }
             })
             .catch(error => {
-                console.log("error", error)
                 setSourceSysData([]);
+                console.log("error", error)   
             })
     }
 
@@ -152,8 +155,8 @@ const CreateDataAsset = (props) => {
                 }
             })
             .catch(error => {
-                console.log("error", error)
                 setTargetSysData([]);
+                console.log("error", error)      
             })
     }
 
@@ -165,10 +168,10 @@ const CreateDataAsset = (props) => {
                 setBackdrop(false);
             })
             .catch(error => {
-                console.log("error", error)
                 setBackdrop(false);
                 props.openSnackbar({ variant: 'error', message: `Failed to load ${props.selectedRow.asset_id} data asset details!` });
                 navigate('/data-assets');
+                console.log("error", error)
             })
     }
 
@@ -216,8 +219,13 @@ const CreateDataAsset = (props) => {
                 ...error,
                 [errorField]: value.toString().trim().length > 0 ? false : true
             })
+            if(field === 'trigger_mechanism' && value==="event_driven"){
+                type('frequency', "")
+                setCronValue("")
+                setErrorValue('');
+                setError({...error,crontabError: false})
+            }
         }
-
     }
 
     const handleReset = () => {
@@ -278,24 +286,25 @@ const CreateDataAsset = (props) => {
                 navigate("/data-assets");
             }
             catch (error) {
-                console.log(error);
                 props.openSnackbar({ variant: 'error', message: `Failed to create Data Asset ID!` });
                 setDisableButton(false);
+                console.log(error);
             }
         }
-        console.log("inside handle save", props.fieldValues)
     }
 
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <div style={{ display: 'flex' }}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
+                {props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}
+            </PageTitle>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
                 <Link to="/data-assets" className={classes.link}>
                     <ArrowBackIosIcon fontSize='small' />
                     <span>Back</span>
-                </Link></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}> {props.mode === 'edit' ? 'Edit Data Asset' : 'New Data Asset'} </span>
+                </Link>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -459,23 +468,23 @@ const CreateDataAsset = (props) => {
                                         />
                                         <FormHelperText>{error.fileDelimiterError ? <span style={{ color: 'red' }}>Only a single character is allowed</span> : ''}</FormHelperText>
                                     </FormControl>
-                                    <FormControl className={classes.formControl}>
-                                        <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
-                                        <Select
-                                            error={error.fileEncryptIndError}
-                                            disabled={disableButton}
-                                            margin="dense"
-                                            variant="outlined"
-                                            id="file_encryption_ind"
-                                            value={props.assetFieldValues.file_encryption_ind}
-                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
-                                        >
-                                            {BOOLEAN_VALUES.map(item => {
-                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                            })}
-                                        </Select>
-                                    </FormControl>
                                 </>}
+                            <FormControl className={classes.formControl}>
+                                <div style={{ marginBottom: '3%' }}> Enable file encryption*</div>
+                                <Select
+                                    error={error.fileEncryptIndError}
+                                    disabled={disableButton}
+                                    margin="dense"
+                                    variant="outlined"
+                                    id="file_encryption_ind"
+                                    value={props.assetFieldValues.file_encryption_ind}
+                                    onChange={(event) => handleValueChange(props.assetFieldValue, 'file_encryption_ind', 'fileEncryptIndError', event.target.value)}
+                                >
+                                    {BOOLEAN_VALUES.map(item => {
+                                        return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
                             <FormControl className={classes.formControl}>
                                 <div > Asset Owner* </div>
                                 <TextField
@@ -703,6 +712,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     assetFieldValue,
     ingestionFieldValue,
     dqRulesFieldValue,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDataAsset);

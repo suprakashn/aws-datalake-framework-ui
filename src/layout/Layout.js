@@ -9,6 +9,9 @@ import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
 import logo from 'images/tigerLogo.png';
 import { useEffect } from "react";
+import SideBarComponent from "components/Notifications/SideBarComponent";
+import { connect } from 'react-redux';
+import { calculateNewValue } from "@testing-library/user-event/dist/utils";
 
 const useStyles = makeStyles((theme) => ({
     logo: {
@@ -74,9 +77,12 @@ const Layout = (props) => {
                     </div>
                 </Toolbar>
             </AppBar>
-            <main className={classes.content} style={{marginBottom:20}}>
+            <main className={classes.content} style={{marginBottom:20, display: "flex"}}>
                 {/* <Toolbar /> */}
-                <Main />
+                <div style={props.openSideBar ? {width: 'calc(100% - 200px)'} : {width: '100%'}}>
+                    <Main/>
+                </div>
+                <SideBarComponent />
                 <SnackbarComponent />
             </main>
             {/* <AppBar position="static">
@@ -90,4 +96,7 @@ const Layout = (props) => {
         </div>
     );
 }
-export default Layout;
+const mapStateToProps = state => ({
+    openSideBar: state.notificationState.openSideBar.open
+})
+export default connect(mapStateToProps)(Layout);

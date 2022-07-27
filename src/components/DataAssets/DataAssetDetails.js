@@ -14,10 +14,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { updateMode, dqRulesFieldValue,updateAllDataAssetValues } from 'actions/dataAssetActions'
-import { openSnackbar } from 'actions/notificationAction';
+import { updateMode, dqRulesFieldValue, updateAllDataAssetValues } from 'actions/dataAssetActions'
+import { openSnackbar, openSideBar } from 'actions/notificationAction';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import Editor from "react-prism-editor";
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +92,7 @@ const DataAssetDetails = (props) => {
   const getSourceSystemData = () => {
     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": null, "src_config": { "src_sys_id": props.assetFieldValues.src_sys_id } })
       .then(response => {
-        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'database') {
+        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'file') {
           setDisplayField(true);
         } else {
           setDisplayField(false);
@@ -150,15 +151,21 @@ const DataAssetDetails = (props) => {
 
   return (
     <div className={classes.root}>
+
       <CssBaseline />
       <Backdrop className={classes.backdrop} open={backdrop} >
-                    <CircularProgress color="inherit" />
+        <CircularProgress color="inherit" />
       </Backdrop>
+      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset Detail', content: 'Data Asset Detail Content' })}>
+        Data Asset Detail
+      </PageTitle>
+
       <div style={{ display: 'flex' }} onClick={handleClose}>
         <Link to="/data-assets" className={classes.link}>
           <ArrowBackIosIcon fontSize='small' />
           <span>Back</span>
-        </Link></div>
+        </Link>
+      </div>
       <Paper className={classes.paper} elevation={3}>
         <div style={{ padding: '2% 3%' }}><Typography className={classes.heading}> Data Asset ID : <span style={{ fontWeight: 'bold' }}> {props.assetFieldValues.asset_id}</span></Typography></div>
         <Tooltip title="close">
@@ -231,13 +238,13 @@ const DataAssetDetails = (props) => {
                       </div>
                       <div>{props.assetFieldValues.file_delim}</div>
                     </FormControl>
-                    <FormControl className={classes.formControl}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                        Enable file encryption
-                      </div>
-                      <div>{(props.assetFieldValues.file_encryption_ind !== null && props.assetFieldValues.file_encryption_ind !== undefined) && props.assetFieldValues.file_encryption_ind.toString()}</div>
-                    </FormControl>
                   </>}
+                <FormControl className={classes.formControl}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                    Enable file encryption
+                  </div>
+                  <div>{(props.assetFieldValues.file_encryption_ind !== null && props.assetFieldValues.file_encryption_ind !== undefined) && props.assetFieldValues.file_encryption_ind.toString()}</div>
+                </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Asset Owner
@@ -343,6 +350,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   openSnackbar,
+  openSideBar,
   dqRulesFieldValue,
   updateAllDataAssetValues
 }, dispatch)
