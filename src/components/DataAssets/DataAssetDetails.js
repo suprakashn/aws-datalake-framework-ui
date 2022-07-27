@@ -156,8 +156,8 @@ const DataAssetDetails = (props) => {
       <Backdrop className={classes.backdrop} open={backdrop} >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset Detail', content: 'Data Asset Detail Content' })}>
-        Data Asset Detail
+      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
+        Data Asset
       </PageTitle>
 
       <div style={{ display: 'flex' }} onClick={handleClose}>
@@ -283,14 +283,14 @@ const DataAssetDetails = (props) => {
                       </div>
                       <div>{props.ingestionFieldValues.src_sql_query}</div>
                     </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Ingestion Source Path
+                      </div>
+                      <div>{props.ingestionFieldValues.ingstn_src_path}</div>
+                    </FormControl>
                   </>
                 }
-                <FormControl className={classes.formControl}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    Ingestion Source Path
-                  </div>
-                  <div>{props.ingestionFieldValues.ingstn_src_path}</div>
-                </FormControl>
                 <FormControl className={classes.formControl}>
                   <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                     Trigger Mechanism

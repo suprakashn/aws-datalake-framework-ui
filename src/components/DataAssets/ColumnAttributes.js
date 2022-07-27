@@ -33,9 +33,12 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(7),
         marginTop: theme.spacing(2)
     },
+    head: {},
+
     heading: {
         fontSize: theme.typography.pxToRem(15),
         fontWeight: "bold",
+        
     },
     link: {
         cursor: 'pointer',
@@ -167,13 +170,13 @@ const ColumnAttributes = (props) => {
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
-            "col_id": props.columnAttributesData.length,
+            "col_id": props.columnAttributesData.length+1,
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
             "col_desc": "",
             "data_classification": "",
-            "col_length": '',
+            "col_length": 0,
             "req_tokenization": false,
             "pk_ind": false,
             "null_ind": false,
@@ -210,10 +213,16 @@ const ColumnAttributes = (props) => {
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls={`panel${index}a-content`}
                             id={`panel${index}a-header`}
-                            style={{ backgroundColor: '#0000000f' }}
+                            style={{
+                                backgroundColor: '#0000000f', paddingRight: "10px",
+                                wordBreak: "break-all",
+                            }}
                         >
-                            <Typography >{`${row.col_nm} : ${row.col_desc}`}</Typography>
-                            {!disableButton && <Tooltip title="Delete"><span style={{ position: 'absolute', top: '30%', right: '5%' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
+                            <div style={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Typography >{`${row.col_nm}`} <span style={{ padding: '0 30px', color: '#aaa' }}>|</span> {`${row.col_desc}`}</Typography>
+                                {!disableButton && <Tooltip title="Delete"><span style={{ marginLeft: '30px' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
+                            </div>
+
                         </AccordionSummary>
                         <AccordionDetails>
                             <div style={{ padding: "1%" }} className={disableButton || classes.editableForm}>
