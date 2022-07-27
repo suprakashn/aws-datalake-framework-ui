@@ -121,8 +121,10 @@ const CreateDataAsset = (props) => {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
             if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": true, "multipartition": false, "file_delim": "," }})
             } else {
                 setDisplayField(false);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": "", "multipartition": "", "file_delim": "" }})
             }
         }
     }, [props.assetFieldValues.src_sys_id])
