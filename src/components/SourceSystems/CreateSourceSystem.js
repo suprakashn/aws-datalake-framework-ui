@@ -308,14 +308,9 @@ const CreateSourceSystem = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>        
             <CssBaseline />
-            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Source System', content: 'Source Systems are individual entities which are registered with the framework aligned with systems which owns one or more data assets. It could be a database, a vendor, social media websites, streaming sources etc.' })}>
                 {props.mode === 'edit' ? 'Edit Source System' : 'New Source System'}
             </PageTitle>
-        
-            {/* <div className='page-header' style={{ paddingBottom: '10px' }}>
-                <h2></h2>
-                <span className="info" onClick={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>Info</span>
-            </div> */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
                 <div onClick={handleBack}>
                     <Link to="/source-systems" className={classes.link}>

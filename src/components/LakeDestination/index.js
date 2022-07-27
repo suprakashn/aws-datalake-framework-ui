@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -122,7 +122,7 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-        <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Lake Destination Content'})}>Lake Destination</PageTitle>
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{

@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -134,7 +134,7 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
-        <PageTitle showInfo={() => props.openSideBar({heading: 'Source System', content: 'Source System Content'})}>Source System</PageTitle>
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Source System', content: 'Source Systems are individual entities which are registered with the framework aligned with systems which owns one or more data assets. It could be a database, a vendor, social media websites, streaming sources etc.'})}>Source System</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" />  */}
         <MaterialTable
           components={{

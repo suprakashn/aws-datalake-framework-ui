@@ -122,8 +122,10 @@ const CreateDataAsset = (props) => {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
             if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": true, "multipartition": false, "file_delim": "," }})
             } else {
                 setDisplayField(false);
+                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": "", "multipartition": "", "file_delim": "" }})
             }
         }
     }, [props.assetFieldValues.src_sys_id])
@@ -294,7 +296,7 @@ const CreateDataAsset = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Create Data Asset Content' })}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
                 {props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}
             </PageTitle>
 

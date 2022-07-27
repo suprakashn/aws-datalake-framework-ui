@@ -156,8 +156,8 @@ const DataAssetDetails = (props) => {
       <Backdrop className={classes.backdrop} open={backdrop} >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset Detail', content: 'Data Asset Detail Content' })}>
-        Data Asset Detail
+      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset',content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
+        Data Asset
       </PageTitle>
 
       <div style={{ display: 'flex' }} onClick={handleClose}>

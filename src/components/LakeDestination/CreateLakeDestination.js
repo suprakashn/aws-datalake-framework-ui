@@ -215,7 +215,7 @@ const CreateLakeDestination = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>
             <CssBaseline />
-            <PageTitle showInfo={() => props.openSideBar({ heading: 'Lake Destination', content: 'Lake Destination Content' })}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored' })}>
                 {props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}
             </PageTitle>
 

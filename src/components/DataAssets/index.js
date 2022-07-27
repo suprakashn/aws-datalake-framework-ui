@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -151,7 +151,7 @@ const DataAssets = (props) => {
   return (
     <>
       <div className={classes.table}>
-        <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Asset Content' })}>
+        <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
           Data Assets
         </PageTitle>
         <MaterialTable

@@ -8,14 +8,15 @@ const PageTitle = (props) => {
     const useStyles = makeStyles((theme) => ({
         heading:
         {
-            fontSize: '16px',
+            fontSize: '25px',
             lineHeight: '30px',
-            margin: 0
+            margin: 0,
+            color:'#646262eb'
         },
         headerContainer: {
             display: 'flex',
             flexFlow: 'row',
-            marginBottom: '20px',
+            marginBottom: '8px',
             alignItems: 'flex-end',
             '& .info':
             {
@@ -23,7 +24,7 @@ const PageTitle = (props) => {
                 "fontSize": "12px",
                 "fontWeight": "bold",
                 "cursor": "pointer",
-                "lineHeight": "28px",
+                "lineHeight": "24px",
                 "marginLeft": "6px"
             }
         }
@@ -33,7 +34,7 @@ const PageTitle = (props) => {
     return (
         <div className={classes.headerContainer}>
             <h2 className={classes.heading}>
-                <span style={{ fontSize: '19px', color: '#f7901d' }}>{firstChar}</span>
+                <span style={{ fontSize: '25px',  }}>{firstChar}</span>
                 {remainingChar}
             </h2>
             <span className="info" onClick={props.showInfo}>Info</span>
