@@ -29,16 +29,10 @@ import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        //width: '100%',
-        margin: theme.spacing(7),
-        marginTop: theme.spacing(2)
-    },
-    head: {},
-
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: "bold",
-        
+        maxWidth: '100%',
+        '& .MuiAccordionSummary-content': {
+            width: '100%'
+        }
     },
     link: {
         cursor: 'pointer',
@@ -200,10 +194,10 @@ const ColumnAttributes = (props) => {
                 <div style={{ position: 'absolute', top: '1%', right: '5%' }}>
                     <Button variant="contained" className={classes.button} onClick={handleAddNew}>Add New +</Button>
                 </div>}
-            <div>
+            <div className={classes.root}>
                 {props.columnAttributesData.map((row, index) => {
                     return <Accordion
-                        style={{ margin: "1% 0", backgroundColor: '#e2e2e278', minWidth: '85vw' }}
+                        style={{ margin: "1% 0", width: '100%', backgroundColor: '#e2e2e278', minWidth: '85vw' }}
                         key={index}
                         onChange={handleChange(row, index)}
                         expanded={expanded === index}
@@ -214,12 +208,21 @@ const ColumnAttributes = (props) => {
                             aria-controls={`panel${index}a-content`}
                             id={`panel${index}a-header`}
                             style={{
-                                backgroundColor: '#0000000f', paddingRight: "10px",
-                                wordBreak: "break-all",
+                                backgroundColor: '#0000000f', 
+                                padding: "0 30px",                                
+                                width: '100%'
                             }}
                         >
                             <div style={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Typography >{`${row.col_nm}`} <span style={{ padding: '0 30px', color: '#aaa' }}>|</span> {`${row.col_desc}`}</Typography>
+                                <Typography style={{width: '100%', textOverflow: "ellipsis", overflow:"hidden"}}>
+                                    <span style={{width: '30%'}}>
+                                        {`${row.col_nm}`}
+                                    </span>
+                                    <span style={{ padding: '0 30px', width:'10%', color: '#aaa' }}>|</span>
+                                    <span style={{width: '60%', textOverflow: "ellipsis", overflow:"hidden"}}>
+                                        {`${row.col_desc}`}
+                                    </span> 
+                                </Typography>
                                 {!disableButton && <Tooltip title="Delete"><span style={{ marginLeft: '30px' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                             </div>
 

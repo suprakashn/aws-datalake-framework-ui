@@ -103,6 +103,7 @@ const CreateDataAsset = (props) => {
     const [sourceSysData, setSourceSysData] = useState([]);
     const [targetSysData, setTargetSysData] = useState([]);
     const [displayField, setDisplayField] = useState(false);
+    const [srcIngestionValue, setSrcIngestionValue] =  useState('');
     const [disableButton, setDisableButton] = useState(false);
     const [backdrop,setBackdrop] = useState(false);
     const [cronValue, setCronValue] = useState('');
@@ -122,9 +123,11 @@ const CreateDataAsset = (props) => {
             let obj = sourceSysData.find(element => element.src_sys_id === props.assetFieldValues.src_sys_id)
             if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
+                setSrcIngestionValue('file');
                 props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": true, "multipartition": false, "file_delim": "," }})
             } else {
                 setDisplayField(false);
+                setSrcIngestionValue(obj['ingstn_pattern'])
                 props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": "", "multipartition": "", "file_delim": "" }})
             }
         }
@@ -252,8 +255,8 @@ const CreateDataAsset = (props) => {
             fileDelimiterError: displayField ? (props.assetFieldValues.file_delim.trim() ? false : true) : false,
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
-            sourceTableNameError: displayField ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
-            sourceSqlQueryError: displayField ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
+            sourceTableNameError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
+            sourceSqlQueryError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
             // ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
             crontabError: props.ingestionFieldValues.trigger_mechanism === 'time_driven' ? (props.ingestionFieldValues.frequency.trim() ? error.crontabError : true) : false,
@@ -555,7 +558,7 @@ const CreateDataAsset = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <div style={{ padding: "0 2%", width: '100%' }}>
-                            {displayField &&
+                            {srcIngestionValue === 'database' &&
                                 <FormControl className={classes.formControl}>
                                     <div > Source Table Name*</div>
                                     <TextField
@@ -568,7 +571,7 @@ const CreateDataAsset = (props) => {
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_table_name', 'sourceTableNameError', event.target.value)}
                                     />
                                 </FormControl>}
-                            {displayField &&
+                            {srcIngestionValue === 'database' &&
                                 <FormControl className={classes.formControl}>
                                     <div > Source SQL Query* </div>
                                     <TextField
