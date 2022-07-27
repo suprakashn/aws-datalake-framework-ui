@@ -17,6 +17,7 @@ import { CircularProgress, Switch, TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { openSnackbar ,openSideBar} from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -214,15 +215,15 @@ const CreateLakeDestination = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>
             <CssBaseline />
-            <Link to="/lake-destinations" className={classes.link}>
-                <ArrowBackIosIcon fontSize='small' />
-                <span>Back</span>
-            </Link>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Lake Destination', content: 'Lake Destination Content' })}>
+                {props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}
+            </PageTitle>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <div className='page-header' style={{ paddingBottom: '10px' }}>
-                    <h2>{props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}</h2>
-                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Lake Destination', content: 'Create Lake Destination Content' })}>Info</span>
-                </div>
+                <Link to="/lake-destinations" className={classes.link}>
+                    <ArrowBackIosIcon fontSize='small' />
+                    <span>Back</span>
+                </Link>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>

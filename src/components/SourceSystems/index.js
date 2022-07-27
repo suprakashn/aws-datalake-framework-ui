@@ -18,6 +18,7 @@ import { Box, Button, Tooltip, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
 import { openSnackbar, openSideBar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -133,10 +134,7 @@ const SourceSystems = (props) => {
     <>
       <ViewSourceSystem selectedRow={selectedRow} />
       <div className={classes.table}>
-        <div className='page-header'>
-          <h2>Source System</h2>
-          <span className="info" onClick={() => props.openSideBar({heading: 'Source System', content: 'Source System Content'})}>Info</span>
-        </div>
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Source System', content: 'Source System Content'})}>Source System</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" />  */}
         <MaterialTable
           components={{

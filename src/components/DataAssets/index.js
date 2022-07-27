@@ -18,6 +18,7 @@ import MaterialTable from "material-table";
 import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import LaunchIcon from '@material-ui/icons/Launch';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -150,10 +151,9 @@ const DataAssets = (props) => {
   return (
     <>
       <div className={classes.table}>
-        <div className='page-header'>
-          <h2>Data Assets</h2>
-          <span className="info" onClick={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Asset Content' })}>Info</span>
-        </div>
+        <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Asset Content' })}>
+          Data Assets
+        </PageTitle>
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (

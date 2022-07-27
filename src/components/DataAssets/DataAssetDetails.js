@@ -14,10 +14,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { updateMode, dqRulesFieldValue,updateAllDataAssetValues } from 'actions/dataAssetActions'
-import { openSnackbar,openSideBar } from 'actions/notificationAction';
+import { updateMode, dqRulesFieldValue, updateAllDataAssetValues } from 'actions/dataAssetActions'
+import { openSnackbar, openSideBar } from 'actions/notificationAction';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import Editor from "react-prism-editor";
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -150,20 +151,21 @@ const DataAssetDetails = (props) => {
 
   return (
     <div className={classes.root}>
-      
+
       <CssBaseline />
       <Backdrop className={classes.backdrop} open={backdrop} >
-                    <CircularProgress color="inherit" />
+        <CircularProgress color="inherit" />
       </Backdrop>
+      <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset Detail', content: 'Data Asset Detail Content' })}>
+        Data Asset Detail
+      </PageTitle>
+
       <div style={{ display: 'flex' }} onClick={handleClose}>
         <Link to="/data-assets" className={classes.link}>
           <ArrowBackIosIcon fontSize='small' />
           <span>Back</span>
-        </Link></div>
-        <div className='page-header' style={{paddingBottom: '10px',marginTop: '1%'}}>
-          <h2>Data Asset Detail</h2>
-          <span className="info" onClick={() => props.openSideBar({heading: 'Data Asset Detail', content: 'Data Asset Detail Content'})}>Info</span>
-        </div>
+        </Link>
+      </div>
       <Paper className={classes.paper} elevation={3}>
         <div style={{ padding: '2% 3%' }}><Typography className={classes.heading}> Data Asset ID : <span style={{ fontWeight: 'bold' }}> {props.assetFieldValues.asset_id}</span></Typography></div>
         <Tooltip title="close">

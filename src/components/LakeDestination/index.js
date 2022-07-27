@@ -18,6 +18,7 @@ import { MTableToolbar } from 'material-table';
 import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
 import defaultInstance from 'routes/defaultInstance';
 import { openSnackbar ,openSideBar} from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -121,10 +122,7 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-        <div className='page-header'>
-          <h2>Lake Destination</h2>
-          <span className="info" onClick={() => props.openSideBar({ heading: 'Lake Destination', content: 'Lake Destination Content' })}>Info</span>
-        </div>
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Lake Destination Content'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
