@@ -30,6 +30,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import Editor from "react-prism-editor";
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -295,17 +296,15 @@ const CreateDataAsset = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <div style={{ display: 'flex' }}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Create Data Asset Content' })}>
+                {props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}
+            </PageTitle>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
                 <Link to="/data-assets" className={classes.link}>
                     <ArrowBackIosIcon fontSize='small' />
                     <span>Back</span>
                 </Link>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <div className='page-header' style={{ paddingBottom: '10px' }}>
-                    <h2>{props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}</h2>
-                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Create Data Asset Content' })}>Info</span>
-                </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>

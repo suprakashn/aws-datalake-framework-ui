@@ -33,14 +33,16 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: '100%'
     },
     close: {
-        cursor: 'pointer'        
+        cursor: 'pointer',
+        fontSize: '20px',
+        color: '#f7901d'        
     }
 }));
 
 const SideBarComponent = (props) => {
     const classes = useStyles();
     const location = useLocation();
-    
+
     useEffect(() => {
         props.closeSideBar();
     }, [location])

@@ -11,6 +11,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { Breadcrumbs, Link } from '@material-ui/core';
 import ViewCatalog from 'components/DataAssets/ViewCatalog';
 import {openSideBar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -96,6 +97,10 @@ const DataCatalogDetails = (props) => {
       <CssBaseline />
      {open && <ViewCatalog open={open} setOpen={setOpen} fieldValues={selectedRow}/>} 
       <div className={classes.table}>
+        <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Catalog Details', content: 'Data Catalog Details Content' })}>
+          Data Catalog Details
+        </PageTitle>
+        
         <div style={{ display: 'flex', marginBottom: "15px" }}>
           <ArrowBackIosIcon fontSize='small' />
           <Breadcrumbs aria-label='Breadcrumb'>
@@ -107,10 +112,7 @@ const DataCatalogDetails = (props) => {
             </Link>
           </Breadcrumbs>
         </div>
-        <div className='page-header'>
-          <h2>Data Catalog Details</h2>
-          <span className="info" onClick={() => props.openSideBar({ heading: 'Data Catalog Details', content: 'Data Catalog Details Content' })}>Info</span>
-        </div>
+        
         <MaterialTable
           isLoading={backdrop}
           icons={tableIcons}

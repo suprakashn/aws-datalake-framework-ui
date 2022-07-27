@@ -26,6 +26,7 @@ import IconButton from "@material-ui/core/IconButton";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
 import { InputAdornment } from '@material-ui/core';
+import PageTitle from 'components/Common/PageTitle';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -307,23 +308,27 @@ const CreateSourceSystem = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>        
             <CssBaseline />
-            <div style={{ display: 'flex' }} onClick={handleBack}>
-                <Link to="/source-systems" className={classes.link}>
-                    <ArrowBackIosIcon fontSize='small' />
-                    <span>Back</span>
-                </Link>
-            </div>
-
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>
+                {props.mode === 'edit' ? 'Edit Source System' : 'New Source System'}
+            </PageTitle>
+        
+            {/* <div className='page-header' style={{ paddingBottom: '10px' }}>
+                <h2></h2>
+                <span className="info" onClick={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>Info</span>
+            </div> */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <div className='page-header' style={{ paddingBottom: '10px' }}>
-                    <h2>{props.mode === 'edit' ? 'Edit Source System' : 'New Source System'}</h2>
-                    <span className="info" onClick={() => props.openSideBar({ heading: 'Create Source System', content: 'Create Source System Content' })}>Info</span>
+                <div onClick={handleBack}>
+                    <Link to="/source-systems" className={classes.link}>
+                        <ArrowBackIosIcon fontSize='small' />
+                        <span>Back</span>
+                    </Link>
                 </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
                 </div>
             </div>
+
             <Paper className={classes.paper} elevation={3}>
                 <div style={{ padding: '3%' }}>
                     <div>
