@@ -250,6 +250,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Domain*</div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.domain)}
@@ -262,6 +263,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Sub Domain* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.subdomain)}
@@ -287,6 +289,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div > Data Owner* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.data_owner)}
@@ -299,6 +302,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div>Support Contact* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.support_cntct)}
@@ -311,6 +315,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Enable Redshift Stage Load </div>
                                 <ThemeSwitch
+                                    disabled={saving}
                                     name="rs_load_ind"
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                     margin='dense'
