@@ -296,7 +296,7 @@ const CreateDataAsset = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Data Asset', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Asset', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
                 {props.mode === 'edit' ? 'Edit Data Asset ' : 'New Data Asset'}
             </PageTitle>
 
