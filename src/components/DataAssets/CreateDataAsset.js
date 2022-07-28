@@ -10,7 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import { withStyles } from '@material-ui/core/styles';
-import { openSnackbar,openSideBar } from 'actions/notificationAction'
+import { openSnackbar, openSideBar } from 'actions/notificationAction'
 import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
 import {
     assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
@@ -103,15 +103,15 @@ const CreateDataAsset = (props) => {
     const [sourceSysData, setSourceSysData] = useState([]);
     const [targetSysData, setTargetSysData] = useState([]);
     const [displayField, setDisplayField] = useState(false);
-    const [srcIngestionValue, setSrcIngestionValue] =  useState('');
+    const [srcIngestionValue, setSrcIngestionValue] = useState('');
     const [disableButton, setDisableButton] = useState(false);
-    const [backdrop,setBackdrop] = useState(false);
+    const [backdrop, setBackdrop] = useState(false);
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
 
     useEffect(() => {
-        if(props.mode !=='create'){
+        if (props.mode !== 'create') {
             fetchDataAssetDetails();
         }
         getSourceSystemData();
@@ -124,19 +124,29 @@ const CreateDataAsset = (props) => {
             if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
                 setSrcIngestionValue('file');
-                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": true, "multipartition": false, "file_delim": "," }})
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type":"", "file_header": "", "multipartition": false, "file_delim": "" } })
             } else {
                 setDisplayField(false);
-                setSrcIngestionValue(obj['ingstn_pattern'])
-                props.updateAllDataAssetValues({...props.fieldValues, "asset_info": {...props.assetFieldValues, "file_header": "", "multipartition": "", "file_delim": "" }})
+                setSrcIngestionValue(obj ? obj['ingstn_pattern'] : "")
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type":"", "file_header": "", "multipartition": "", "file_delim": "" } })
             }
         }
     }, [props.assetFieldValues.src_sys_id])
 
-    const getSourceSystemData = () => {  
+    useEffect(() => {
+        if (srcIngestionValue === 'file') {
+            if (props.assetFieldValues.file_type === 'csv') {
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_header": true, "file_delim": "," } })
+            }else{
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_header": "", "file_delim": "" } })
+            }
+        }
+    }, [props.assetFieldValues.file_type])
+
+    const getSourceSystemData = () => {
         defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": 'all', "src_config": { "src_sys_id": null } })
             .then(response => {
-                if (response.data.responseBody) {
+                if (response.data.responseStatus) {
                     setSourceSysData(response.data.responseBody);
                 } else {
                     setSourceSysData([]);
@@ -144,14 +154,14 @@ const CreateDataAsset = (props) => {
             })
             .catch(error => {
                 setSourceSysData([]);
-                console.log("error", error)   
+                console.log("error", error)
             })
     }
 
     const getTargetSystemData = () => {
         defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
             .then(response => {
-                if (response.data.responseBody) {
+                if (response.data.responseStatus) {
                     setTargetSysData(response.data.responseBody);
                 } else {
                     setTargetSysData([]);
@@ -159,22 +169,30 @@ const CreateDataAsset = (props) => {
             })
             .catch(error => {
                 setTargetSysData([]);
-                console.log("error", error)      
+                console.log("error", error)
             })
     }
 
     const fetchDataAssetDetails = () => {
+        let assetID = props.selectedRow.asset_id ? props.selectedRow.asset_id : null
+        let srcSysID = props.selectedRow.src_sys_id ? props.selectedRow.src_sys_id : null
         setBackdrop(true);
-        defaultInstance.post('/dataasset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
+        defaultInstance.post('/dataasset/read', { "asset_id": assetID, "src_sys_id": srcSysID })
             .then(response => {
-                props.updateAllDataAssetValues({ ...response.data.responseBody });
-                setBackdrop(false);
+                if (response.data.responseStatus) {
+                    props.updateAllDataAssetValues({ ...response.data.responseBody });
+                } else {
+                    props.resetDataAssetValues();
+                    navigate("/data-assets");
+                }
             })
             .catch(error => {
-                setBackdrop(false);
-                props.openSnackbar({ variant: 'error', message: `Failed to load ${props.selectedRow.asset_id} data asset details!` });
+                handleCancel();
+                props.openSnackbar({ variant: 'error', message: `Failed to load the data asset details!` });
                 navigate('/data-assets');
                 console.log("error", error)
+            }).finally(() => {
+                setBackdrop(false);
             })
     }
 
@@ -222,11 +240,11 @@ const CreateDataAsset = (props) => {
                 ...error,
                 [errorField]: value.toString().trim().length > 0 ? false : true
             })
-            if(field === 'trigger_mechanism' && value==="event_driven"){
+            if (field === 'trigger_mechanism' && value === "event_driven") {
                 type('frequency', "")
                 setCronValue("")
                 setErrorValue('');
-                setError({...error,crontabError: false})
+                setError({ ...error, crontabError: false })
             }
         }
     }
@@ -251,8 +269,8 @@ const CreateDataAsset = (props) => {
             targetIDError: props.assetFieldValues.target_id ? false : true,
             fileTypeError: displayField ? (props.assetFieldValues.file_type.length > 0 ? false : true) : false,
             assetNameError: error.assetNameError ? true : props.assetFieldValues.asset_nm.trim() ? false : true,
-            triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern && props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
-            fileDelimiterError: displayField ? (props.assetFieldValues.file_delim.trim() ? false : true) : false,
+            // triggerFilePtrnError: (props.assetFieldValues.trigger_file_pattern && props.assetFieldValues.trigger_file_pattern.trim() && error.triggerFilePtrnError) ? true : false,
+            fileDelimiterError: props.assetFieldValues.file_type === 'csv' ? (props.assetFieldValues.file_delim.trim() ? false : true) : false,
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
             sourceTableNameError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
@@ -342,6 +360,19 @@ const CreateDataAsset = (props) => {
                                     />
                                 </FormControl>}
                             <FormControl className={classes.formControl}>
+                                <div >Name*</div>
+                                <TextField
+                                    error={error.assetNameError}
+                                    disabled={disableButton}
+                                    margin='dense'
+                                    variant='outlined'
+                                    value={props.assetFieldValues.asset_nm}
+                                    id="asset_nm"
+                                    onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'asset_nm', 'assetNameError', event.target.value, 25)}
+                                />
+                                <FormHelperText>{error.assetNameError ? (props.assetFieldValues.asset_nm.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : '') : ''}</FormHelperText>
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
                                 <div style={{ marginBottom: '3%' }}>Source system ID*</div>
                                 <Select
                                     error={error.sourceSysIDError}
@@ -379,37 +410,8 @@ const CreateDataAsset = (props) => {
                                     })}
                                 </Select>
                             </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div >Name*</div>
-                                <TextField
-                                    error={error.assetNameError}
-                                    disabled={disableButton}
-                                    margin='dense'
-                                    variant='outlined'
-                                    value={props.assetFieldValues.asset_nm}
-                                    id="asset_nm"
-                                    onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'asset_nm', 'assetNameError', event.target.value, 25)}
-                                />
-                                <FormHelperText>{error.assetNameError ? (props.assetFieldValues.asset_nm.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 25 characters</span> : '') : ''}</FormHelperText>
-                            </FormControl>
                             {displayField &&
                                 <>
-                                    <FormControl className={classes.formControl}>
-                                        <div style={{ marginBottom: '3%' }}>Header*</div>
-                                        <Select
-                                            error={error.fileHeaderError}
-                                            disabled={disableButton}
-                                            margin="dense"
-                                            variant="outlined"
-                                            id="file_header"
-                                            value={props.assetFieldValues.file_header}
-                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_header', 'fileHeaderError', event.target.value)}
-                                        >
-                                            {BOOLEAN_VALUES.map(item => {
-                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                            })}
-                                        </Select>
-                                    </FormControl>
                                     <FormControl className={classes.formControl}>
                                         <div style={{ marginBottom: '3%' }}>Multi-part file*</div>
                                         <Select
@@ -445,7 +447,7 @@ const CreateDataAsset = (props) => {
                                             })}
                                         </Select>
                                     </FormControl>
-                                    <FormControl className={classes.formControl}>
+                                    {/* <FormControl className={classes.formControl}>
                                         <div > Trigger file pattern</div>
                                         <TextField
                                             error={error.triggerFilePtrnError}
@@ -457,6 +459,27 @@ const CreateDataAsset = (props) => {
                                             onChange={(event) => handleMaxCharacter(props.assetFieldValue, 'trigger_file_pattern', 'triggerFilePtrnError', event.target.value, 10)}
                                         />
                                         <FormHelperText>{error.triggerFilePtrnError ? (props.assetFieldValues.trigger_file_pattern.length > 0 ? <span style={{ color: 'red' }}>Reached maximum limit of 10 characters</span> : '') : ''}</FormHelperText>
+                                    </FormControl> */}
+
+                                </>}
+                            {props.assetFieldValues.file_type === 'csv' &&
+                                <>
+
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Header*</div>
+                                        <Select
+                                            error={error.fileHeaderError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="file_header"
+                                            value={props.assetFieldValues.file_header}
+                                            onChange={(event) => handleValueChange(props.assetFieldValue, 'file_header', 'fileHeaderError', event.target.value)}
+                                        >
+                                            {BOOLEAN_VALUES.map(item => {
+                                                return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                            })}
+                                        </Select>
                                     </FormControl>
                                     <FormControl className={classes.formControl}>
                                         <div > Delimiter*</div>
@@ -689,7 +712,7 @@ const CreateDataAsset = (props) => {
             </Button>
             <Button className={classes.button} disabled={disableButton} style={{ backgroundColor: '#A3A3A390' }} onClick={handleCancel}>Cancel</Button>
             <Backdrop className={classes.backdrop} open={backdrop} >
-                    <CircularProgress color="inherit" />
+                <CircularProgress color="inherit" />
             </Backdrop>
         </div>
     );

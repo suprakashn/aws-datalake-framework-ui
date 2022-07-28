@@ -80,7 +80,7 @@ const ColumnAttributes = (props) => {
     const [error, setError] = useState({})
 
     useEffect(() => {
-        if (props.mode === 'view' || props.mode === 'delete'){
+        if (props.mode === 'view' || props.mode === 'delete') {
             setDisableButton(true);
         }
     }, []);
@@ -164,7 +164,7 @@ const ColumnAttributes = (props) => {
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
-            "col_id": props.columnAttributesData.length+1,
+            "col_id": props.columnAttributesData.length + 1,
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
@@ -208,20 +208,20 @@ const ColumnAttributes = (props) => {
                             aria-controls={`panel${index}a-content`}
                             id={`panel${index}a-header`}
                             style={{
-                                backgroundColor: '#0000000f', 
-                                padding: "0 30px",                                
+                                backgroundColor: '#0000000f',
+                                padding: "0 30px",
                                 width: '100%'
                             }}
                         >
-                            <div style={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Typography style={{width: '100%', textOverflow: "ellipsis", overflow:"hidden"}}>
-                                    <span style={{width: '30%'}}>
+                            <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Typography style={{ width: '100%', textOverflow: "ellipsis", overflow: "hidden" }}>
+                                    <span style={{ width: '30%' }}>
                                         {`${row.col_nm}`}
                                     </span>
-                                    <span style={{ padding: '0 30px', width:'10%', color: '#aaa' }}>|</span>
-                                    <span style={{width: '60%', textOverflow: "ellipsis", overflow:"hidden"}}>
+                                    <span style={{ padding: '0 30px', width: '10%', color: '#aaa' }}>|</span>
+                                    <span style={{ width: '60%', textOverflow: "ellipsis", overflow: "hidden" }}>
                                         {`${row.col_desc}`}
-                                    </span> 
+                                    </span>
                                 </Typography>
                                 {!disableButton && <Tooltip title="Delete"><span style={{ marginLeft: '30px' }}><DeleteOutlineOutlinedIcon onClick={() => handleDelete(row)} /></span></Tooltip>}
                             </div>
@@ -241,6 +241,98 @@ const ColumnAttributes = (props) => {
                                         onChange={(event) => handleMaxCharacter(row, 'col_nm', 'colNameError', event.target.value, 30)}
                                     />
                                     <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div > Description* </div>
+                                    <TextField
+                                        error={error.colDescriptionError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={row.col_desc}
+                                        id="col_desc"
+                                        onChange={(event) => handleValueChange(row, 'col_desc', 'colDescriptionError', event.target.value)}
+                                    />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Data Type*</div>
+                                    <Select
+                                        error={error.dataTypeError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="data_type"
+                                        value={row.data_type}
+                                        onChange={(event) => handleValueChange(row, 'data_type', 'dataTypeError', event.target.value)}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Select data type</em>
+                                        </MenuItem>
+                                        {TARGET_DATA_TYPE.map(item => {
+                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div >Column Length</div>
+                                    <TextField
+                                        type={"number"}
+                                        error={error.columnLengthError}
+                                        disabled={disableButton}
+                                        margin='dense'
+                                        variant='outlined'
+                                        value={row.col_length}
+                                        id="col_length"
+                                        onChange={(event) => handleValueChange(row, 'col_length', 'columnLengthError', event.target.value)}
+                                    />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
+                                    <Select
+                                        error={error.primaryKeyIndicatorError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="pk_ind"
+                                        value={row.pk_ind}
+                                        onChange={(event) => handleValueChange(row, 'pk_ind', 'primaryKeyIndicatorError', event.target.value)}
+                                    >
+                                        {BOOLEAN_VALUES.map(item => {
+                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Data Classification*</div>
+                                    <Select
+                                        error={error.dataClassificationError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="data_classification"
+                                        value={row.data_classification}
+                                        onChange={(event) => handleValueChange(row, 'data_classification', 'dataClassificationError', event.target.value)}
+                                    >
+                                        {DATA_CLASSIFICATION.map(item => {
+                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}> Enable Tokenization</div>
+                                    <Select
+                                        error={error.tokenizationError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="req_tokenization"
+                                        value={row.req_tokenization}
+                                        onChange={(event) => handleValueChange(row, 'req_tokenization', 'tokenizationError', event.target.value)}
+                                    >
+                                        {BOOLEAN_VALUES.map(item => {
+                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
+                                        })}
+                                    </Select>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div >Target column name</div>
@@ -268,98 +360,6 @@ const ColumnAttributes = (props) => {
                                     >
                                         <MenuItem value="">
                                             <em>Select target data type</em>
-                                        </MenuItem>
-                                        {TARGET_DATA_TYPE.map(item => {
-                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div > Description* </div>
-                                    <TextField
-                                        error={error.colDescriptionError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        value={row.col_desc}
-                                        id="col_desc"
-                                        onChange={(event) => handleValueChange(row, 'col_desc', 'colDescriptionError', event.target.value)}
-                                    />
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Data Classification*</div>
-                                    <Select
-                                        error={error.dataClassificationError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="data_classification"
-                                        value={row.data_classification}
-                                        onChange={(event) => handleValueChange(row, 'data_classification', 'dataClassificationError', event.target.value)}
-                                    >
-                                        {DATA_CLASSIFICATION.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div >Column Length</div>
-                                    <TextField
-                                        type={"number"}
-                                        error={error.columnLengthError}
-                                        disabled={disableButton}
-                                        margin='dense'
-                                        variant='outlined'
-                                        value={row.col_length}
-                                        id="col_length"
-                                        onChange={(event) => handleValueChange(row, 'col_length', 'columnLengthError', event.target.value)}
-                                    />
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}> Enable Tokenization</div>
-                                    <Select
-                                        error={error.tokenizationError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="req_tokenization"
-                                        value={row.req_tokenization}
-                                        onChange={(event) => handleValueChange(row, 'req_tokenization', 'tokenizationError', event.target.value)}
-                                    >
-                                        {BOOLEAN_VALUES.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
-                                    <Select
-                                        error={error.primaryKeyIndicatorError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="pk_ind"
-                                        value={row.pk_ind}
-                                        onChange={(event) => handleValueChange(row, 'pk_ind', 'primaryKeyIndicatorError', event.target.value)}
-                                    >
-                                        {BOOLEAN_VALUES.map(item => {
-                                            return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Data Type*</div>
-                                    <Select
-                                        error={error.dataTypeError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="data_type"
-                                        value={row.data_type}
-                                        onChange={(event) => handleValueChange(row, 'data_type', 'dataTypeError', event.target.value)}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Select data type</em>
                                         </MenuItem>
                                         {TARGET_DATA_TYPE.map(item => {
                                             return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>

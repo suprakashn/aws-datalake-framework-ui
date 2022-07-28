@@ -226,12 +226,12 @@ const DataAssetDetails = (props) => {
                       </div>
                       <div>{props.assetFieldValues.file_type}</div>
                     </FormControl>
-                    <FormControl className={classes.formControl}>
+                    {/* <FormControl className={classes.formControl}>
                       <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                         Trigger file pattern
                       </div>
                       <div>{props.assetFieldValues.trigger_file_pattern}</div>
-                    </FormControl>
+                    </FormControl> */}
                     <FormControl className={classes.formControl}>
                       <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                         Delimiter
