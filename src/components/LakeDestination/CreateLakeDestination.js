@@ -299,7 +299,7 @@ const CreateLakeDestination = (props) => {
                                     onChange={handleValueChange}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}style={{minWidth: '350px'}}>
                                 <div>Support Contact* </div>
                                 <TextField
                                     disabled={saving}
