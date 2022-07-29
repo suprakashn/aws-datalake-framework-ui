@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
     formControl: {
         minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250
@@ -354,8 +354,8 @@ const CreateSourceSystem = (props) => {
                                     onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div > Source System Description </div>
+                            <FormControl className={classes.formControl} style={{minWidth: '535px'}}>
+                                <div> Source System Description </div>
                                 <TextField
                                     disabled={disableButton}
                                     margin='dense'
@@ -402,7 +402,7 @@ const CreateSourceSystem = (props) => {
                                     onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl} style={{minWidth: '350px'}}>
                                 <div >Support Contact* </div>
                                 <TextField
                                     disabled={disableButton}

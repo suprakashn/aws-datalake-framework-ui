@@ -44,11 +44,11 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     formControl: {
-        minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        minWidth: 280,
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
-        maxWidth: 250
+        maxWidth: 280
     },
     button: {
         float: 'right',
@@ -250,6 +250,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Domain*</div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.domain)}
@@ -262,6 +263,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Sub Domain* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.subdomain)}
@@ -284,21 +286,10 @@ const CreateLakeDestination = (props) => {
                                     />
                                 </FormControl>
                             }
-                            <FormControl className={classes.formControl}>
-                                <div > Data Owner* </div>
-                                <TextField
-                                    margin='dense'
-                                    variant='outlined'
-                                    error={Boolean(error.data_owner)}
-                                    helperText={error.data_owner}
-                                    value={props.fieldValues.data_owner}
-                                    id="data_owner"
-                                    onChange={handleValueChange}
-                                />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}style={{minWidth: '400px'}}>
                                 <div>Support Contact* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.support_cntct)}
@@ -309,8 +300,22 @@ const CreateLakeDestination = (props) => {
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
+                                <div > Data Owner* </div>
+                                <TextField
+                                    disabled={saving}
+                                    margin='dense'
+                                    variant='outlined'
+                                    error={Boolean(error.data_owner)}
+                                    helperText={error.data_owner}
+                                    value={props.fieldValues.data_owner}
+                                    id="data_owner"
+                                    onChange={handleValueChange}
+                                />
+                            </FormControl>  
+                            <FormControl className={classes.formControl}>
                                 <div> Enable Redshift Stage Load </div>
                                 <ThemeSwitch
+                                    disabled={saving}
                                     name="rs_load_ind"
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                     margin='dense'
