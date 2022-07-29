@@ -634,9 +634,12 @@ const CreateDataAsset = (props) => {
                                     <MenuItem value="">
                                         <em>Select trigger mechanism</em>
                                     </MenuItem>
-                                    {TRIGGER_MECHANISM.map(item => {
+                                    <MenuItem key={'time_driven'} value={'time_driven'} >Time Driven</MenuItem>
+                                    {srcIngestionValue !== 'database' &&
+                                    <MenuItem key={'event_driven'} value={'event_driven'} >Event Driven</MenuItem>}
+                                    {/* {TRIGGER_MECHANISM.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
-                                    })}
+                                    })} */}
                                 </Select>
                             </FormControl>
                             {props.ingestionFieldValues.trigger_mechanism === 'time_driven' &&
