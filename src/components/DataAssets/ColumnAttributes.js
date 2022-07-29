@@ -214,12 +214,12 @@ const ColumnAttributes = (props) => {
                             }}
                         >
                             <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Typography style={{ width: '100%', textOverflow: "ellipsis", overflow: "hidden" }}>
+                                <Typography style={{ width: '100%', textOverflow: "ellipsis", overflow: "hidden", whiteSpace: 'nowrap' }}>
                                     <span style={{ width: '30%' }}>
                                         {`${row.col_nm}`}
                                     </span>
                                     <span style={{ padding: '0 30px', width: '10%', color: '#aaa' }}>|</span>
-                                    <span style={{ width: '60%', textOverflow: "ellipsis", overflow: "hidden" }}>
+                                    <span style={{ width: '60%', textOverflow: "ellipsis", overflow: "hidden", whiteSpace: 'nowrap' }}>
                                         {`${row.col_desc}`}
                                     </span>
                                 </Typography>
