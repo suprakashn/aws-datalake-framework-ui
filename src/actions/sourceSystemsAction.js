@@ -1,14 +1,14 @@
 import * as constants from 'components/Constants/Constants';
 
-export const openSourceSystemSidebar = () => dispatch => {
+export const openSourceSystemDialog = () => dispatch => {
     dispatch({
-        type: constants.OPEN_SIDEBAR,
+        type: constants.OPEN_DIALOG,
     })
 }
 
-export const closeSourceSystemSidebar = () => dispatch => {
+export const closeSourceSystemDialog = () => dispatch => {
     dispatch({
-        type: constants.CLOSE_SIDEBAR,
+        type: constants.CLOSE_DIALOG,
     })
 }
 

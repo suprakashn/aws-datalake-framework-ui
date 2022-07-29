@@ -17,14 +17,15 @@ import { Box, Button, LinearProgress } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
 import defaultInstance from 'routes/defaultInstance';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: '1060px'
   },
   table: {
-    margin: '3%',
+    margin: '2% 3%',
     "& .MuiBox-root+div": {
       width: '100%',
     },
@@ -38,12 +39,26 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 'none'
     },
   },
+  idHeader:{
+    color: '#00B1E8',
+    cursor: 'pointer',
+    paddingLeft: '5%',
+    '&:hover': {
+      color: '#ff8700',
+    },
+  },
   button: {
     float: 'right',
-    margin: '1%',
-    color: 'white',
+    margin: '2vh',
+    backgroundColor: 'black',
+    color: '#F7901D',
+    minWidth: '7%',
     marginTop: '12px',
-  },
+    '&:hover': {
+        fontWeight: '600',
+        backgroundColor: 'black',
+    }
+},
 }));
 
 const LakeDestination = (props) => {
@@ -81,7 +96,7 @@ const LakeDestination = (props) => {
   const columns = [
     {
       title: "Target ID", field: "target_id", render: (rowData) => {
-        return <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
+        return <span className={classes.idHeader} onClick={() => handleAction('view', rowData)}>{rowData.target_id}</span>
       }
     },
     { title: "Domain", field: "domain", },
@@ -107,13 +122,14 @@ const LakeDestination = (props) => {
     <>
       {(props.mode === 'view' || props.mode === 'delete') && <ViewLakeDestination selectedRow={selectedRow} />}
       <div className={classes.table}>
-        <LinearProgress hidden={!loading} color="secondary" />
+        <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
+        {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <MaterialTable
           components={{
             Toolbar: (toolbarProps) => (
               <Box >
-                <Link to="/create-lake-destination" >
-                  <Button variant="contained" className={classes.button} style={{ backgroundColor: '#00B1E8' }} onClick={() => handleCreate()}>Add New +</Button>
+                <Link to="./create" >
+                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
                 </Link>
                 <MTableToolbar {...toolbarProps} />
               </Box>
@@ -138,7 +154,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('edit', rowData);
-                navigate('/create-lake-destination')
+                navigate('./edit')
               }
             },
             {
@@ -147,7 +163,7 @@ const LakeDestination = (props) => {
               position: 'row',
               onClick: (event, rowData) => {
                 handleAction('clone', rowData)
-                navigate('/create-lake-destination')
+                navigate('./create')
               }
             },
             {
@@ -168,7 +184,7 @@ const LakeDestination = (props) => {
               }
             }
           ]}
-
+          isLoading={loading}
           options={{
             //selection: true,
             //showTextRowsSelected: false,
@@ -223,7 +239,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateLakeDestinationTableData,
   updateFetchDataFlag,
   updateMode,
-  openSnackbar
+  openSnackbar,
+  openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(LakeDestination);

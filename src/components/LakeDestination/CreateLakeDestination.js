@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
 import {
@@ -14,8 +15,9 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { CircularProgress, Switch, TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import { openSnackbar } from 'actions/notificationAction';
+import { openSnackbar ,openSideBar} from 'actions/notificationAction';
 import defaultInstance from 'routes/defaultInstance';
+import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,32 +39,47 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "none",
         fontSize: "12px",
         marginLeft: 0,
+        '&:hover': {
+            fontWeight: 'bold',
+        },
     },
     formControl: {
-        minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        minWidth: 280,
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
-        maxWidth: 250
+        maxWidth: 280
     },
     button: {
         float: 'right',
-        margin: '1vh',
-        color: 'white',
+        margin: '2vh',
+        backgroundColor: 'black',
+        color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
-    },
-    primaryBtn: {
-        background: '#00B1E8',
-        '&:disabled': {
-            background: '#ccc',
-            color: 'white',
-        },
         '&:hover': {
-          background: '#0192bf',
-        }
-      }
+            fontWeight: '600',
+            backgroundColor: 'black',
+        },
+        '&:disabled': {
+            background: '#A3A3A390',
+        },
+    },
 }));
+
+const ThemeSwitch = withStyles({
+    switchBase: {
+      color: 'black',
+      '&$checked': {
+        color: '#F7901D',
+      },
+      '&$checked + $track': {
+        backgroundColor: '#F7901D',
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
 
 const CreateLakeDestination = (props) => {
     const classes = useStyles();
@@ -72,7 +89,7 @@ const CreateLakeDestination = (props) => {
 
     const handleValueChange = (event) => {
         let { id, value, checked } = event.target;
-        if(event.target.type === 'checkbox'){
+        if (event.target.type === 'checkbox') {
             value = checked;
         }
 
@@ -177,18 +194,18 @@ const CreateLakeDestination = (props) => {
                     }
                 }
                 break;
-            default: throw(new Error("Invalid Mode"));
+            default: throw (new Error("Invalid Mode"));
         }
-        
+
         try {
             const response = await defaultInstance.post(url, requestData)
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.updateFetchDataFlag(true);
                 props.openSnackbar({ variant: 'success', message: response.data.responseMessage });
-            }else{
+            } else {
                 let message = response.data.responseMessage || `Failed to create target system ID: ${props.fieldValues.target_id}!`
                 props.openSnackbar({ variant: 'error', message });
-            }            
+            }
         }
         catch (er) {
             props.openSnackbar({ variant: 'error', message: `Failed to create target system ID: ${props.fieldValues.target_id}!` });
@@ -198,12 +215,15 @@ const CreateLakeDestination = (props) => {
     return (
         <form className={classes.root} onSubmit={handleSave}>
             <CssBaseline />
-            <Link to="/lake-destinations" className={classes.link}>
-                <ArrowBackIosIcon fontSize='small' />
-                <span>Back</span>
-            </Link>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored' })}>
+                {props.mode === 'edit' ? 'Edit Target System ' : 'New Target System'}
+            </PageTitle>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>  {props.mode === 'edit' ? 'Edit' : 'New'} Destination </span>
+                <Link to="/lake-destinations" className={classes.link}>
+                    <ArrowBackIosIcon fontSize='small' />
+                    <span>Back</span>
+                </Link>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
@@ -230,6 +250,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Domain*</div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.domain)}
@@ -242,6 +263,7 @@ const CreateLakeDestination = (props) => {
                             <FormControl className={classes.formControl}>
                                 <div> Sub Domain* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.subdomain)}
@@ -264,21 +286,10 @@ const CreateLakeDestination = (props) => {
                                     />
                                 </FormControl>
                             }
-                            <FormControl className={classes.formControl}>
-                                <div > Data Owner* </div>
-                                <TextField
-                                    margin='dense'
-                                    variant='outlined'
-                                    error={Boolean(error.data_owner)}
-                                    helperText={error.data_owner}
-                                    value={props.fieldValues.data_owner}
-                                    id="data_owner"
-                                    onChange={handleValueChange}
-                                />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl}style={{minWidth: '400px'}}>
                                 <div>Support Contact* </div>
                                 <TextField
+                                    disabled={saving}
                                     margin='dense'
                                     variant='outlined'
                                     error={Boolean(error.support_cntct)}
@@ -289,9 +300,22 @@ const CreateLakeDestination = (props) => {
                                 />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <div> Enable Redshift Load </div>
-                                <Switch
-                                    color="primary"
+                                <div > Data Owner* </div>
+                                <TextField
+                                    disabled={saving}
+                                    margin='dense'
+                                    variant='outlined'
+                                    error={Boolean(error.data_owner)}
+                                    helperText={error.data_owner}
+                                    value={props.fieldValues.data_owner}
+                                    id="data_owner"
+                                    onChange={handleValueChange}
+                                />
+                            </FormControl>  
+                            <FormControl className={classes.formControl}>
+                                <div> Enable Redshift Stage Load </div>
+                                <ThemeSwitch
+                                    disabled={saving}
                                     name="rs_load_ind"
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                     margin='dense'
@@ -305,7 +329,7 @@ const CreateLakeDestination = (props) => {
                     </div>
                 </div>
             </Paper>
-            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')}  >
+            <Button type='submit' disabled={saving} className={classes.button}  >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>
@@ -325,7 +349,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     updateAllLakeDestinationValues,
     resetLakeDestinationValues,
     updateFetchDataFlag,
-    openSnackbar
+    openSnackbar,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateLakeDestination);

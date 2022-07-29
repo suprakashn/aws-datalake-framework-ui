@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import defaultInstance from 'routes/defaultInstance';
-import { sourceSystemFieldValue, closeSourceSystemSidebar, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
+import { sourceSystemFieldValue, closeSourceSystemDialog, updateAllSourceSystemValues, updateMode, updateDataFlag } from 'actions/sourceSystemsAction'
 import { openSnackbar } from 'actions/notificationAction';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
@@ -32,19 +32,26 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     float: 'right',
-    margin: '1vh',
-    color: 'white',
+    margin: '2vh',
+    backgroundColor: 'black',
+    color: '#F7901D',
     minWidth: '7%',
     marginTop: '12px',
-  },
-  primaryBtn: {
-    background: '#00B1E8',
-    '&:disabled': {
-        background: '#ccc',
-        color: 'white',
-    },
     '&:hover': {
-      background: '#0192bf',
+      fontWeight: '600',
+      backgroundColor: 'black',
+    },
+    '&:disabled': {
+      background: '#A3A3A390',
+    },
+  },
+  "tabHeader": {
+    listStyleType: 'none',
+    marginRight: '20px',
+    paddingBottom: '8px',
+    cursor: 'pointer',
+    '&:focus:after': {
+      display: 'none'
     }
   }
 }));
@@ -54,42 +61,43 @@ const ViewSourceSystem = (props) => {
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
-  
+
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllSourceSystemValues({ ...props.selectedRow })
-    navigate("/create-source-system")
+    navigate("./edit")
   }
 
   const handleDelete = async () => {
-    try{
+    try {
       setDeletingFlag(true);
-      const response = await defaultInstance.post('source_system/delete?tasktype=delete', {"src_config":{"src_sys_id": props.fieldValues.src_sys_id} })
-      props.closeSourceSystemSidebar();
+      const response = await defaultInstance.post('source_system/delete?tasktype=delete', { "src_config": { "src_sys_id": props.fieldValues.src_sys_id } })
+      props.closeSourceSystemDialog();
       setDeletingFlag(false);
-      if(response.data.responseStatus){
+      if (response.data.responseStatus) {
         props.updateDataFlag(true);
         props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
-      }else{
+      } else {
         props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
       }
       navigate("/source-systems");
     }
-    catch(error){
+    catch (error) {
       console.log("error", error);
       setDeletingFlag(false);
-      props.openSnackbar({ variant: 'error', message: `Failed to delete the source system!` });    
+      props.openSnackbar({ variant: 'error', message: `Failed to delete the source system!` });
     }
-            
+
   }
 
   const handleClose = () => {
     setTabIndex(0);
     props.updateMode('');
-    props.closeSourceSystemSidebar();
+    props.closeSourceSystemDialog();
   }
 
   return (
+    
     <Dialog open={props.open} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
       <DialogTitle >
         {props.fieldValues.src_sys_id ? <div>Source System ID : <span style={{ fontWeight: 'bold' }}> {props.fieldValues.src_sys_id}</span></div> : ''}
@@ -101,18 +109,18 @@ const ViewSourceSystem = (props) => {
         <div>
           <Tabs>
             <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
-              <Tab style={{
+              <Tab className={classes.tabHeader} style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
                 borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
               }} onClick={() => setTabIndex(0)}><span>Source system Attributes</span></Tab>
-              { props.fieldValues.ingstn_pattern === 'database' &&
-                <Tab style={{
-                fontWeight: tabIndex === 1 ? 'bold' : '',
-                //margin: ' 0 20px',
-                border: 'none',
-                borderBottom: tabIndex === 1 ? '5px solid #F7901D' : ''
-              }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
+              {props.fieldValues.ingstn_pattern === 'database' &&
+                <Tab className={classes.tabHeader} style={{
+                  fontWeight: tabIndex === 1 ? 'bold' : '',
+                  //margin: ' 0 20px',
+                  border: 'none',
+                  borderBottom: tabIndex === 1 ? '5px solid #F7901D' : ''
+                }} onClick={() => setTabIndex(1)}><span>Database Properties</span></Tab>
               }
             </TabList>
             <TabPanel>
@@ -172,58 +180,58 @@ const ViewSourceSystem = (props) => {
                 </div>
               </div>
             </TabPanel>
-            { props.fieldValues.ingstn_pattern === 'database' &&
-            <TabPanel>
-              <div style={{ border: '1px solid #CBCBCB' }}>
-                <div style={{ marginLeft: '3%', paddingTop: 10 }}>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Host
-                    </div>
-                    <div>{props.fieldValues.db_hostname}</div>
-                  </FormControl>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Type
-                    </div>
-                    <div>{props.fieldValues.db_type}</div>
-                  </FormControl>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Name
-                    </div>
-                    <div>{props.fieldValues.db_name}</div>
-                  </FormControl>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Port
-                    </div>
-                    <div>{props.fieldValues.db_port}</div>
-                  </FormControl>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Schema
-                    </div>
-                    <div>{props.fieldValues.db_schema}</div>
-                  </FormControl>
-                  <FormControl className={classes.formControl}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      DB Username
-                    </div>
-                    <div>{props.fieldValues.db_username}</div>
-                  </FormControl>
+            {props.fieldValues.ingstn_pattern === 'database' &&
+              <TabPanel>
+                <div style={{ border: '1px solid #CBCBCB' }}>
+                  <div style={{ marginLeft: '3%', paddingTop: 10 }}>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Host
+                      </div>
+                      <div>{props.fieldValues.db_hostname}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Type
+                      </div>
+                      <div>{props.fieldValues.db_type}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Name
+                      </div>
+                      <div>{props.fieldValues.db_name}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Port
+                      </div>
+                      <div>{props.fieldValues.db_port}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Schema
+                      </div>
+                      <div>{props.fieldValues.db_schema}</div>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        DB Username
+                      </div>
+                      <div>{props.fieldValues.db_username}</div>
+                    </FormControl>
+                  </div>
                 </div>
-              </div>
-            </TabPanel>
+              </TabPanel>
             }
           </Tabs>
         </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
-        {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button} style={{ backgroundColor: '#00B1E8' }} >Edit</Button>}
+        {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button}>Edit</Button>}
         {props.mode === 'delete' &&
-          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
+          <Button onClick={handleDelete} disabled={deleting} className={classes.button} >
             {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
             {!deleting && 'Delete'}
           </Button>
@@ -234,7 +242,7 @@ const ViewSourceSystem = (props) => {
 }
 
 const mapStateToProps = state => ({
-  open: state.sourceSystemState.sidebar.sidebarFlag,
+  open: state.sourceSystemState.dialog.dialogFlag,
   fieldValues: state.sourceSystemState.sourceSystemValues,
   mode: state.sourceSystemState.updateMode.mode,
 
@@ -243,7 +251,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllSourceSystemValues,
   sourceSystemFieldValue,
-  closeSourceSystemSidebar,
+  closeSourceSystemDialog,
   updateDataFlag,
   openSnackbar,
 }, dispatch)

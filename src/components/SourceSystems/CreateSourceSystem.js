@@ -10,10 +10,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
-import { openSnackbar, } from 'actions/notificationAction'
+import { openSnackbar, openSideBar} from 'actions/notificationAction'
 import { MECHANISM, INGESTION_PATTERN, DB_TYPE } from 'components/Constants/SourceSystemConstants'
 import {
-    sourceSystemFieldValue, closeSourceSystemSidebar, resetSourceSystemValues,
+    sourceSystemFieldValue, closeSourceSystemDialog, resetSourceSystemValues,
     updateDataFlag, updateMode, updateAllSourceSystemValues
 } from 'actions/sourceSystemsAction'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
@@ -22,6 +22,12 @@ import { TextField, CircularProgress, FormHelperText, Tooltip } from '@material-
 import { Button } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import IconButton from "@material-ui/core/IconButton";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Visibility from "@material-ui/icons/Visibility";
+import { InputAdornment } from '@material-ui/core';
+import PageTitle from 'components/Common/PageTitle';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,31 +49,32 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "none",
         fontSize: "12px",
         marginLeft: 0,
+        '&:hover': {
+            fontWeight: 'bold',
+        },
     },
     formControl: {
         minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250
     },
     button: {
         float: 'right',
-        margin: '1vh',
-        color: 'white',
+        margin: '2vh',
+        backgroundColor: 'black',
+        color: '#F7901D',
         minWidth: '7%',
         marginTop: '12px',
-    },
-    primaryBtn: {
-        background: '#00B1E8',
-        '&:disabled': {
-            background: '#ccc',
-            color: 'white',
-        },
         '&:hover': {
-          background: '#0192bf',
-        }
-      }
+            fontWeight: '600',
+            backgroundColor: 'black',
+        },
+        '&:disabled': {
+            background: '#A3A3A390',
+        },
+    },
 }));
 
 const CreateSourceSystem = (props) => {
@@ -76,6 +83,7 @@ const CreateSourceSystem = (props) => {
     const [disableButton, setDisableButton] = useState(false);
     const [error, setError] = useState({})
     const [saving, setSavingFlag] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleValueChange = (event) => {
         var { id, value, name } = event.target;
@@ -161,7 +169,7 @@ const CreateSourceSystem = (props) => {
     const handleCancel = () => {
         props.updateMode('');
         props.resetSourceSystemValues();
-        props.closeSourceSystemSidebar();
+        props.closeSourceSystemDialog();
         navigate("/source-systems");
     }
 
@@ -189,20 +197,20 @@ const CreateSourceSystem = (props) => {
             }
         }
 
-        try{
+        try {
             const response = await defaultInstance.post('source_system/create?tasktype=create', payload)
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-            }else{
+            } else {
                 props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
             }
             props.updateMode('');
             props.resetSourceSystemValues();
-            props.closeSourceSystemSidebar();
+            props.closeSourceSystemDialog();
             navigate("/source-systems");
         }
-        catch(error){
+        catch (error) {
             console.log(error);
             props.openSnackbar({ variant: 'error', message: `Failed to create source system ID: ${props.fieldValues.src_sys_id}!` });
             setDisableButton(false);
@@ -239,24 +247,23 @@ const CreateSourceSystem = (props) => {
             }
         }
 
-        try{
+        try {
             const response = await defaultInstance.post('source_system/update', payload);
-            if(response.data.responseStatus){
+            if (response.data.responseStatus) {
                 props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
                 props.updateDataFlag(true);
-            }else{
+            } else {
                 props.openSnackbar({ variant: 'error', message: `${response.data.responseMessage}` });
             }
             props.updateMode('');
             props.resetSourceSystemValues();
-            props.closeSourceSystemSidebar();
+            props.closeSourceSystemDialog();
             navigate("/source-systems");
-    
-        }catch(error){
+        } catch (error) {
             console.log("error", error)
             props.openSnackbar({ variant: 'error', message: `Failed to update source system ID: ${props.fieldValues.src_sys_id}!` });
             setDisableButton(false);
-        }        
+        }
     }
 
     const handleSave = async (e) => {
@@ -295,24 +302,28 @@ const CreateSourceSystem = (props) => {
 
     const handleBack = () => {
         //  props.updateDataFlag(false);
-        props.closeSourceSystemSidebar();
+        props.closeSourceSystemDialog();
     }
 
     return (
-        <form className={classes.root} onSubmit={handleSave}>
+        <form className={classes.root} onSubmit={handleSave}>        
             <CssBaseline />
-            <div style={{ display: 'flex' }} onClick={handleBack}>
-                <Link to="/source-systems" className={classes.link}>
-                    <ArrowBackIosIcon fontSize='small' />
-                    <span>Back</span>
-                </Link></div>
+            <PageTitle showInfo={() => props.openSideBar({ heading: 'Create Source System', content: 'Source Systems are individual entities which are registered with the framework aligned with systems which owns one or more data assets. It could be a database, a vendor, social media websites, streaming sources etc.' })}>
+                {props.mode === 'edit' ? 'Edit Source System' : 'New Source System'}
+            </PageTitle>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1%' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '16px' }}> {props.mode === 'edit' ? 'Edit Source System' : 'New Source System'} </span>
+                <div onClick={handleBack}>
+                    <Link to="/source-systems" className={classes.link}>
+                        <ArrowBackIosIcon fontSize='small' />
+                        <span>Back</span>
+                    </Link>
+                </div>
                 <div className={classes.link} onClick={handleReset}>
                     <ReplayIcon fontSize='small' />
                     <span>Reset</span>
                 </div>
             </div>
+
             <Paper className={classes.paper} elevation={3}>
                 <div style={{ padding: '3%' }}>
                     <div>
@@ -343,8 +354,8 @@ const CreateSourceSystem = (props) => {
                                     onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div > Source System Description </div>
+                            <FormControl className={classes.formControl} style={{minWidth: '535px'}}>
+                                <div> Source System Description </div>
                                 <TextField
                                     disabled={disableButton}
                                     margin='dense'
@@ -391,8 +402,8 @@ const CreateSourceSystem = (props) => {
                                     onChange={(event) => handleValueChange(event)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <div >Support Contact  </div>
+                            <FormControl className={classes.formControl} style={{minWidth: '350px'}}>
+                                <div >Support Contact* </div>
                                 <TextField
                                     disabled={disableButton}
                                     margin='dense'
@@ -536,10 +547,11 @@ const CreateSourceSystem = (props) => {
                                 {props.mode === 'create' &&
                                     <FormControl className={classes.formControl}>
                                         <Tooltip open={error.db_pass === 'Weak Password'} placement="top-start" title="Password should be 8 to 16 characters long and contains atleast one digit and one special charater(!@#$%^&*)">
-                                            <div >DB Password <HelpOutlineIcon style={{ fontSize: '14px' }} color='secondary'></HelpOutlineIcon></div>
+                                            <div >DB Password*</div>
                                         </Tooltip>
                                         <TextField
                                             disabled={disableButton}
+                                            type= {showPassword ? 'text' : 'password'}
                                             margin='dense'
                                             variant='outlined'
                                             value={props.fieldValues.db_pass}
@@ -547,6 +559,16 @@ const CreateSourceSystem = (props) => {
                                             error={Boolean(error.db_pass)}
                                             helperText={error.db_pass}
                                             onChange={(event) => handleValueChange(event)}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                        >
+                                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>)
+                                            }}
                                         />
                                     </FormControl>}
                             </div>
@@ -554,7 +576,7 @@ const CreateSourceSystem = (props) => {
                         </div>}
                 </div>
             </Paper>
-            <Button type='submit' disabled={saving} className={[classes.button, classes.primaryBtn].join(' ')} >
+            <Button type='submit' disabled={saving} className={classes.button} >
                 {saving && <>Saving <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
                 {!saving && 'Save'}
             </Button>
@@ -565,7 +587,7 @@ const CreateSourceSystem = (props) => {
 }
 
 const mapStateToProps = state => ({
-    open: state.sourceSystemState.sidebar.sidebarFlag,
+    open: state.sourceSystemState.dialog.dialogFlag,
     fieldValues: state.sourceSystemState.sourceSystemValues,
     mode: state.sourceSystemState.updateMode.mode,
     dataFlag: state.sourceSystemState.updateDataFlag.dataFlag
@@ -575,9 +597,10 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     updateMode,
     updateDataFlag,
     sourceSystemFieldValue,
-    closeSourceSystemSidebar,
+    closeSourceSystemDialog,
     resetSourceSystemValues,
-    updateAllSourceSystemValues
+    updateAllSourceSystemValues,
+    openSideBar
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSourceSystem);

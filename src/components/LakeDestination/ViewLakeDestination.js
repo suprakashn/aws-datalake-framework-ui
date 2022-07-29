@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -32,22 +33,43 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     float: 'right',
-    margin: '1vh',
-    color: 'white',
+    margin: '2vh',
+    backgroundColor: 'black',
+    color: '#F7901D',
     minWidth: '7%',
     marginTop: '12px',
-  },
-  primaryBtn: {
-    background: '#00B1E8',
-    '&:disabled': {
-        background: '#ccc',
-        color: 'white',
-    },
     '&:hover': {
-      background: '#0192bf',
+      fontWeight: '600',
+      backgroundColor: 'black',
+    },
+    '&:disabled': {
+      background: '#A3A3A390',
+    },
+  },
+  "tabHeader": {
+    listStyleType: 'none',
+    marginRight: '20px',
+    paddingBottom: '8px',
+    cursor: 'pointer',
+    '&:focus:after': {
+      display: 'none'
     }
   }
 }));
+
+const ThemeSwitch = withStyles({
+  switchBase: {
+    color: 'black',
+    '&$checked': {
+      color: '#F7901D',
+    },
+    '&$checked + $track': {
+      backgroundColor: '#F7901D',
+    },
+  },
+  checked: {},
+  track: {},
+})(Switch);
 
 const ViewLakeDestination = (props) => {
   const classes = useStyles();
@@ -59,7 +81,7 @@ const ViewLakeDestination = (props) => {
   const handleEdit = () => {
     props.updateMode('edit');
     props.updateAllLakeDestinationValues(props.selectedRow)
-    navigate("/create-lake-destination")
+    navigate("./edit")
   }
 
   const handleDelete = async () => {
@@ -77,7 +99,7 @@ const ViewLakeDestination = (props) => {
       } else {
         let message = response.data.responseMessage || `Failed to delete target system ID: ${props.fieldValues.target_id}!`
         props.openSnackbar({ variant: 'error', message });
-      }            
+      }
     }
     catch (ex) {
       props.openSnackbar({ variant: 'error', message: `Failed to delete target system ID: ${props.fieldValues.target_id}!` });
@@ -104,7 +126,7 @@ const ViewLakeDestination = (props) => {
         <div>
           <Tabs>
             <TabList style={{ display: 'flex', margin: 0, border: 'none' }}>
-              <Tab style={{
+              <Tab className={classes.tabHeader} style={{
                 fontWeight: tabIndex === 0 ? 'bold' : '',
                 border: 'none',
                 borderBottom: tabIndex === 0 ? '5px solid #F7901D' : ''
@@ -151,11 +173,11 @@ const ViewLakeDestination = (props) => {
                   </FormControl>
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                      Enable Redshift Load
+                      Enable Redshift Stage Load
                     </div>
-                    <div><Switch disabled checked={props.fieldValues.rs_load_ind} inputProps={{ 'aria-label': 'primary checkbox' }} /></div>
+                    <div><ThemeSwitch checked={props.fieldValues.rs_load_ind} inputProps={{ 'aria-label': 'primary checkbox' }} /></div>
                   </FormControl>
-                  { props.fieldValues.rs_load_ind &&
+                  {props.fieldValues.rs_load_ind &&
                     <>
                       <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
@@ -179,9 +201,9 @@ const ViewLakeDestination = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
-        {props.mode === 'view' && <Button onClick={handleEdit} className={[classes.button, classes.primaryBtn].join(' ')}>Edit</Button>}
+        {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button}>Edit</Button>}
         {props.mode === 'delete' &&
-          <Button onClick={handleDelete} disabled={deleting} className={[classes.button, classes.primaryBtn].join(' ')} >
+          <Button onClick={handleDelete} disabled={deleting} className={classes.button} >
             {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
             {!deleting && 'Delete'}
           </Button>
@@ -201,7 +223,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   updateMode,
   updateAllLakeDestinationValues,
   updateFetchDataFlag,
-  openSnackbar
+  openSnackbar,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewLakeDestination);

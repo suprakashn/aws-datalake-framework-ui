@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -8,6 +8,10 @@ import HeaderBackground from 'images/abstract-black.jpg'
 import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
 import logo from 'images/tigerLogo.png';
+import { useEffect } from "react";
+import SideBarComponent from "components/Notifications/SideBarComponent";
+import { connect } from 'react-redux';
+import { calculateNewValue } from "@testing-library/user-event/dist/utils";
 
 const useStyles = makeStyles((theme) => ({
     logo: {
@@ -31,15 +35,28 @@ const useStyles = makeStyles((theme) => ({
 
 const Layout = (props) => {
     const classes = useStyles();
-    const [number, setNumber] = useState(0);
+    const [activePageIndex, setActivePageIndex] = useState(0);
+    
+    const location = useLocation();
+    const { pathname } = location;
     const handleOnclick = (index) => {
-        setNumber(index);
+        setActivePageIndex(index);
     }
     const listOfNavItems = [
         { name: 'Home', icon: <i class="fas fa-layer-group fa-lg"></i>, url: '/' },
         { name: 'Source Systems', icon: <i class="fas fa-layer-group fa-lg"></i>, url: '/source-systems' },
         { name: 'Data Assets', icon: <i class="fas fa-database fa-lg"></i>, url: '/data-assets' },
-        { name: 'Lake Destinations', icon: <i class="fas fa-warehouse fa-lg"></i>, url: '/lake-destinations' }]
+        { name: 'Lake Destinations', icon: <i class="fas fa-warehouse fa-lg"></i>, url: '/lake-destinations' }
+    ]
+    
+    useEffect(() => {
+        listOfNavItems.forEach((nav, i) => {
+            if(pathname.includes(nav.url)){
+                setActivePageIndex(i);
+            }
+        })
+    });
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -55,14 +72,17 @@ const Layout = (props) => {
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link key={index} to={item.url} className={classes.link} style={index === number ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
             </AppBar>
-            <main className={classes.content} style={{marginBottom:20}}>
+            <main className={classes.content} style={{marginBottom:20, display: "flex"}}>
                 {/* <Toolbar /> */}
-                <Main />
+                <div style={props.openSideBar ? {width: 'calc(100% - 200px)'} : {width: '100%'}}>
+                    <Main/>
+                </div>
+                <SideBarComponent />
                 <SnackbarComponent />
             </main>
             {/* <AppBar position="static">
@@ -76,4 +96,7 @@ const Layout = (props) => {
         </div>
     );
 }
-export default Layout;
+const mapStateToProps = state => ({
+    openSideBar: state.notificationState.openSideBar.open
+})
+export default connect(mapStateToProps)(Layout);
