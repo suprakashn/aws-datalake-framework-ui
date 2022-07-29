@@ -15,8 +15,7 @@ import {
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
     updateDataFlag, updateMode, updateAllDataAssetValues
 } from 'actions/dataAssetActions'
-import { TextField } from '@material-ui/core';
-import { Button } from '@material-ui/core';
+import { Divider,Button,TextField } from '@material-ui/core';
 import defaultInstance from 'routes/defaultInstance';
 import { Tooltip, Fab } from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
         minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250,
@@ -242,7 +241,7 @@ const ColumnAttributes = (props) => {
                                     />
                                     <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
                                 </FormControl>
-                                <FormControl className={classes.formControl}>
+                                <FormControl className={classes.formControl} style={{minWidth: '535px'}}>
                                     <div > Description* </div>
                                     <TextField
                                         error={error.colDescriptionError}
@@ -334,6 +333,7 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
+                                <Divider style={{margin: '1% 7% 2% 1%'}}/>
                                 <FormControl className={classes.formControl}>
                                     <div >Target column name</div>
                                     <TextField

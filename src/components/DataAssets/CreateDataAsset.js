@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
         minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250
@@ -523,7 +523,7 @@ const CreateDataAsset = (props) => {
                                     onChange={(event) => handleValueChange(props.assetFieldValue, 'asset_owner', 'assetOwnerError', event.target.value)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classes.formControl} style={{minWidth: '350px'}}>
                                 <div >Support contact*</div>
                                 <TextField
                                     error={error.supportContactError}

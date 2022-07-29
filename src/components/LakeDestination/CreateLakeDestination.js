@@ -44,11 +44,11 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     formControl: {
-        minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        minWidth: 280,
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
-        maxWidth: 250
+        maxWidth: 280
     },
     button: {
         float: 'right',
@@ -286,20 +286,7 @@ const CreateLakeDestination = (props) => {
                                     />
                                 </FormControl>
                             }
-                            <FormControl className={classes.formControl}>
-                                <div > Data Owner* </div>
-                                <TextField
-                                    disabled={saving}
-                                    margin='dense'
-                                    variant='outlined'
-                                    error={Boolean(error.data_owner)}
-                                    helperText={error.data_owner}
-                                    value={props.fieldValues.data_owner}
-                                    id="data_owner"
-                                    onChange={handleValueChange}
-                                />
-                            </FormControl>
-                            <FormControl className={classes.formControl}style={{minWidth: '350px'}}>
+                            <FormControl className={classes.formControl}style={{minWidth: '400px'}}>
                                 <div>Support Contact* </div>
                                 <TextField
                                     disabled={saving}
@@ -312,6 +299,19 @@ const CreateLakeDestination = (props) => {
                                     onChange={handleValueChange}
                                 />
                             </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <div > Data Owner* </div>
+                                <TextField
+                                    disabled={saving}
+                                    margin='dense'
+                                    variant='outlined'
+                                    error={Boolean(error.data_owner)}
+                                    helperText={error.data_owner}
+                                    value={props.fieldValues.data_owner}
+                                    id="data_owner"
+                                    onChange={handleValueChange}
+                                />
+                            </FormControl>  
                             <FormControl className={classes.formControl}>
                                 <div> Enable Redshift Stage Load </div>
                                 <ThemeSwitch

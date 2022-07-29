@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
     formControl: {
         minWidth: 250,
-        margin: '0px 3% 1% 0px',
+        margin: '0px 3% 2% 0px',
         fontSize: 13,
         wordBreak: 'break-word',
         maxWidth: 250
