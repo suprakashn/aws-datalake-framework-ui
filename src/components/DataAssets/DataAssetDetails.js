@@ -345,21 +345,18 @@ const DataAssetDetails = (props) => {
         </div>
       </div>
       <Dialog open={displayDeleteDialog} fullWidth classes={{ paperFullWidth: classes.dialogCustomizedWidth }}>
-        <DialogTitle style={{ backgroundColor: '#8080801a' }}>
-          Delete Confirmation
-          <Tooltip title="close">
-            <Close style={{ position: 'absolute', top: 19, right: 17, cursor: 'pointer', color: '#F7901D' }} onClick={() => setDisplayDeleteDialog(false)} />
-          </Tooltip>
-        </DialogTitle>
-        <DialogContent style={{paddingTop:'4%'}}>
-           Are you sure you want to delete the data asset <span style={{fontWeight:'bold'}}>{props.assetFieldValues.asset_id}</span> ?
+        <DialogContent  style={{fontSize:'16px',textAlign:'center'}}>
+          <div style={{padding:'4% 0% 2%'}}>
+          Are you sure you want to delete data asset ID?
+          </div>
+           <div style={{ color:'#E26C45',paddingBottom:'2%'}}>{props.assetFieldValues.asset_id}</div> 
         </DialogContent>
-        <DialogActions>
-          <Button onClick={()=> setDisplayDeleteDialog(false)} className={classes.button} style={{ backgroundColor: '#A3A3A390' }}>
-            Cancel
+        <DialogActions style={{ justifyContent:'center'}}>
+          <Button onClick={()=> setDisplayDeleteDialog(false)} className={classes.button} style={{ backgroundColor: '#A3A3A390', minWidth:'100px' }}>
+           <span style={{padding:'0% 5%'}}>Cancel</span> 
           </Button>
-          <Button onClick={handleDelete} className={classes.button} autoFocus>
-            Submit
+          <Button onClick={handleDelete} className={classes.button} style={{minWidth:'100px'}} autoFocus>
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

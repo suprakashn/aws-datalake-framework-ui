@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -36,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     margin: '2vh',
     backgroundColor: 'black',
     color: '#F7901D',
-    minWidth: '7%',
-    marginTop: '12px',
+    minWidth: '100px',
+    marginTop: '8px',
     '&:hover': {
       fontWeight: '600',
       backgroundColor: 'black',
@@ -76,7 +77,7 @@ const ViewLakeDestination = (props) => {
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
-
+  const [checked, setChecked] = useState(false);
 
   const handleEdit = () => {
     props.updateMode('edit');
@@ -199,15 +200,24 @@ const ViewLakeDestination = (props) => {
           </Tabs>
         </div>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
+      <DialogActions style={{ display: 'block' }}>
+        {props.mode === 'delete' && <>
+          <Checkbox
+            style={{ marginLeft: '1%' }}
+            color="secondary"
+            checked={checked}
+            onChange={(event) => setChecked(event.target.checked)}
+          />
+          <span style={{ paddingTop: '8px', }}>Are you sure you want to delete this Target System?</span>
+        </>}
         {props.mode === 'view' && <Button onClick={handleEdit} className={classes.button}>Edit</Button>}
         {props.mode === 'delete' &&
-          <Button onClick={handleDelete} disabled={deleting} className={classes.button} >
+          <Button onClick={handleDelete} disabled={deleting || !checked} className={classes.button} >
             {deleting && <>Deleting <CircularProgress size={16} style={{ marginLeft: '10px', color: 'white' }} /></>}
             {!deleting && 'Delete'}
           </Button>
         }
+        <Button onClick={handleClose} disabled={deleting} className={classes.button} style={{ backgroundColor: '#A3A3A390' }} > Close </Button>
       </DialogActions>
     </Dialog>
   );
