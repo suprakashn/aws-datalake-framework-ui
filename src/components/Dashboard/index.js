@@ -1,46 +1,103 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import sourceSystems from 'images/sourceSystems1.png';
-import lakeDestinations from 'images/lakeDestinations.png';
-import dataAssets from 'images/dataAssets.png';
+import awsLogo from 'images/AWS logo.png';
+import sourceSystemIcon from 'images/sourceSystemIcon.png';
+import dataAssetIcon from 'images/dataAssetIcon.png';
+import lakeDestinationIcon from 'images/lakeDestinationIcon.png';
+import backgroundImage from 'images/background.png';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
-    mainContainer: {
-        margin: 'auto',
-        paddingTop: theme.spacing(2),
-        paddingLeft: theme.spacing(12),
-        paddingRight: theme.spacing(12),
-        backgroundColor: 'white'
+    container: {
+        backgroundImage: 'url(' + backgroundImage + ')',
+        "padding": "80px 20px",
+        "color": "white",
+        "margin": "auto",
+        "fontSize": "35px",
+        "textAlign": "center",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'contain'
     },
-    welcomeStyle: {
-        color:'#f7901d'
-        // fontSize:'16px',
-        // fontWeight:'500'
+    pageHeader: {
+        fontSize: '40px',
+        margin: 0,
+        padding: '30px 20px 10px',
+        '& img': {
+            "width": "auto",
+            "verticalAlign": "-webkit-baseline-middle",
+            "padding": "0 14px 0 5px"
+        }
     },
-    welcomeContent: {
-        fontWeight: 400,
-        fontSize: 14,
+    pageDesc: {
+        "fontSize": "18px",
+        "width": "50%",
+        "margin": "auto",
+        "marginBottom": "30px",
+        "marginTop": "20px"
     },
-    imageContainer: {
-        margin: 'auto',
-        //padding: theme.spacing(4),
-        textAlign: 'center',
-        //maxWidth:'90%',
+    boxContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '70px',
+        '& > a:nth-child(2)': {
+            "background": "linear-gradient(to bottom, #959595 50%, #000 50%)",
+            color: 'white'
+        }
     },
-    labelStyle: {
-        color: '#f7901d',
-        textAlign: 'center',
-        fontSize: '16px',
-        fontWeight: 'bold'
+    box: {
+        "width": "20%",
+        "maxWidth": "400px",
+        "background": "linear-gradient(to bottom, #fff 50%, #000 50%)",
+        "color": "black",
+        "fontSize": "20px",
+        "padding": "40px 20px",
+        "borderRadius": "25px",
+        "textAlign": "center",
+        "height": "100%",
+        "display": "flex",
+        "flexDirection": "column",
+        "margin": "0 20px",
+        "position": 'relative',
+        textDecoration: 'none',
+        '&:hover': {
+            boxShadow: '0px 10px 7px 0px #555'
+        },
+        '&:hover div::after': {
+            display: 'block'
+        },
+        '&:hover img': {
+            transform: 'scale(1.1)'
+        }
     },
-    contentStyle: {
-        textAlign: 'center',
-        wordBreak: 'break-word',
-        whiteSpace: 'pre-wrap',
-        padding: '0 10%'
+    boxTop: {
+        '& h3': {
+            margin: '5px 0px 15px',
+            paddingBottom: '35px',
+            textDecoration: 'none'
+        },
+        '& img': {
+            transition: 'transform .2s',
+            width: '75px'
+        }
+    },
+    boxBottom: {
+        color: 'white',
+        fontSize: '15px',
+        minHeight: '120px',
+        position: 'relative',
+        '&::after': {
+            display: 'none',
+            position: 'absolute',
+            bottom: '0px',
+            content: '""',
+            left: 'calc(50% - 10px)',
+            width: '20px',
+            backgroundColor: 'white',
+            height: '2px'
+        }
     }
-
 }));
 
 const Dashboard = (props) => {
@@ -52,43 +109,45 @@ const Dashboard = (props) => {
     //         </Grid>
     //     </Grid>)
     return (
-        <div className={classes.mainContainer}>
-            <div>
-                <h2 className={classes.welcomeStyle}>Welcome to Tiger Analytics AWS DataLake!</h2>
-                <div className={classes.welcomeContent}>
-                    <p>We are in the midst of an exciting era where there is massive digital disruption and transformation across all industries. The key to success will be in enabling delightful, engaging, and meaningful user experiences to solve the right business problems for our clients and end-users.</p>
-                </div>
-            </div>
-            <div className={classes.imageContainer}>
-                <Grid container>
-                    <Grid item md={4} lg={4}>
-                        <img src={sourceSystems} style={{maxWidth:'75%'}}/>
-                        <h3 className={classes.labelStyle}>
-                            Source Systems
-                        </h3>
-                        <div className={classes.contentStyle}>
-                            Create, edit or delete a source system entity associated to various sources to consume
-                        </div>
-                    </Grid>
-                    <Grid item md={4} lg={4}>
-                        <img src={dataAssets} style={{maxWidth:'75%'}} />
-                        <h3 className={classes.labelStyle}>
-                            Data Assets
-                        </h3>
-                        <div className={classes.contentStyle}>
-                            Create, edit or delete data assets associated to various source files, define columns,descriptions, dq and more
-                        </div>
-                    </Grid>
-                    <Grid item md={4} lg={4}>
-                        <img src={lakeDestinations} style={{maxWidth:'75%'}} />
-                        <h3 className={classes.labelStyle}>
-                            Lake Destinations
-                        </h3>
-                        <div className={classes.contentStyle}>
-                            Create, edit or delete destinations in the data lake based on the organizational data management and organization strategy
-                        </div>
-                    </Grid>
-                </Grid>
+        <div className={classes.container}>
+            <h1 className={classes.pageHeader}>
+                Welcome to Tiger Analytics <img src={awsLogo} />DataLake!
+            </h1>
+            <p className={classes.pageDesc}>
+                The first cloud analytics service where you can easily develop and run massively
+                parallel data transformation and processing programmes in U-SQL,R,Python and .Net
+                over petabytes of data.
+            </p>
+            <div className={classes.boxContainer}>
+                <Link className={classes.box} to={"/source-systems"}>
+                    <div className={classes.boxTop}>
+                        <img src={sourceSystemIcon} />
+                        <h3>Source Systems</h3>
+                    </div>
+                    <div className={classes.boxBottom}>
+                        Create, edit or delete a source system entity associated to various sources to consume
+                    </div>
+                </Link>
+                <Link className={classes.box} to={"/data-assets"}>
+                    <div className={classes.boxTop}>
+                        <img src={dataAssetIcon} />
+                        <h3>Data Assets</h3>
+                    </div>
+                    <div className={classes.boxBottom}>
+                        Create, edit or delete  data assest associated to various source files,define columns,
+                        descriptions,dq and more
+                    </div>
+                </Link>
+                <Link className={classes.box} to={"/lake-destinations"}>
+                    <div className={classes.boxTop}>
+                        <img src={lakeDestinationIcon} />
+                        <h3>Lake Destinations</h3>
+                    </div>
+                    <div className={classes.boxBottom}>
+                    Create, edit or delete  data assest associated to various source files,define columns,
+                        descriptions,dq and more
+                    </div>
+                </Link>
             </div>
         </div>
     )
