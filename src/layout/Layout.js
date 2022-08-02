@@ -61,7 +61,7 @@ const Layout = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="sticky" style={{padding: '17px 5px'}}>
+            <AppBar position="sticky" style={{padding: '5px'}}>
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
                 <Toolbar style={{ backgroundColor: 'black',display:'flex', justifyContent:'space-between' }}>
@@ -69,7 +69,8 @@ const Layout = (props) => {
                             <img src={logo}  style={{maxWidth: '5%'}}/>
                         </div> */}
                     <Link to="/" className={classes.logo}>
-                        <img src={logo}  style={{maxWidth: '120px'}}/> <span style={{color:'#F7901D', margin: '0 20px'}}>|</span> AWS DATA LAKE
+                        <img src={logo}  style={{maxWidth: '120px'}}/> <span style={{color:'#F7901D', margin: '0 20px'}}>| </span>  
+                        <span style={{color:'#F7901D', margin: '0 7px'}}>AWS </span> DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
