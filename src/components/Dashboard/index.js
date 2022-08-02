@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         "fontSize": "35px",
         "textAlign": "center",
         backgroundRepeat: 'no-repeat',
-        backgroundSize: 'contain'
+        backgroundSize: '100% 490px'
     },
     pageHeader: {
         fontSize: '40px',
@@ -75,7 +75,8 @@ const useStyles = makeStyles((theme) => ({
         '& h3': {
             margin: '5px 0px 15px',
             paddingBottom: '35px',
-            textDecoration: 'none'
+            textDecoration: 'none',
+           
         },
         '& img': {
             transition: 'transform .2s',
@@ -90,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
         '&::after': {
             display: 'none',
             position: 'absolute',
-            bottom: '0px',
+            bottom: '-5px',
             content: '""',
             left: 'calc(50% - 10px)',
             width: '20px',
@@ -114,9 +115,7 @@ const Dashboard = (props) => {
                 Welcome to Tiger Analytics <img src={awsLogo} />DataLake!
             </h1>
             <p className={classes.pageDesc}>
-                The first cloud analytics service where you can easily develop and run massively
-                parallel data transformation and processing programmes in U-SQL,R,Python and .Net
-                over petabytes of data.
+            Companies spend a lot of time and effort in configuring and setting up resources to build pipelines to consume and publish data coming from disparate sources within their Data Lake. This framework provides user-friendly ways to ingest, cleanse and mask data and hides all the complexities running in the background.
             </p>
             <div className={classes.boxContainer}>
                 <Link className={classes.box} to={"/source-systems"}>
