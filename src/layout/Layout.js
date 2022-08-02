@@ -7,20 +7,21 @@ import { CssBaseline } from "@material-ui/core";
 import HeaderBackground from 'images/abstract-black.jpg'
 import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
-import logo from 'images/tigerLogo.png';
 import { useEffect } from "react";
 import SideBarComponent from "components/Notifications/SideBarComponent";
 import { connect } from 'react-redux';
 import { calculateNewValue } from "@testing-library/user-event/dist/utils";
+import  logo  from 'images/logo white.png';
 
 const useStyles = makeStyles((theme) => ({
     logo: {
-        display:'inline-block',
-        fontSize: '20px',
+        display:'flex',
+        fontSize: '23px',
         cursor: "pointer",
         marginRight: theme.spacing(5),
         textDecoration: "none",
         color: "white",
+        alignItems: 'flex-start'
     },
     link: {
         textDecoration: "none",
@@ -60,7 +61,7 @@ const Layout = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="sticky">
+            <AppBar position="sticky" style={{padding: '17px 5px'}}>
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
                 <Toolbar style={{ backgroundColor: 'black',display:'flex', justifyContent:'space-between' }}>
@@ -68,7 +69,7 @@ const Layout = (props) => {
                             <img src={logo}  style={{maxWidth: '5%'}}/>
                         </div> */}
                     <Link to="/" className={classes.logo}>
-                        TIGER ANALYTICS <span style={{color:'#F7901D'}}>AWS</span> DATA LAKE
+                        <img src={logo}  style={{maxWidth: '120px'}}/> <span style={{color:'#F7901D', margin: '0 20px'}}>|</span> AWS DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
