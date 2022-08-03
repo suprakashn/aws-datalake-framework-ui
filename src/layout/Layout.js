@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     },
     link: {
         textDecoration: "none",
-        color: "white",
+        color: "gray",
         fontSize: "13px",
         margin: theme.spacing(2),
         "&:hover": {
@@ -89,7 +89,7 @@ const Layout = (props) => {
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D', color: 'white'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
