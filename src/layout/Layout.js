@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(5),
         textDecoration: "none",
         color: "white",
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        padding:'20px'
     },
     link: {
         textDecoration: "none",
@@ -32,6 +33,20 @@ const useStyles = makeStyles((theme) => ({
             color: "#fffc"
         },
     },
+    pipe: {
+        position: "relative",
+        margin: "0 20px",
+        "&::after": {
+            "content": "''",
+            "position": "absolute",
+            "height": "40px",
+            "display": "block",
+            "width": "1px",
+            "top": "0px",
+            "background": "#f7901d",
+            "left": "0px"
+        }
+    }
 }));
 
 const Layout = (props) => {
@@ -61,7 +76,7 @@ const Layout = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="sticky" style={{padding: '5px'}}>
+            <AppBar position="sticky" style={{padding: '15px 5px'}}>
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
                 <Toolbar style={{ backgroundColor: 'black',display:'flex', justifyContent:'space-between' }}>
@@ -69,8 +84,8 @@ const Layout = (props) => {
                             <img src={logo}  style={{maxWidth: '5%'}}/>
                         </div> */}
                     <Link to="/" className={classes.logo}>
-                        <img src={logo}  style={{maxWidth: '120px'}}/> <span style={{color:'#F7901D', margin: '0 20px'}}>| </span>  
-                        <span style={{color:'#F7901D', margin: '0 7px'}}>AWS </span> DATA LAKE
+                        <img src={logo}  style={{maxWidth: '120px'}}/> <span className={classes.pipe}></span>  
+                        <span style={{ margin: '0 7px'}}>AWS </span> DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {

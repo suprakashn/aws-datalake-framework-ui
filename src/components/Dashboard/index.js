@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: '100% 490px'
     },
     pageHeader: {
-        fontSize: '40px',
+        fontSize: '35px',
         margin: 0,
         padding: '30px 20px 10px',
         '& img': {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     pageDesc: {
-        "fontSize": "18px",
+        "fontSize": "16px",
         "width": "50%",
         "margin": "auto",
         "marginBottom": "30px",
@@ -48,14 +48,15 @@ const useStyles = makeStyles((theme) => ({
     },
     box: {
         "width": "20%",
-        "maxWidth": "400px",
+        "maxWidth": "275px",
         "background": "linear-gradient(to bottom, #fff 50%, #000 50%)",
         "color": "black",
         "fontSize": "20px",
         "padding": "40px 20px",
         "borderRadius": "25px",
         "textAlign": "center",
-        "height": "100%",
+        //"height": "100%",
+        "minHeight": "370px",
         "display": "flex",
         "flexDirection": "column",
         "margin": "0 20px",
@@ -76,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
             margin: '5px 0px 15px',
             paddingBottom: '35px',
             textDecoration: 'none',
-           
+
         },
         '& img': {
             transition: 'transform .2s',
@@ -112,10 +113,10 @@ const Dashboard = (props) => {
     return (
         <div className={classes.container}>
             <h1 className={classes.pageHeader}>
-                Welcome to Tiger Analytics <img src={awsLogo} />DataLake!
+                Welcome to Tiger Analytics <img style={{ width: "92px" }} src={awsLogo} />DataLake!
             </h1>
             <p className={classes.pageDesc}>
-            Companies spend a lot of time and effort in configuring and setting up resources to build pipelines to consume and publish data coming from disparate sources within their Data Lake. This framework provides user-friendly ways to ingest, cleanse and mask data and hides all the complexities running in the background.
+                Framework powered by AWS services and self-service portal to ingest, cleanse and mask data. Build your datalake without a fuss and let the Tiger Analytics AWS Data Lake take care of the complexities in the background.
             </p>
             <div className={classes.boxContainer}>
                 <Link className={classes.box} to={"/source-systems"}>
@@ -124,7 +125,7 @@ const Dashboard = (props) => {
                         <h3>Source Systems</h3>
                     </div>
                     <div className={classes.boxBottom}>
-                        Create, edit or delete a source system entity associated to various sources to consume
+                        Connect with multiple sources including databases and kinesis data streams
                     </div>
                 </Link>
                 <Link className={classes.box} to={"/data-assets"}>
@@ -133,8 +134,7 @@ const Dashboard = (props) => {
                         <h3>Data Assets</h3>
                     </div>
                     <div className={classes.boxBottom}>
-                        Create, edit or delete  data assest associated to various source files,define columns,
-                        descriptions,dq and more
+                        Define the data asset properties, sensitive data properties and data quality rules
                     </div>
                 </Link>
                 <Link className={classes.box} to={"/lake-destinations"}>
@@ -143,8 +143,7 @@ const Dashboard = (props) => {
                         <h3>Lake Destinations</h3>
                     </div>
                     <div className={classes.boxBottom}>
-                    Create, edit or delete  data assest associated to various source files,define columns,
-                        descriptions,dq and more
+                        Organize data in the lake to better control accesses & permissions
                     </div>
                 </Link>
             </div>
