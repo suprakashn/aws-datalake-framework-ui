@@ -13,7 +13,7 @@ export const themer = {
       },
       secondary: {
         // main: '#FFFFFF', //AppBar white clr
-        main: '#0000FF', 
+        main:'#f7901d',
         color: 'white',
       },
     },
