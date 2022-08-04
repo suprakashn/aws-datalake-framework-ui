@@ -7,30 +7,46 @@ import { CssBaseline } from "@material-ui/core";
 import HeaderBackground from 'images/abstract-black.jpg'
 import SnackbarComponent from 'components/Notifications/SnackBarComponent';
 import Main from 'routes/Main';
-import logo from 'images/tigerLogo.png';
 import { useEffect } from "react";
 import SideBarComponent from "components/Notifications/SideBarComponent";
 import { connect } from 'react-redux';
 import { calculateNewValue } from "@testing-library/user-event/dist/utils";
+import  logo  from 'images/logo white.png';
 
 const useStyles = makeStyles((theme) => ({
     logo: {
-        display:'inline-block',
-        fontSize: '20px',
+        display:'flex',
+        fontSize: '23px',
         cursor: "pointer",
         marginRight: theme.spacing(5),
         textDecoration: "none",
         color: "white",
+        alignItems: 'flex-start',
+        padding:'20px'
     },
     link: {
         textDecoration: "none",
-        color: "white",
+        color: "gray",
         fontSize: "13px",
         margin: theme.spacing(2),
         "&:hover": {
             color: "#fffc"
         },
     },
+    pipe: {
+        position: "relative",
+        margin: "0 20px",
+        "&::after": {
+            "content": "''",
+            "position": "absolute",
+            "height": "40px",
+            "display": "block",
+            "width": "1px",
+            "top": "0px",
+            "background": "#f7901d",
+            "left": "0px"
+        }
+    }
 }));
 
 const Layout = (props) => {
@@ -60,7 +76,7 @@ const Layout = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="sticky">
+            <AppBar position="sticky" style={{padding: '15px 5px'}}>
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
                 <Toolbar style={{ backgroundColor: 'black',display:'flex', justifyContent:'space-between' }}>
@@ -68,11 +84,12 @@ const Layout = (props) => {
                             <img src={logo}  style={{maxWidth: '5%'}}/>
                         </div> */}
                     <Link to="/" className={classes.logo}>
-                        TIGER ANALYTICS <span style={{color:'#F7901D'}}>AWS</span> DATA LAKE
+                        <img src={logo}  style={{maxWidth: '120px'}}/> <span className={classes.pipe}></span>  
+                        <span style={{ margin: '0 7px'}}>AWS </span> DATA LAKE
                     </Link>
                     <div className="font-link">
                         {listOfNavItems.map((item,index) => {
-                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
+                            return <Link key={index} to={item.url} className={classes.link} style={index === activePageIndex ? {'paddingBottom': 8, 'borderBottom':'4px solid #F7901D', color: 'white'}:{}} onClick={()=>handleOnclick(index)}>{item.name} </Link>
                         })}
                     </div>
                 </Toolbar>
