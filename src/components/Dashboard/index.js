@@ -12,18 +12,18 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
     container: {
         backgroundImage: 'url(' + backgroundImage + ')',
-        "padding": "80px 20px",
+        "padding": "0px 20px",
         "color": "white",
         "margin": "auto",
         "fontSize": "35px",
         "textAlign": "center",
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 490px'
+        backgroundSize: '100% 360px',
     },
     pageHeader: {
         fontSize: '35px',
         margin: 0,
-        padding: '30px 20px 10px',
+        padding: '20px 20px 10px',
         '& img': {
             "width": "auto",
             "verticalAlign": "-webkit-baseline-middle",
@@ -32,31 +32,31 @@ const useStyles = makeStyles((theme) => ({
     },
     pageDesc: {
         "fontSize": "16px",
-        "width": "50%",
+        "width": "75%",
         "margin": "auto",
-        "marginBottom": "30px",
-        "marginTop": "20px"
+        "marginTop": "10px",
+        maxWidth: '610px'
     },
     boxContainer: {
         display: 'flex',
         justifyContent: 'center',
-        marginTop: '70px',
+        marginTop: '30px',
         '& > a:nth-child(2)': {
             "background": "linear-gradient(to bottom, #959595 50%, #000 50%)",
             color: 'white'
         }
     },
     box: {
-        "width": "20%",
-        "maxWidth": "275px",
+        "width": "24%",
+        "maxWidth": "245px",
         "background": "linear-gradient(to bottom, #fff 50%, #000 50%)",
         "color": "black",
         "fontSize": "20px",
-        "padding": "40px 20px",
-        "borderRadius": "25px",
+        "padding": "25px 20px 15px",
+        "borderRadius": "20px",
         "textAlign": "center",
         //"height": "100%",
-        "minHeight": "370px",
+        "minHeight": "330px",
         "display": "flex",
         "flexDirection": "column",
         "margin": "0 20px",
@@ -77,11 +77,11 @@ const useStyles = makeStyles((theme) => ({
             margin: '5px 0px 15px',
             paddingBottom: '35px',
             textDecoration: 'none',
-
+            fontSize: '22px'
         },
         '& img': {
             transition: 'transform .2s',
-            width: '75px'
+            width: '70px'
         }
     },
     boxBottom: {
