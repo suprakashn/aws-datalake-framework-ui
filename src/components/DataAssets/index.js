@@ -136,7 +136,7 @@ const DataAssets = (props) => {
         navigate(`/data-assets/details/${selectedRow.src_sys_id}`);
         break;
       case 'delete':
-        navigate("/data-assets/delete");
+        navigate(`/data-assets/delete/${selectedRow.src_sys_id}`);
         break;
       case 'clone':
         navigate("/data-assets/create");

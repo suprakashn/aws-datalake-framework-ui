@@ -89,6 +89,7 @@ const DataAssetDetails = (props) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [deleting, setDeletingFlag] = useState(false);
   const [displayField, setDisplayField] = useState(false);
+  const [srcIngestionValue, setSrcIngestionValue] = useState('');
   const [backdrop, setBackdrop] = useState(false);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
   const {src_sys_id} = useParams();
@@ -101,10 +102,13 @@ const DataAssetDetails = (props) => {
   const getSourceSystemData = () => {
     defaultInstance.post('/source_system/read?tasktype=read', { "fetch_limit": null, "src_config": { "src_sys_id": src_sys_id } })
       .then(response => {
-        if (response.data.responseBody.length > 0 && response.data.responseBody[0].ingstn_pattern === 'file') {
+        let obj = response.data.responseBody;
+        if (obj.length > 0 && obj[0].ingstn_pattern === 'file') {
           setDisplayField(true);
+          setSrcIngestionValue('file');
         } else {
           setDisplayField(false);
+          setSrcIngestionValue(obj[0] ? obj[0].ingstn_pattern : "")
         }
       })
       .catch(error => {
@@ -278,7 +282,7 @@ const DataAssetDetails = (props) => {
             <TabPanel>
               <div style={{ border: '1px solid #CBCBCB' }}>
                 <div style={{ marginLeft: '3%', paddingTop: 10 }}>
-                  {displayField &&
+                {srcIngestionValue === 'database' &&
                     <>
                       <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
