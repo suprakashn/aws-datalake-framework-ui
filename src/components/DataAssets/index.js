@@ -133,7 +133,7 @@ const DataAssets = (props) => {
     props.updateSelectedRow({...selectedRow});
     switch (mode) {
       case 'view':
-        navigate("/data-assets/details");
+        navigate(`/data-assets/details/${selectedRow.src_sys_id}`);
         break;
       case 'delete':
         navigate("/data-assets/delete");
