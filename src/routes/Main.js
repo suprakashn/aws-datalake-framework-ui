@@ -19,8 +19,8 @@ const Page = props =>(
         <Route path="/data-assets" element={<DataAssets/>}/>
         <Route path="/data-assets/create" element={<CreateDataAsset/>}/>
         <Route path="/data-assets/edit" element={<CreateDataAsset/>}/>
-        <Route path="/data-assets/details" element={<DataAssetDetails/>}/>
-        <Route path="/data-assets/delete" element={<DataAssetDetails/>}/>
+        <Route path="/data-assets/details/:src_sys_id" element={<DataAssetDetails/>}/>
+        <Route path="/data-assets/delete/:src_sys_id" element={<DataAssetDetails/>}/>
         <Route path="/data-assets/catalog-details" element={<DataCatalogDetails/>}/>
         <Route path="/lake-destinations" element={<LakeDestination/>}/>
         <Route path="/lake-destinations/create" element={<CreateLakeDestination/>}/>
