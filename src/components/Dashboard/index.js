@@ -1,4 +1,6 @@
+/* eslint-disable no-useless-computed-key */
 /* eslint-disable jsx-a11y/alt-text */
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -53,18 +55,28 @@ const useStyles = makeStyles((theme) => ({
         "textAlign": "center",
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%',
+        ['@media (min-width:1920px)']: { // eslint-disable-line no-useless-computed-key
+            height: '90vh'
+        }
     },
     pageHeader: {
         //fontSize: '35px',
         margin: 0,
         //padding: '20px 20px 10px',
         padding: '4% 0 2%',
-        fontSize: '30px',
+        fontSize: '30px',        
         //fontWeight: 100,
         '& img': {
             "width": "auto",
             "verticalAlign": "-webkit-baseline-middle",
-            "padding": "0 14px 0 5px"
+            "padding": "0 14px 0 5px",
+            "width": "92px"
+        },
+        ['@media (min-width:1920px)']: {
+            fontSize: '50px',
+            '& img':{
+                width: '117px'
+            }
         }
     },
     pageDesc: {
@@ -73,7 +85,10 @@ const useStyles = makeStyles((theme) => ({
         "width": "75%",
         "margin": "auto",
         // "marginTop": "10px",
-        maxWidth: '41%'
+        maxWidth: '41%',
+        ['@media (min-width:1920px)']: { // eslint-disable-line no-useless-computed-key
+            fontSize: '20px'
+        }
     },
     boxContainer: {
         display: 'flex',
@@ -83,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
         '& > a:nth-child(2)': {
             "background": "linear-gradient(to bottom, #959595 50%, #000 50%)",
             'color': 'white'
-        }
+        },
     },
     box: {
         "width": "17%",
@@ -109,6 +124,10 @@ const useStyles = makeStyles((theme) => ({
         },
         '&:hover img': {
             transform: 'scale(1.1)'
+        },
+        ['@media (min-width:1920px)']: {
+            "width": "18%",
+            "padding": "50px 25px 50px",
         }
     },
     boxTop: {
@@ -121,6 +140,15 @@ const useStyles = makeStyles((theme) => ({
         '& img': {
             transition: 'transform .2s',
             width: '50px'
+        },
+        ['@media (min-width:1920px)']: {
+            '& img': {
+                width: '70px'
+            },
+            '& h3': {
+                padding: '20px 0 70px',
+                fontSize: '30px'
+            },
         }
     },
     boxBottom: {
@@ -137,6 +165,10 @@ const useStyles = makeStyles((theme) => ({
             width: '20px',
             backgroundColor: 'white',
             height: '2px'
+        },
+        ['@media (min-width:1920px)']: {
+            fontSize: '21px',
+            minHeight: '150px'
         }
     }
 }));
@@ -144,7 +176,6 @@ const useStyles = makeStyles((theme) => ({
 const Dashboard = (props) => {
     const classes = useStyles();
     const [activePageIndex, setActivePageIndex] = useState(0);
-
     const location = useLocation();
     const { pathname } = location;
     const handleOnclick = (index) => {
@@ -181,7 +212,7 @@ const Dashboard = (props) => {
                 </Toolbar>
             </div>
             <h1 className={classes.pageHeader}>
-                Welcome to Tiger Analytics <img style={{ width: "92px" }} src={awsLogo} />DataLake!
+                Welcome to Tiger Analytics <img src={awsLogo} />DataLake!
             </h1>
             <p className={classes.pageDesc}>
                 Framework powered by AWS services and self-service portal to ingest, cleanse and mask data. Build your datalake without a fuss and let the Tiger Analytics AWS Data Lake take care of the complexities in the background.
