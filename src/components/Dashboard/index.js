@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     box: {
-        "width": "17%",
+        "width": "15%",
         // "maxWidth": "245px",
         "background": "linear-gradient(to bottom, #fff 50%, #000 50%)",
         "color": "black",
@@ -170,7 +170,19 @@ const useStyles = makeStyles((theme) => ({
             fontSize: '21px',
             minHeight: '150px'
         }
-    }
+    },
+    footer: {
+        marginTop: '70px',
+        color: 'black',
+        padding: '10px 30px 20px 30px',
+        fontSize: '10px',
+        ['@media (min-width:1920px)']: {
+            fontSize: '21px',
+            minHeight: '150px'
+        }
+
+    },
+
 }));
 
 const Dashboard = (props) => {
@@ -245,6 +257,9 @@ const Dashboard = (props) => {
                         Organize data in the lake to better control accesses & permissions
                     </div>
                 </Link>
+            </div>
+            <div className={classes.BottomDescription}>
+                CopyRight © 2022, Tiger Analytics Inc, All right reserved.
             </div>
         </div>
     )
