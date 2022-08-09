@@ -175,7 +175,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: '70px',
         color: 'black',
         padding: '10px 30px 20px 30px',
-        fontSize: '10px',
+        fontSize: '12px',
         ['@media (min-width:1920px)']: {
             fontSize: '21px',
             minHeight: '150px'
@@ -259,7 +259,7 @@ const Dashboard = (props) => {
                 </Link>
             </div>
             <div className={classes.footer}>
-                CopyRight © 2022, Tiger Analytics Inc, All right reserved.
+                Copyright © 2022, Tiger Analytics Inc. All rights reserved.
             </div>
         </div>
     )
