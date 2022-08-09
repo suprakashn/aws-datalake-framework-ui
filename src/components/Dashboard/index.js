@@ -73,9 +73,10 @@ const useStyles = makeStyles((theme) => ({
             "width": "92px"
         },
         ['@media (min-width:1920px)']: {
-            fontSize: '50px',
+            fontSize: '46px',
             '& img':{
-                width: '117px'
+                width: '125px',
+                margin:'11px 4px 4px'
             }
         }
     },
@@ -177,8 +178,8 @@ const useStyles = makeStyles((theme) => ({
         padding: '10px 30px 20px 30px',
         fontSize: '12px',
         ['@media (min-width:1920px)']: {
-            fontSize: '21px',
-            minHeight: '150px'
+            fontSize: '18px',
+            minHeight: '50px'
         }
 
     },
