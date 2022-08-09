@@ -258,7 +258,7 @@ const Dashboard = (props) => {
                     </div>
                 </Link>
             </div>
-            <div className={classes.BottomDescription}>
+            <div className={classes.footer}>
                 CopyRight © 2022, Tiger Analytics Inc, All right reserved.
             </div>
         </div>
