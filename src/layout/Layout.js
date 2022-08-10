@@ -76,6 +76,7 @@ const Layout = (props) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
+            {activePageIndex !== 0 ? 
             <AppBar position="sticky" style={{padding: '15px 5px'}}>
                 <CssBaseline />
                 {/* <Toolbar style={{ backgroundImage: `url("${HeaderBackground}")` }}> */}
@@ -93,7 +94,7 @@ const Layout = (props) => {
                         })}
                     </div>
                 </Toolbar>
-            </AppBar>
+            </AppBar>: ''}
             <main className={classes.content} style={{marginBottom:20, display: "flex"}}>
                 {/* <Toolbar /> */}
                 <div style={props.openSideBar ? {width: 'calc(100% - 200px)'} : {width: '100%'}}>
