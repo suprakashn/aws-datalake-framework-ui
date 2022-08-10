@@ -10,13 +10,14 @@ export const FILE_TYPE = [
     { name: 'JSON', value: 'json' }
 ]
 
-//Boolean, Fractional, Integral, String, Numeric
+//Integer,Long,Double,String,Boolean,Datetime
 export const TARGET_DATA_TYPE = [
     { name: 'Boolean', value: 'Boolean' },
-    { name: 'Fractional', value: 'Fractional' },
-    { name: 'Integral', value: 'Integral' },
-    { name: 'Numeric', value: 'Numeric' },
-    { name: 'String', value: 'String' },
+    { name: 'Datetime', value: 'Datetime' },
+    { name: 'Double', value: 'Double' },
+    { name: 'Integer', value: 'Integer' },
+    { name: 'Long', value: 'Long' },
+    { name: 'String', value: 'String' },  
 ]
 
 export const DATA_CLASSIFICATION = [
