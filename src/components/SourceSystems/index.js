@@ -19,6 +19,7 @@ import { MTableToolbar } from 'material-table';
 import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
 import { openSnackbar, openSideBar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
+import SearchBar from 'components/Common/SearchBar';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -47,6 +48,13 @@ const useStyles = makeStyles((theme) => ({
       color: '#ff8700',
     },
   },
+  toolbar: {
+    "display": "flex",
+    "width": "100%",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "padding": "15px 30px 7px"
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -69,6 +77,7 @@ const SourceSystems = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
+  const [filteredList, setFilteredList] = useState(props.data);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -136,21 +145,18 @@ const SourceSystems = (props) => {
       <div className={classes.table}>
         <PageTitle showInfo={() => props.openSideBar({heading: 'Source System', content: 'Source Systems are individual entities which are registered with the framework aligned with systems which owns one or more data assets. It could be a database, a vendor, social media websites, streaming sources etc.'})}>Source System</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" />  */}
+        <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '25px'}}>
+          <SearchBar data={props.data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <Link to="./create" >
+              <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
+          </Link>
+        </div>
+
         <MaterialTable
-          components={{
-            Toolbar: (toolbarProps) => (
-              <Box >
-                <Link to="./create" >
-                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
-                <MTableToolbar {...toolbarProps} />
-              </Box>
-            ),
-          }}
           icons={tableIcons}
           title="Source Systems"
           columns={columns}
-          data={props.data}
+          data={filteredList}
           actions={[
             {
               icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
@@ -189,7 +195,9 @@ const SourceSystems = (props) => {
           options={{
             //selection: true,
             // showTextRowsSelected: false,
+            toolbar: false,
             paging: false,
+            search: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,

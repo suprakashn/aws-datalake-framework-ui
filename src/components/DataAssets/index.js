@@ -19,6 +19,7 @@ import { Box, Button, Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
 import LaunchIcon from '@material-ui/icons/Launch';
 import PageTitle from 'components/Common/PageTitle';
+import SearchBar from 'components/Common/SearchBar';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -47,6 +48,13 @@ const useStyles = makeStyles((theme) => ({
       color: '#ff8700',
     },
   },
+  toolbar: {
+    "display": "flex",
+    "width": "100%",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "padding": "15px 30px 7px"
+  },
   button: {
     float: 'right',
     margin: '15px',
@@ -67,6 +75,7 @@ const DataAssets = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [backdrop, setBackdrop] = useState(false);
+  const [filteredList, setFilteredList] = useState(props.data);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -154,24 +163,22 @@ const DataAssets = (props) => {
         <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
           Data Assets
         </PageTitle>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px' }}>
+          <SearchBar data={props.data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <Link to="/data-assets/create" >
+            <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
+          </Link>
+        </div>
         <MaterialTable
-          components={{
-            Toolbar: (toolbarProps) => (
-              <Box >
-                <Link to="/data-assets/create" >
-                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
-                <MTableToolbar {...toolbarProps} />
-              </Box>
-            ),
-          }}
           isLoading={backdrop}
           icons={tableIcons}
           title="Data Assets"
           columns={columns}
-          data={data}
+          data={filteredList}
           options={{
             paging: false,
+            toolbar: false,
+            search: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,
