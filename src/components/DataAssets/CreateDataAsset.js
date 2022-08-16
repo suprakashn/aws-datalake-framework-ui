@@ -124,11 +124,11 @@ const CreateDataAsset = (props) => {
             if (obj && obj['ingstn_pattern'] === 'file') {
                 setDisplayField(true);
                 setSrcIngestionValue('file');
-                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type":"", "file_header": "", "multipartition": false, "file_delim": "" } })
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type": "", "file_header": "", "multipartition": false, "file_delim": "" } })
             } else {
                 setDisplayField(false);
                 setSrcIngestionValue(obj ? obj['ingstn_pattern'] : "")
-                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type":"", "file_header": "", "multipartition": "", "file_delim": "" } })
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type": "", "file_header": "", "multipartition": "", "file_delim": "" } })
             }
         }
     }, [props.assetFieldValues.src_sys_id])
@@ -137,7 +137,7 @@ const CreateDataAsset = (props) => {
         if (srcIngestionValue === 'file') {
             if (props.assetFieldValues.file_type === 'csv') {
                 props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_header": true, "file_delim": "," } })
-            }else{
+            } else {
                 props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_header": "", "file_delim": "" } })
             }
         }
@@ -523,7 +523,7 @@ const CreateDataAsset = (props) => {
                                     onChange={(event) => handleValueChange(props.assetFieldValue, 'asset_owner', 'assetOwnerError', event.target.value)}
                                 />
                             </FormControl>
-                            <FormControl className={classes.formControl} style={{minWidth: '350px'}}>
+                            <FormControl className={classes.formControl} style={{ minWidth: '350px' }}>
                                 <div >Support contact*</div>
                                 <TextField
                                     error={error.supportContactError}
@@ -577,6 +577,23 @@ const CreateDataAsset = (props) => {
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
+                        <Typography className={classes.heading}>Column Attributes</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <ColumnAttributes />
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion style={{ margin: "1% 0" }}
+                    key={3}
+                    onChange={handleChange(3)}
+                    expanded={expanded === 3}
+                    TransitionProps={{ unmountOnExit: true }}
+                >
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel3a-content"
+                        id="panel3a-header"
+                    >
                         <Typography className={classes.heading}>Ingestion Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -596,6 +613,49 @@ const CreateDataAsset = (props) => {
                                 </FormControl>}
                             {srcIngestionValue === 'database' &&
                                 <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Extraction Method*</div>
+                                    <Select
+                                        error={error.extMethodError}
+                                        disabled={props.mode === 'edit'}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="ext_method"
+                                        value={props.ingestionFieldValues.ext_method}
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ext_method', 'extMethodError', event.target.value)}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Select extraction method</em>
+                                        </MenuItem>
+                                        <MenuItem key="full" value="full">Full</MenuItem>
+                                        <MenuItem key="incremental" value="incremental">Incremental</MenuItem>
+                                    </Select>
+                                </FormControl>}
+                                {srcIngestionValue === 'database' && props.ingestionFieldValues.ext_method === 'incremental' &&
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Extraction Column*</div>
+                                    <Select
+                                        error={error.extColumnError}
+                                        disabled={props.mode === 'edit'}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="ext_col"
+                                        value={props.ingestionFieldValues.ext_col}
+                                        onChange={(event) => handleValueChange(props.ingestionFieldValue, 'ext_col', 'extColumnError', event.target.value)}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Select extraction Column</em>
+                                        </MenuItem>
+                                        {props.columnAttributesData.map(row=>{
+                                            if(row.data_type === 'datetime'){
+                                                return <MenuItem key={row.col_nm} value={row.col_nm}>{row.col_nm}</MenuItem>
+                                            }
+                                        })
+
+                                        }
+                                    </Select>
+                                </FormControl>}
+                            {/* {srcIngestionValue === 'database' &&
+                                <FormControl className={classes.formControl}>
                                     <div > Source SQL Query* </div>
                                     <TextField
                                         error={error.sourceSqlQueryError}
@@ -606,7 +666,7 @@ const CreateDataAsset = (props) => {
                                         id="src_sql_query"
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
                                     />
-                                </FormControl>}
+                                </FormControl>} */}
                             {props.mode !== 'create' &&
                                 <FormControl className={classes.formControl}>
                                     <div > Ingestion Source Path* </div>
@@ -636,7 +696,7 @@ const CreateDataAsset = (props) => {
                                     </MenuItem>
                                     <MenuItem key={'time_driven'} value={'time_driven'} >Time Driven</MenuItem>
                                     {srcIngestionValue !== 'database' &&
-                                    <MenuItem key={'event_driven'} value={'event_driven'} >Event Driven</MenuItem>}
+                                        <MenuItem key={'event_driven'} value={'event_driven'} >Event Driven</MenuItem>}
                                     {/* {TRIGGER_MECHANISM.map(item => {
                                         return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                     })} */}
@@ -659,23 +719,6 @@ const CreateDataAsset = (props) => {
                                     </FormControl>
                                 </Tooltip>}
                         </div>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion style={{ margin: "1% 0" }}
-                    key={3}
-                    onChange={handleChange(3)}
-                    expanded={expanded === 3}
-                    TransitionProps={{ unmountOnExit: true }}
-                >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel3a-content"
-                        id="panel3a-header"
-                    >
-                        <Typography className={classes.heading}>Column Attributes</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <ColumnAttributes />
                     </AccordionDetails>
                 </Accordion>
                 <Accordion style={{ margin: "1% 0" }}
@@ -726,6 +769,7 @@ const mapStateToProps = state => ({
     fieldValues: state.dataAssetState.dataAssetValues,
     assetFieldValues: state.dataAssetState.dataAssetValues.asset_info,
     ingestionFieldValues: state.dataAssetState.dataAssetValues.ingestion_attributes,
+    columnAttributesData: state.dataAssetState.dataAssetValues.asset_attributes,
     dqRulesFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
     mode: state.dataAssetState.updateMode.mode,
     dataFlag: state.dataAssetState.updateDataFlag.dataFlag,

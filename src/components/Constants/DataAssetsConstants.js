@@ -13,7 +13,7 @@ export const FILE_TYPE = [
 //Integer,Long,Double,String,Boolean,Datetime
 export const TARGET_DATA_TYPE = [
     { name: 'Boolean', value: 'Boolean' },
-    { name: 'Datetime', value: 'Datetime' },
+    { name: 'Datetime', value: 'datetime' },
     { name: 'Double', value: 'Double' },
     { name: 'Integer', value: 'Integer' },
     { name: 'Long', value: 'Long' },

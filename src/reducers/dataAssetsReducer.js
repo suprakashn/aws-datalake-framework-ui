@@ -22,6 +22,7 @@ const initialIngestionAttributes = {
     "ingstn_src_path": "",
     "trigger_mechanism": "",
     "frequency": "",
+    "ext_method": "full",
 }
 const initialColumnAttributes = [{
     "col_id": 1,
