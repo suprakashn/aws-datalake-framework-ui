@@ -272,7 +272,7 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                {row.data_type === "datetime" && 
+                                {row.data_type === "Datetime" && 
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '3%' }}>Datetime Format</div>
                                     <Select
@@ -386,7 +386,7 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                {row.tgt_data_type === "datetime" && 
+                                {row.tgt_data_type === "Datetime" && 
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '3%' }}>Target Datetime Format</div>
                                     <Select

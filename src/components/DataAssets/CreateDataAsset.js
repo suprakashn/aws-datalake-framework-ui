@@ -274,10 +274,11 @@ const CreateDataAsset = (props) => {
             assetOwnerError: props.assetFieldValues.asset_owner.trim() ? false : true,
             supportContactError: props.assetFieldValues.support_cntct.trim() ? false : true,
             sourceTableNameError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_table_name.trim() ? false : true) : false,
-            sourceSqlQueryError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
+            //sourceSqlQueryError: srcIngestionValue === 'database' ? (props.ingestionFieldValues.src_sql_query.trim() ? false : true) : false,
             // ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
             crontabError: props.ingestionFieldValues.trigger_mechanism === 'time_driven' ? (props.ingestionFieldValues.frequency.trim() ? error.crontabError : true) : false,
+            extColumnError: false
         }
         setError(errorObj);
         console.log("error obj", errorObj)
@@ -616,7 +617,7 @@ const CreateDataAsset = (props) => {
                                     <div style={{ marginBottom: '3%' }}>Extraction Method*</div>
                                     <Select
                                         error={error.extMethodError}
-                                        disabled={props.mode === 'edit'}
+                                        disabled={props.mode === 'edit' || disableButton}
                                         margin="dense"
                                         variant="outlined"
                                         id="ext_method"
@@ -635,7 +636,7 @@ const CreateDataAsset = (props) => {
                                     <div style={{ marginBottom: '3%' }}>Extraction Column*</div>
                                     <Select
                                         error={error.extColumnError}
-                                        disabled={props.mode === 'edit'}
+                                        disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
                                         id="ext_col"
@@ -646,7 +647,7 @@ const CreateDataAsset = (props) => {
                                             <em>Select extraction Column</em>
                                         </MenuItem>
                                         {props.columnAttributesData.map(row=>{
-                                            if(row.data_type === 'datetime'){
+                                            if(row.data_type === 'Datetime'){
                                                 return <MenuItem key={row.col_nm} value={row.col_nm}>{row.col_nm}</MenuItem>
                                             }
                                         })
@@ -667,7 +668,7 @@ const CreateDataAsset = (props) => {
                                         onChange={(event) => handleValueChange(props.ingestionFieldValue, 'src_sql_query', 'sourceSqlQueryError', event.target.value)}
                                     />
                                 </FormControl>} */}
-                            {props.mode !== 'create' &&
+                            {props.mode !== 'create' && srcIngestionValue !== 'database' &&
                                 <FormControl className={classes.formControl}>
                                     <div > Ingestion Source Path* </div>
                                     <TextField

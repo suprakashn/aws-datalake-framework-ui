@@ -13,7 +13,7 @@ export const FILE_TYPE = [
 //Integer,Long,Double,String,Boolean,Datetime
 export const TARGET_DATA_TYPE = [
     { name: 'Boolean', value: 'Boolean' },
-    { name: 'Datetime', value: 'datetime' },
+    { name: 'Datetime', value: 'Datetime' },
     { name: 'Double', value: 'Double' },
     { name: 'Integer', value: 'Integer' },
     { name: 'Long', value: 'Long' },
@@ -33,16 +33,17 @@ export const TRIGGER_MECHANISM = [
 ]
 
 export const DATE_TIME_FORMATS = [
-    { name: 'mm/dd/yyyy', value: 'mm/dd/yyyy' },
-    { name: 'mm/dd/yy', value: 'mm/dd/yy' },
-    { name: 'dd/mm/yyyy', value: 'dd/mm/yyyy' },
-    { name: 'dd/mm/yy', value: 'dd/mm/yy' },
-    { name: 'dd-mm-yyyy', value: 'dd-mm-yyyy' },
-    { name: 'dd-mm-yy', value: 'dd-mm-yy' },
-    { name: 'mm-dd-yyyy', value: 'mm-dd-yyyy' },
-    { name: 'mm-dd-yy', value: 'mm-dd-yy' },
-    { name: 'yyyy-mm-dd', value: 'yyyy-mm-dd' },
-    { name: 'yyyy-mm-dd hh:mm:ss', value: 'yyyy-mm-dd hh:mm:ss' },
-    { name: 'yyyy-mm-dd HH:MM:SS tt', value: 'yyyy-mm-dd HH:MM:SS tt' },
+    { name: 'MM/dd/yyyy', value: 'MM/dd/yyyy' },
+    { name: 'MM/dd/yy', value: 'MM/dd/yy' },
+    { name: 'dd/MM/yyyy', value: 'dd/MM/yyyy' },
+    { name: 'dd/MM/yy', value: 'dd/MM/yy' },
+    { name: 'dd-MM-yyyy', value: 'dd-MM-yyyy' },
+    { name: 'dd-MM-yy', value: 'dd-MM-yy' },
+    { name: 'MM-dd-yyyy', value: 'MM-dd-yyyy' },
+    { name: 'MM-dd-yy', value: 'MM-dd-yy' },
+    { name: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
+    { name: 'yyyy-MM-dd hh:mm:ss', value: 'yyyy-MM-dd hh:mm:ss' },
+    { name: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss'},
+    { name: 'yyyy-MM-dd hh:mm:ss tt', value: 'yyyy-MM-dd hh:mm:ss tt' },
     { name : 'Custom', value: 'custom'}
 ]

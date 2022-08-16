@@ -290,20 +290,34 @@ const DataAssetDetails = (props) => {
                         </div>
                         <div>{props.ingestionFieldValues.src_table_name}</div>
                       </FormControl>
-                      <FormControl className={classes.formControl}>
+                      {/* <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           Source SQL Query
                         </div>
                         <div>{props.ingestionFieldValues.src_sql_query}</div>
-                      </FormControl>
+                      </FormControl> */}
                       <FormControl className={classes.formControl}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Extraction Method
+                        </div>
+                        <div>{props.ingestionFieldValues.ext_method}</div>
+                      </FormControl>
+                      {srcIngestionValue === 'database' && props.ingestionFieldValues.ext_method === 'incremental' &&
+                      <FormControl className={classes.formControl}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Extraction Column
+                        </div>
+                        <div>{props.ingestionFieldValues.ext_col}</div>
+                      </FormControl>}
+                      </>
+                  }
+                  {srcIngestionValue !== 'database' &&
+                   <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           Ingestion Source Path
                         </div>
                         <div>{props.ingestionFieldValues.ingstn_src_path}</div>
-                      </FormControl>
-                    </>
-                  }
+                      </FormControl>}
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                       Trigger Mechanism
