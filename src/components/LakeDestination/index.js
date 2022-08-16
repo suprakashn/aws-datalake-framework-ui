@@ -133,10 +133,10 @@ const LakeDestination = (props) => {
       <div className={classes.table}>
         <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px',}}>
           <SearchBar data={props.tableData} onChange={(d) => { setFilteredList(d) }}></SearchBar>
           <Link to="./create" >
-            <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
+            <Button variant="contained" className={classes.button} style={{marginTop: '7px'}} onClick={() => handleCreate()}>Add New +</Button>
           </Link>
         </div>
         <MaterialTable

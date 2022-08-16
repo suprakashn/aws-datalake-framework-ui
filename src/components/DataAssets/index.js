@@ -166,7 +166,7 @@ const DataAssets = (props) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px' }}>
           <SearchBar data={data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
           <Link to="/data-assets/create" >
-            <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
+            <Button variant="contained" className={classes.button}  style={{marginTop: '7px'}} onClick={() => handleCreate()}>Add New +</Button>
           </Link>
         </div>
         <MaterialTable
