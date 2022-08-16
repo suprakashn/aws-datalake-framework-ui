@@ -9,7 +9,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Select from '@material-ui/core/Select';
 import { openSnackbar, } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, FILE_TYPE, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
+import { BOOLEAN_VALUES, DATE_TIME_FORMATS, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
 import {
     columnFieldValue,
     dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
@@ -272,6 +272,26 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
+                                {row.data_type === "datetime" && 
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Datetime Format</div>
+                                    <Select
+                                        error={error.datatimeFormatError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="datetime_format"
+                                        value={row.datetime_format}
+                                        onChange={(event) => handleValueChange(row, 'datetime_format', 'datetimeFormatError', event.target.value)}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Select datetime format</em>
+                                        </MenuItem>
+                                        {DATE_TIME_FORMATS.map(item => {
+                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>}
                                 <FormControl className={classes.formControl}>
                                     <div >Column Length</div>
                                     <TextField
@@ -366,6 +386,26 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
+                                {row.tgt_data_type === "datetime" && 
+                                <FormControl className={classes.formControl}>
+                                    <div style={{ marginBottom: '3%' }}>Target Datetime Format</div>
+                                    <Select
+                                        error={error.targetDatatimeFormatError}
+                                        disabled={disableButton}
+                                        margin="dense"
+                                        variant="outlined"
+                                        id="tgt_datetime_format"
+                                        value={row.tgt_datetime_format}
+                                        onChange={(event) => handleValueChange(row, 'tgt_datetime_format', 'targetDatatimeFormatError', event.target.value)}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Select target datetime format</em>
+                                        </MenuItem>
+                                        {DATE_TIME_FORMATS.map(item => {
+                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>}
                             </div>
                         </AccordionDetails>
                     </Accordion>

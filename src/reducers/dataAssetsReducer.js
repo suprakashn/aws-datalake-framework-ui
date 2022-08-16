@@ -23,18 +23,21 @@ const initialIngestionAttributes = {
     "trigger_mechanism": "",
     "frequency": "",
     "ext_method": "full",
+    "ext_col": "",
 }
 const initialColumnAttributes = [{
     "col_id": 1,
     "col_nm": "",
     "tgt_col_nm": "",
     "tgt_data_type": "",
+    "tgt_datetime_format": "",
     "col_desc": "",
     "data_classification": "",
     "col_length": 0,
     "req_tokenization": false,
     "pk_ind": false,
     "data_type": "",
+    "datetime_format": "",
     "null_ind": false
 }]
 

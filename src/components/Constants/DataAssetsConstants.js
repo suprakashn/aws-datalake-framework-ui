@@ -31,3 +31,18 @@ export const TRIGGER_MECHANISM = [
     { name: 'Time Driven', value: 'time_driven' },
     { name: 'Event Driven', value: 'event_driven' },
 ]
+
+export const DATE_TIME_FORMATS = [
+    { name: 'mm/dd/yyyy', value: 'mm/dd/yyyy' },
+    { name: 'mm/dd/yy', value: 'mm/dd/yy' },
+    { name: 'dd/mm/yyyy', value: 'dd/mm/yyyy' },
+    { name: 'dd/mm/yy', value: 'dd/mm/yy' },
+    { name: 'dd-mm-yyyy', value: 'dd-mm-yyyy' },
+    { name: 'dd-mm-yy', value: 'dd-mm-yy' },
+    { name: 'mm-dd-yyyy', value: 'mm-dd-yyyy' },
+    { name: 'mm-dd-yy', value: 'mm-dd-yy' },
+    { name: 'yyyy-mm-dd', value: 'yyyy-mm-dd' },
+    { name: 'yyyy-mm-dd hh:mm:ss', value: 'yyyy-mm-dd hh:mm:ss' },
+    { name: 'yyyy-mm-dd HH:MM:SS tt', value: 'yyyy-mm-dd HH:MM:SS tt' },
+    { name : 'Custom', value: 'custom'}
+]
