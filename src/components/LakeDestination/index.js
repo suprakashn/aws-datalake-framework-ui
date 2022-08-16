@@ -73,7 +73,7 @@ const LakeDestination = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [filteredList, setFilteredList] = useState(props.data);
+  const [filteredList, setFilteredList] = useState(props.tableData);
   const [selectedRow, setSelectedRow] = useState(null);
   
   useEffect(() => {
@@ -134,7 +134,7 @@ const LakeDestination = (props) => {
         <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px' }}>
-          <SearchBar data={props.data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <SearchBar data={props.tableData} onChange={(d) => { setFilteredList(d) }}></SearchBar>
           <Link to="./create" >
             <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
           </Link>

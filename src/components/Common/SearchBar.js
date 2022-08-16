@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
@@ -35,6 +35,10 @@ const SearchBar = (props) => {
     const [searchKeyword, setSearchKeyword] = useState('');
     const classes = useStyles();
     let data = props.data;
+    
+    useEffect(() =>  {
+        props.onChange(props.data)
+    }, [props.data])
 
     const handleChange = (event) => {
         const keyword = event.target.value;
