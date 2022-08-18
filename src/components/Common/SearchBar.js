@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import searchImage from 'images/search image.png';
+import searchImage from 'images/search images.png';
+// import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import MaterialTable from "material-table";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -11,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
     },
     searchBox: {
         padding: "10px 10px 10px 40px",
-        outline: "none",
         border: "none",
+        outline: "none",
         marginBottom: '15px',
         boxShadow: '2px 1px 8px 0px #ddd',
         fontSize: '15px',
@@ -53,7 +55,7 @@ const SearchBar = (props) => {
 
     return (
         <div className={classes.search}>
-            <img src={searchImage} style={{ maxWidth: '40px', position: 'absolute', padding: '12px 8px' }} />
+            <img src={searchImage} style={{ maxWidth: '34px', position: 'absolute', padding: '14px 8px' }} />
             <input
                 className={classes.searchBox}
                 type="search"
@@ -61,7 +63,9 @@ const SearchBar = (props) => {
                 placeholder='Search..'
                 value={searchKeyword || ""}
                 onChange={handleChange}
+               
             />
+             {/* <SearchOutlinedIcon/> */}
         </div>
     )
 }
