@@ -103,27 +103,27 @@ const DataAssets = (props) => {
     { title: "Data Asset Name", field: "asset_nm", },
     { title: "Target System ID", field: "target_id", },
     { title: "Asset Owner", field: "asset_owner", },
-    {
-      title: "Actions", field: "", render: (rowData) => {
-        return <div style={{minWidth: '200px'}}>
-          <Tooltip placement='top' title="View">
-            <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Edit">
-            <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></EditOutlinedIcon >
-          </Tooltip>
-          <Tooltip placement='top' title="Clone">
-            <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></FileCopyOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Delete">
-            <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Catalogs">
-            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
-          </Tooltip>
-        </div>
-      }
-    },
+    // {
+    //   title: "Actions", field: "", render: (rowData) => {
+    //     return <div style={{minWidth: '200px'}}>
+    //       <Tooltip placement='top' title="View">
+    //         <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Edit">
+    //         <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></EditOutlinedIcon >
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Clone">
+    //         <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></FileCopyOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Delete">
+    //         <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Catalogs">
+    //         <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
+    //       </Tooltip>
+    //     </div>
+    //   }
+    // },
   ];
 
   const handleUrlClick = (rowData) => {
@@ -175,6 +175,53 @@ const DataAssets = (props) => {
           title="Data Assets"
           columns={columns}
           data={filteredList}
+          actions={[
+            {
+              icon: () => <VisibilityOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>,
+              tooltip: 'View',
+              position: 'row', // 'auto' | 'toolbar' | 'toolbarOnSelect' | 'row'
+              onClick: (rowData) => {
+                handleActionClick('view', rowData)
+              }
+            },
+            {
+              icon: () => <EditOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></EditOutlinedIcon >,
+              tooltip: 'Edit',
+              position: 'row',
+              onClick: (rowData) => {
+                handleActionClick(rowData);
+              }
+            },
+            {
+
+              icon: () => <FileCopyOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></FileCopyOutlinedIcon>,
+              tooltip: 'Clone',
+              position: 'row',
+              onClick: (rowData) => {
+                handleActionClick(rowData);
+              }
+            },
+            {
+
+              icon: () => <DeleteOutlineOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>,
+              tooltip: 'Delete',
+              position: 'row',
+              onClick: (rowData) => {
+                handleActionClick('delete', rowData)
+              }
+            },
+            {
+              icon: () =>
+                <LaunchIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></LaunchIcon>,
+
+              tooltip: 'Catalogs',
+              position: 'row',
+              onClick: (rowData) => {
+                handleUrlClick(rowData)
+              }
+            },
+
+          ]}
           options={{
             paging: false,
             toolbar: false,
