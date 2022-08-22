@@ -180,16 +180,17 @@ const DataAssets = (props) => {
               icon: () => <VisibilityOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>,
               tooltip: 'View',
               position: 'row', // 'auto' | 'toolbar' | 'toolbarOnSelect' | 'row'
-              onClick: (rowData) => {
-                handleActionClick('view', rowData)
+              onClick: (event, rowData) => {
+                console.log("view data", rowData)
+                handleActionClick(rowData, 'view')
               }
             },
             {
               icon: () => <EditOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></EditOutlinedIcon >,
               tooltip: 'Edit',
               position: 'row',
-              onClick: (rowData) => {
-                handleActionClick(rowData);
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'edit');
               }
             },
             {
@@ -197,8 +198,8 @@ const DataAssets = (props) => {
               icon: () => <FileCopyOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></FileCopyOutlinedIcon>,
               tooltip: 'Clone',
               position: 'row',
-              onClick: (rowData) => {
-                handleActionClick(rowData);
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'clone');
               }
             },
             {
@@ -206,8 +207,8 @@ const DataAssets = (props) => {
               icon: () => <DeleteOutlineOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>,
               tooltip: 'Delete',
               position: 'row',
-              onClick: (rowData) => {
-                handleActionClick('delete', rowData)
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'delete')
               }
             },
             {
@@ -216,7 +217,7 @@ const DataAssets = (props) => {
 
               tooltip: 'Catalogs',
               position: 'row',
-              onClick: (rowData) => {
+              onClick: (event, rowData) => {
                 handleUrlClick(rowData)
               }
             },
