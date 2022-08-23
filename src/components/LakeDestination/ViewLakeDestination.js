@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withStyles } from '@material-ui/core/styles';
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, CircularProgress, Switch } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Close from '@material-ui/icons/Close';
-import { Button, CircularProgress, Switch } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
-import { lakeDestinationFieldValue, updateAllLakeDestinationValues, updateMode, updateFetchDataFlag } from 'actions/lakeDestinationsAction'
-import { useNavigate } from 'react-router';
-import defaultInstance from 'routes/defaultInstance';
+import Close from '@material-ui/icons/Close';
+import { lakeDestinationFieldValue, updateAllLakeDestinationValues, updateFetchDataFlag, updateMode } from 'actions/lakeDestinationsAction';
 import { openSnackbar } from 'actions/notificationAction';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {

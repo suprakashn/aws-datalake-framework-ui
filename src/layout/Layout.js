@@ -1,17 +1,14 @@
-import React, { useState } from "react";
-import { Link, useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import { CssBaseline } from "@material-ui/core";
-import HeaderBackground from 'images/abstract-black.jpg'
-import SnackbarComponent from 'components/Notifications/SnackBarComponent';
-import Main from 'routes/Main';
-import { useEffect } from "react";
+import AppBar from "@material-ui/core/AppBar";
+import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from "@material-ui/core/Toolbar";
 import SideBarComponent from "components/Notifications/SideBarComponent";
+import SnackbarComponent from 'components/Notifications/SnackBarComponent';
+import logo from 'images/logo white.png';
+import React, { useEffect, useState } from "react";
 import { connect } from 'react-redux';
-import { calculateNewValue } from "@testing-library/user-event/dist/utils";
-import  logo  from 'images/logo white.png';
+import { Link, useLocation } from 'react-router-dom';
+import Main from 'routes/Main';
 
 const useStyles = makeStyles((theme) => ({
     logo: {

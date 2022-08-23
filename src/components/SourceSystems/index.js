@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  openSourceSystemDialog, updateMode, closeSourceSystemDialog, updateAllSourceSystemValues,
-  resetSourceSystemValues, updateSourceSysTableData, updateDataFlag
-} from 'actions/sourceSystemsAction';
-import defaultInstance from 'routes/defaultInstance';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
-import tableIcons from "components/MetaData/MaterialTableIcons";
-import MaterialTable from "material-table";
-import { Box, Button, Tooltip, LinearProgress } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
-import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
-import { openSnackbar, openSideBar } from 'actions/notificationAction';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import { closeSourceSystemDialog, openSourceSystemDialog, resetSourceSystemValues, updateAllSourceSystemValues, updateDataFlag, updateMode, updateSourceSysTableData } from 'actions/sourceSystemsAction';
 import PageTitle from 'components/Common/PageTitle';
 import SearchBar from 'components/Common/SearchBar';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
+import clone from 'images/clone.png';
+import edit from 'images/edit.png';
+import remove from 'images/Remove.png';
+import show from 'images/Show.png';
+import MaterialTable from "material-table";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

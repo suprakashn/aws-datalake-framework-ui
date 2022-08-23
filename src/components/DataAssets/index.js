@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
-  resetDataAssetValues, updateDataAssetTableData, updateSelectedRow
-} from 'actions/dataAssetActions';
-import { openSnackbar,openSideBar } from 'actions/notificationAction';
-import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import tableIcons from "components/MetaData/MaterialTableIcons";
-import MaterialTable from "material-table";
-import { Box, Button, Tooltip } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import LaunchIcon from '@material-ui/icons/Launch';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import { closeDataAssetDialogue, openDataAssetDialogue, resetDataAssetValues, updateAllDataAssetValues, updateDataAssetTableData, updateMode, updateSelectedRow } from 'actions/dataAssetActions';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
 import SearchBar from 'components/Common/SearchBar';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import MaterialTable from "material-table";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

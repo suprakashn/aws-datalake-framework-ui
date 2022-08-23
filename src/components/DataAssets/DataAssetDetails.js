@@ -1,28 +1,27 @@
+import { Backdrop, Button, CircularProgress } from '@material-ui/core';
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import FormControl from '@material-ui/core/FormControl';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import Close from '@material-ui/icons/Close';
+import { dqRulesFieldValue, updateAllDataAssetValues, updateMode } from 'actions/dataAssetActions';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
+import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import React, { useEffect, useState } from 'react';
+import Editor from "react-prism-editor";
 import { connect } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Paper from '@material-ui/core/Paper';
-import Close from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import { Button, CircularProgress, Backdrop } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import Tooltip from '@material-ui/core/Tooltip';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { Tab, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import { bindActionCreators } from 'redux';
 import defaultInstance from 'routes/defaultInstance';
-import { updateMode, dqRulesFieldValue, updateAllDataAssetValues } from 'actions/dataAssetActions'
-import { openSnackbar, openSideBar } from 'actions/notificationAction';
-import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
-import Editor from "react-prism-editor";
-import PageTitle from 'components/Common/PageTitle';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {

@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Breadcrumbs, Link } from '@material-ui/core';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles } from '@material-ui/core/styles';
-import {Link as RouterLink } from 'react-router-dom';
-import defaultInstance from 'routes/defaultInstance';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import { openSideBar } from 'actions/notificationAction';
+import ViewCatalog from 'components/DataAssets/ViewCatalog';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { Breadcrumbs, Link } from '@material-ui/core';
-import ViewCatalog from 'components/DataAssets/ViewCatalog';
-import {openSideBar } from 'actions/notificationAction';
-import PageTitle from 'components/Common/PageTitle';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

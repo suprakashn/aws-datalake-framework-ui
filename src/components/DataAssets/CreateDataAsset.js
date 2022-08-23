@@ -1,36 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { Backdrop, Button, CircularProgress, TextField, Tooltip } from '@material-ui/core';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { Link, useNavigate } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
-import { withStyles } from '@material-ui/core/styles';
-import { openSnackbar, openSideBar } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, FILE_TYPE, TRIGGER_MECHANISM } from 'components/Constants/DataAssetsConstants'
-import {
-    assetFieldValue, ingestionFieldValue, dqRulesFieldValue,
-    dataAssetFieldValue, resetDataAssetValues,
-    updateDataFlag, updateMode, updateAllDataAssetValues
-} from 'actions/dataAssetActions'
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ReplayIcon from '@material-ui/icons/Replay';
-import { Button, CircularProgress, TextField, Tooltip, Backdrop } from '@material-ui/core';
-import defaultInstance from 'routes/defaultInstance';
-import cron from 'cron-validate';
-import AddSharpIcon from '@material-ui/icons/AddSharp';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
-import Editor from "react-prism-editor";
+import ReplayIcon from '@material-ui/icons/Replay';
+import {
+    assetFieldValue, dataAssetFieldValue, dqRulesFieldValue, ingestionFieldValue, resetDataAssetValues, updateAllDataAssetValues, updateDataFlag, updateMode
+} from 'actions/dataAssetActions';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
+import { BOOLEAN_VALUES, FILE_TYPE } from 'components/Constants/DataAssetsConstants';
+import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
+import cron from 'cron-validate';
+import React, { useEffect, useState } from 'react';
+import Editor from "react-prism-editor";
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     formControl: {
-        margin: theme.spacing(1),
+       // margin: theme.spacing(1),
         minWidth: 250,
         margin: '0px 3% 2% 0px',
         fontSize: 13,

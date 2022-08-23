@@ -1,7 +1,7 @@
+import { Application } from 'containers';
 import React from 'react';
-import {history} from 'store/configureStore';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-import { Application} from 'containers';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { history } from 'store/configureStore';
 
 const App = () => {
     return (

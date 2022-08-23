@@ -1,30 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { useNavigate } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Button, Divider, TextField, Tooltip } from '@material-ui/core';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { openSnackbar, } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, DATE_TIME_FORMATS, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
-import {
-    columnFieldValue,
-    dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
-    updateDataFlag, updateMode, updateAllDataAssetValues
-} from 'actions/dataAssetActions'
-import { Divider,Button,TextField } from '@material-ui/core';
-import defaultInstance from 'routes/defaultInstance';
-import { Tooltip, Fab } from '@material-ui/core';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {
+    closeDataAssetDialogue, columnFieldValue,
+    dataAssetFieldValue, resetDataAssetValues, updateAllDataAssetValues, updateDataFlag, updateMode
+} from 'actions/dataAssetActions';
+import { openSnackbar } from 'actions/notificationAction';
+import { BOOLEAN_VALUES, DATA_CLASSIFICATION, DATE_TIME_FORMATS, TARGET_DATA_TYPE } from 'components/Constants/DataAssetsConstants';
 import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 
 const useStyles = makeStyles((theme) => ({
     root: {

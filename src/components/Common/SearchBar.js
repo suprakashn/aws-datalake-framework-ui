@@ -1,10 +1,6 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
-import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import searchImage from 'images/search images.png';
-// import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import MaterialTable from "material-table";
+import React, { useEffect, useState } from 'react';
 
 
 const useStyles = makeStyles((theme) => ({

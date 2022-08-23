@@ -1,7 +1,7 @@
+import logo from 'images/tigerLogo.png';
 import { PureComponent } from 'react';
 import { Helmet } from 'react-helmet/es/Helmet';
 
-import logo from 'images/tigerLogo.png';
 class ReactHelmet extends PureComponent {
 	render() {
 		return (

@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
 import {
-  resetLakeDestinationValues, updateMode, updateAllLakeDestinationValues,
-  updateFetchDataFlag, updateLakeDestinationTableData
+  resetLakeDestinationValues, updateAllLakeDestinationValues,
+  updateFetchDataFlag, updateLakeDestinationTableData, updateMode
 } from 'actions/lakeDestinationsAction';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
-import tableIcons from "components/MetaData/MaterialTableIcons";
-import MaterialTable from "material-table";
-import { Box, Button, LinearProgress } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
-import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
-import defaultInstance from 'routes/defaultInstance';
-import { openSnackbar ,openSideBar} from 'actions/notificationAction';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
 import SearchBar from 'components/Common/SearchBar';
+import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import clone from 'images/clone.png';
+import edit from 'images/edit.png';
+import remove from 'images/Remove.png';
+import show from 'images/Show.png';
+import MaterialTable from "material-table";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
