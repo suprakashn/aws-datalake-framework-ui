@@ -80,7 +80,7 @@ const DataAssets = (props) => {
 
   useEffect(() => {
     setBackdrop(true);
-    defaultInstance.post('/dataassetinfo/read', { "src_sys_id": null })
+    defaultInstance.post('/data_asset_info/read', { "src_sys_id": null })
       .then(response => {
         setData(response.data.responseBody);
         setBackdrop(false);

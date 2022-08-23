@@ -79,7 +79,7 @@ const LakeDestination = (props) => {
   useEffect(() => {
     if (props.fetchDataFlag) {
       setLoading(true);
-      defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
+      defaultInstance.post('/target_system/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
         .then(response => {
           setLoading(false);
           if(response.data.responseStatus){

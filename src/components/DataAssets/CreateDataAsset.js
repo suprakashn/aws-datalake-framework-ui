@@ -159,7 +159,7 @@ const CreateDataAsset = (props) => {
     }
 
     const getTargetSystemData = () => {
-        defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
+        defaultInstance.post('/target_system/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
             .then(response => {
                 if (response.data.responseStatus) {
                     setTargetSysData(response.data.responseBody);
@@ -177,7 +177,7 @@ const CreateDataAsset = (props) => {
         let assetID = props.selectedRow.asset_id ? props.selectedRow.asset_id : null
         let srcSysID = props.selectedRow.src_sys_id ? props.selectedRow.src_sys_id : null
         setBackdrop(true);
-        defaultInstance.post('/dataasset/read', { "asset_id": assetID, "src_sys_id": srcSysID })
+        defaultInstance.post('/data_asset/read', { "asset_id": assetID, "src_sys_id": srcSysID })
             .then(response => {
                 if (response.data.responseStatus) {
                     props.updateAllDataAssetValues({ ...response.data.responseBody });
@@ -294,7 +294,7 @@ const CreateDataAsset = (props) => {
             setDisableButton(true);
             let payload = props.mode === 'edit' ? { ...props.fieldValues, asset_id: props.assetFieldValues.asset_id, src_sys_id: props.assetFieldValues.src_sys_id } : { ...props.fieldValues }
             // let payload = { ...props.fieldValues }
-            let url = props.mode === 'edit' ? '/dataasset/update' : 'dataasset/create'
+            let url = props.mode === 'edit' ? '/data_asset/update' : 'data_asset/create'
             try {
                 const response = await defaultInstance.post(url, payload)
                 if (response.data.responseStatus) {

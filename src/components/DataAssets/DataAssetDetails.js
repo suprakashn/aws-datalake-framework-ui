@@ -119,7 +119,7 @@ const DataAssetDetails = (props) => {
 
   const fetchDataAssetDetails = () => {
     setBackdrop(true);
-    defaultInstance.post('/dataasset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
+    defaultInstance.post('/data_asset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
       .then(response => {
         props.updateAllDataAssetValues({ ...response.data.responseBody });
         setBackdrop(false);
@@ -141,7 +141,7 @@ const DataAssetDetails = (props) => {
     try {
       setDisplayDeleteDialog(false);
       setDeletingFlag(true);
-      const response = await defaultInstance.post('dataasset/delete', { asset_id: props.assetFieldValues.asset_id, src_sys_id: props.assetFieldValues.src_sys_id });
+      const response = await defaultInstance.post('data_asset/delete', { asset_id: props.assetFieldValues.asset_id, src_sys_id: props.assetFieldValues.src_sys_id });
       setDeletingFlag(false);
       if (response.data.responseStatus) {
         props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });

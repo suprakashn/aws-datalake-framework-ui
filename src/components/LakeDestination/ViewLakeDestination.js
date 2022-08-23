@@ -93,7 +93,7 @@ const ViewLakeDestination = (props) => {
           target_id: props.fieldValues.target_id
         }
       }
-      const response = await defaultInstance.post('/targetsystem/delete', requestData)
+      const response = await defaultInstance.post('/target_system/delete', requestData)
       if (response.data.responseStatus) {
         props.updateFetchDataFlag(true);
         props.openSnackbar({ variant: 'success', message: response.data.responseMessage });

@@ -75,7 +75,7 @@ const DataCatalogDetails = (props) => {
 
   useEffect(() => {
     setBackdrop(true);
-    defaultInstance.post('/dataassetcatalog/read', { "src_sys_id": params.src_sys_id, "asset_id": params.asset_id })
+    defaultInstance.post('/data_catalog/read', { "src_sys_id": params.src_sys_id, "asset_id": params.asset_id })
       .then(response => {
         setData(response.data.responseBody);
         setBackdrop(false);

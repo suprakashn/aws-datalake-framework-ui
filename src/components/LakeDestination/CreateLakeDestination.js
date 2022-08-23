@@ -180,13 +180,13 @@ const CreateLakeDestination = (props) => {
         switch (props.mode) {
             case 'create':
             case 'clone':
-                url = '/targetsystem/create';
+                url = '/target_system/create';
                 requestData = {
                     target_config: dataToSave
                 }
                 break;
             case 'edit':
-                url = '/targetsystem/update';
+                url = '/target_system/update';
                 requestData = {
                     target_config: {
                         target_id: props.fieldValues.target_id,
