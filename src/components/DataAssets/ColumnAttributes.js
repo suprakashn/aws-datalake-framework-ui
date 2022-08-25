@@ -70,15 +70,65 @@ const useStyles = makeStyles((theme) => ({
 const ColumnAttributes = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
-    const [expanded, setExpanded] = React.useState(0);
+    const [expanded, setExpanded] = React.useState(-1);
     const [disableButton, setDisableButton] = useState(false);
+    const [dateTimeFormatField, setDateTimeFormatField] = useState({});
+    const [customDateTimeFormatField, setCustomDateTimeFormatField] = useState({});
+    const [targetDateTimeFormatField, setTargetDateTimeFormatField] = useState({});
+    const [customTargetDateTimeFormatField, setCustomTargetDateTimeFormatField] = useState({});
+
     const [error, setError] = useState({})
 
     useEffect(() => {
         if (props.mode === 'view' || props.mode === 'delete') {
             setDisableButton(true);
         }
+        var dateTimeFormat = {};
+        var targetDateTimeFormat = {};
+        var customDateTimeFormat = {};
+        var customTargetDateTimeFormat = {};
+
+        props.columnAttributesData?.forEach(row => {
+            if (DATE_TIME_FORMATS.find(d => d.value == row.datetime_format)) {
+                dateTimeFormat[row.col_id + ""] = row.datetime_format;
+            } else if (row.datetime_format) {
+                dateTimeFormat[row.col_id + ""] = "custom";
+                customDateTimeFormat[row.col_id + ""] = row.datetime_format
+            }
+
+            if (DATE_TIME_FORMATS.find(d => d.value == row.tgt_datetime_format)) {
+                targetDateTimeFormat[row.col_id + ""] = row.tgt_datetime_format;
+            } else if (row.tgt_datetime_format) {
+                targetDateTimeFormat[row.col_id + ""] = "custom";
+                customTargetDateTimeFormat[row.col_id + ""] = row.tgt_datetime_format
+            }
+        })
+        setDateTimeFormatField(dateTimeFormat)
+        setTargetDateTimeFormatField(targetDateTimeFormat)
+        setCustomDateTimeFormatField(customDateTimeFormat)
+        setCustomTargetDateTimeFormatField(customTargetDateTimeFormat)
+        setExpanded(0)
     }, []);
+
+    const handleDateTimeFormatChange = (row, value) => {
+        setDateTimeFormatField({ ...dateTimeFormatField, [row.col_id + ""]: value })
+        handleValueChange(row, "datetime_format", "datetimeFormatError", value);
+    }
+
+    const handleCustomDateTimeFormatChange = (row, value) => {
+        setCustomDateTimeFormatField({ ...customDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "datetime_format", "customDatetimeFormatError", value);
+    }
+
+    const handleTargetDateTimeFormatChange = (row, value) => {
+        setTargetDateTimeFormatField({ ...targetDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "tgt_datetime_format", "targetDatatimeFormatError", value);
+    }
+
+    const handleCustomTargetDateTimeFormatChange = (row, value) => {
+        setCustomTargetDateTimeFormatField({ ...customTargetDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "tgt_datetime_format", "customTargetDatatimeFormatError", value);
+    }
 
     const handleChange = (row, id) => (_, isExpanded) => {
         setExpanded(isExpanded ? id : false)
@@ -115,7 +165,7 @@ const ColumnAttributes = (props) => {
         props.columnFieldValue([...info]);
         setError({
             ...error,
-            [errorField]: value.toString().trim().length > 0 ? false : true
+            [errorField]: (value || "").toString().trim().length > 0 ? false : true
         })
     }
 
@@ -181,6 +231,22 @@ const ColumnAttributes = (props) => {
         info.splice(indexValue, 1);
         let data = info.map((item, index) => { return { ...item, col_id: index + 1 } })
         props.columnFieldValue([...data]);
+
+        const newCustomDateTime = { ...customDateTimeFormatField }
+        delete newCustomDateTime["" + row.col_id];
+        setCustomDateTimeFormatField(newCustomDateTime)
+
+        const newDateTime = { ...dateTimeFormatField }
+        delete newDateTime["" + row.col_id];
+        setDateTimeFormatField(newDateTime)
+
+        const newTargetCustomDateTime = { ...customTargetDateTimeFormatField }
+        delete newTargetCustomDateTime["" + row.col_id];
+        setCustomTargetDateTimeFormatField(newTargetCustomDateTime)
+
+        const newTargetDateTime = { ...targetDateTimeFormatField }
+        delete newTargetDateTime["" + row.col_id];
+        setTargetDateTimeFormatField(newTargetDateTime)
     }
 
     return (
@@ -237,7 +303,7 @@ const ColumnAttributes = (props) => {
                                     />
                                     <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
                                 </FormControl>
-                                <FormControl className={classes.formControl} style={{minWidth: '535px'}}>
+                                <FormControl className={classes.formControl} style={{ minWidth: '535px' }}>
                                     <div > Description* </div>
                                     <TextField
                                         error={error.colDescriptionError}
@@ -246,8 +312,9 @@ const ColumnAttributes = (props) => {
                                         variant='outlined'
                                         value={row.col_desc}
                                         id="col_desc"
-                                        onChange={(event) => handleValueChange(row, 'col_desc', 'colDescriptionError', event.target.value)}
+                                        onChange={(event) => handleMaxCharacter(row, 'col_desc', 'colDescriptionError', event.target.value, 400)}
                                     />
+                                    <FormHelperText>{error.colDescriptionError ? <span style={{ color: 'red' }}>Reached maximum limit of 400 characters</span> : ''}</FormHelperText>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '3%' }}>Data Type*</div>
@@ -268,26 +335,40 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                {row.data_type === "Datetime" && 
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Datetime Format</div>
-                                    <Select
-                                        error={error.datatimeFormatError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="datetime_format"
-                                        value={row.datetime_format}
-                                        onChange={(event) => handleValueChange(row, 'datetime_format', 'datetimeFormatError', event.target.value)}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Select datetime format</em>
-                                        </MenuItem>
-                                        {DATE_TIME_FORMATS.map(item => {
-                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
+                                {row.data_type === "Datetime" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Datetime Format*</div>
+                                        <Select
+                                            error={error.datetimeFormatError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="datetime_format"
+                                            value={dateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleDateTimeFormatChange(row, event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select datetime format</em>
+                                            </MenuItem>
+                                            {DATE_TIME_FORMATS.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>}
+                                {row.data_type === "Datetime" && dateTimeFormatField[`${row.col_id}`] == "custom" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div>Custom Datetime Format*</div>
+                                        <TextField
+                                            type={"text"}
+                                            error={error.customDatetimeFormatError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="customdatetime_format"
+                                            value={customDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleCustomDateTimeFormatChange(row, event.target.value)}
+                                        />
+                                    </FormControl>}
                                 <FormControl className={classes.formControl}>
                                     <div >Column Length</div>
                                     <TextField
@@ -302,7 +383,7 @@ const ColumnAttributes = (props) => {
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
+                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator*</div>
                                     <Select
                                         error={error.primaryKeyIndicatorError}
                                         disabled={disableButton}
@@ -349,7 +430,7 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                <Divider style={{margin: '1% 7% 2% 1%'}}/>
+                                <Divider style={{ margin: '1% 7% 2% 1%' }} />
                                 <FormControl className={classes.formControl}>
                                     <div >Target column name</div>
                                     <TextField
@@ -382,26 +463,42 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                {row.tgt_data_type === "Datetime" && 
-                                <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Target Datetime Format</div>
-                                    <Select
-                                        error={error.targetDatatimeFormatError}
-                                        disabled={disableButton}
-                                        margin="dense"
-                                        variant="outlined"
-                                        id="tgt_datetime_format"
-                                        value={row.tgt_datetime_format}
-                                        onChange={(event) => handleValueChange(row, 'tgt_datetime_format', 'targetDatatimeFormatError', event.target.value)}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Select target datetime format</em>
-                                        </MenuItem>
-                                        {DATE_TIME_FORMATS.map(item => {
-                                            return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>}
+                                {row.tgt_data_type === "Datetime" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Target Datetime Format</div>
+                                        <Select
+                                            error={error.targetDatatimeFormatError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="tgt_datetime_format"
+                                            value={targetDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleTargetDateTimeFormatChange(row, event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select target datetime format</em>
+                                            </MenuItem>
+                                            {DATE_TIME_FORMATS.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>}
+
+                                {row.tgt_data_type === "Datetime" &&
+                                    targetDateTimeFormatField[`${row.col_id}`] === "custom" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div>Custom Target Datetime Format</div>
+                                        <TextField
+                                            type={"text"}
+                                            error={error.customTargetDatatimeFormatError}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="customtargetdatetime_format"
+                                            value={customTargetDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleCustomTargetDateTimeFormatChange(row, event.target.value)}
+                                        />
+                                    </FormControl>}
                             </div>
                         </AccordionDetails>
                     </Accordion>
