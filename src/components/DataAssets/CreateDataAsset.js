@@ -124,7 +124,7 @@ const CreateDataAsset = (props) => {
             } else {
                 setDisplayField(false);
                 setSrcIngestionValue(obj ? obj['ingstn_pattern'] : "")
-                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type": "csv", "file_header": "", "multipartition": "", "file_delim": "," } })
+                props.updateAllDataAssetValues({ ...props.fieldValues, "asset_info": { ...props.assetFieldValues, "file_type": "csv", "file_header": "true", "multipartition": "", "file_delim": "," } })
             }
         }
     }, [props.assetFieldValues.src_sys_id])
@@ -459,7 +459,7 @@ const CreateDataAsset = (props) => {
                                     </FormControl> */}
 
                                 </>}
-                            {props.assetFieldValues.file_type === 'csv' &&
+                                {displayField && props.assetFieldValues.file_type === 'csv' &&
                                 <>
 
                                     <FormControl className={classes.formControl}>
