@@ -9,7 +9,7 @@ const initialDataAttributes = {
     "multipartition": "", //default false
     "file_type": "",
     "asset_nm": "",
-    "trigger_file_pattern": "",
+    "trigger_file_pattern": null,
     "file_delim": "", //default ,
     "file_encryption_ind": false, //default false
     "asset_owner": "",
