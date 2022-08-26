@@ -213,6 +213,8 @@ const ColumnAttributes = (props) => {
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
+            "datetime_format": "",
+            "tgt_datetime_format": "",
             "col_desc": "",
             "data_classification": "",
             "col_length": 0,
