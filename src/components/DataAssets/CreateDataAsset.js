@@ -105,6 +105,7 @@ const CreateDataAsset = (props) => {
     const [cronValue, setCronValue] = useState('');
     const [errorValue, setErrorValue] = useState('');
     const [error, setError] = useState({})
+    var [saveForm, setSaveForm] = useState(0);
 
     useEffect(() => {
         if (props.mode !== 'create') {
@@ -274,7 +275,8 @@ const CreateDataAsset = (props) => {
             // ingestionSourcePathError: props.mode !== 'create' ? (props.ingestionFieldValues.ingstn_src_path && props.ingestionFieldValues.ingstn_src_path.trim() ? false : true) : false,
             triggerMechanismError: props.ingestionFieldValues.trigger_mechanism.trim() ? false : true,
             crontabError: props.ingestionFieldValues.trigger_mechanism === 'time_driven' ? (props.ingestionFieldValues.frequency.trim() ? error.crontabError : true) : false,
-            extColumnError: false
+            extColumnError: false,
+            columnAttributeError: !props.isColumnAttributeValid
         }
         setError(errorObj);
         console.log("error obj", errorObj)
@@ -284,6 +286,8 @@ const CreateDataAsset = (props) => {
     const handleSave = async () => {
         console.log("field values", { ...props.fieldValues })
         let errorLength = validate();
+        setSaveForm(saveForm + 1)
+        console.log("isColumnAttributeValid from redux", props.isColumnAttributeValid)
         if (errorLength) {
             props.openSnackbar({ variant: 'error', message: 'Enter all mandatory fields with valid data!' });
         } else {
@@ -577,7 +581,7 @@ const CreateDataAsset = (props) => {
                         <Typography className={classes.heading}>Column Attributes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <ColumnAttributes />
+                        <ColumnAttributes saveForm={saveForm}/>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion style={{ margin: "1% 0" }}
@@ -770,7 +774,8 @@ const mapStateToProps = state => ({
     dqRulesFieldValues: state.dataAssetState.dataAssetValues.adv_dq_rules,
     mode: state.dataAssetState.updateMode.mode,
     dataFlag: state.dataAssetState.updateDataFlag.dataFlag,
-    selectedRow: state.dataAssetState.updateSelectedRow
+    selectedRow: state.dataAssetState.updateSelectedRow,
+    isColumnAttributeValid: state.dataAssetState.validateColumnAttribute?.data
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
     openSnackbar,

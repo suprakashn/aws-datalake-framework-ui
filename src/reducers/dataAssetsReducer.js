@@ -85,6 +85,16 @@ const updateDataAssetTableData = (state = { data: [] }, action) => {
     }
 }
 
+
+const validateColumnAttribute = (state = {}, action) => {
+    switch (action.type) {
+        case Constants.VALIDATE_COLUMN_ATTRIBUTES_DATA:
+            return { ...state, data: action.payload }
+        default:
+            return { ...state }
+    }
+}
+
 const dataAssetValues = (state = { "asset_info": initialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes, "adv_dq_rules": [] }, action) => {
     switch (action.type) {
         case Constants.UPDATE_ASSET_INFO_FIELD_VALUE:
@@ -121,7 +131,8 @@ const dataAssetsReducer = combineReducers({
     dataAssetValues,
     updateDataFlag,
     updateDataAssetTableData,
-    updateSelectedRow
+    updateSelectedRow,
+    validateColumnAttribute
 })
 
 export default dataAssetsReducer;
