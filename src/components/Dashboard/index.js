@@ -1,16 +1,16 @@
 /* eslint-disable no-useless-computed-key */
 /* eslint-disable jsx-a11y/alt-text */
 
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from "@material-ui/core/Toolbar";
 import awsLogo from 'images/AWS logo.png';
-import sourceSystemIcon from 'images/sourceSystemIcon.png';
+import backgroundImage from 'images/background.png';
 import dataAssetIcon from 'images/dataAssetIcon.png';
 import lakeDestinationIcon from 'images/lakeDestinationIcon.png';
-import backgroundImage from 'images/background.png';
-import Toolbar from "@material-ui/core/Toolbar";
 import logo from 'images/logo white.png';
+import sourceSystemIcon from 'images/sourceSystemIcon.png';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     logo: {
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '30px',        
         //fontWeight: 100,
         '& img': {
-            "width": "auto",
+            // "width": "auto",
             "verticalAlign": "-webkit-baseline-middle",
             "padding": "0 14px 0 5px",
             "width": "92px"

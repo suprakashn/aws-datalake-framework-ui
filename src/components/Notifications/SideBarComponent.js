@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { closeSideBar } from 'actions/notificationAction';
 import { makeStyles } from '@material-ui/core';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import { closeSideBar } from 'actions/notificationAction';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
+import { bindActionCreators } from 'redux';
 
 const useStyles = makeStyles((theme) => ({
     sideBar: {

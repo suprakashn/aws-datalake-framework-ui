@@ -1,5 +1,5 @@
-import React from 'react';
 import Layout from 'layout/Layout';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

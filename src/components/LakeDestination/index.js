@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
 import {
-  resetLakeDestinationValues, updateMode, updateAllLakeDestinationValues,
-  updateFetchDataFlag, updateLakeDestinationTableData
+  resetLakeDestinationValues, updateAllLakeDestinationValues,
+  updateFetchDataFlag, updateLakeDestinationTableData, updateMode
 } from 'actions/lakeDestinationsAction';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
-import tableIcons from "components/MetaData/MaterialTableIcons";
-import MaterialTable from "material-table";
-import { Box, Button, LinearProgress } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
-import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
-import defaultInstance from 'routes/defaultInstance';
-import { openSnackbar ,openSideBar} from 'actions/notificationAction';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
+import SearchBar from 'components/Common/SearchBar';
+import ViewLakeDestination from 'components/LakeDestination/ViewLakeDestination';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import clone from 'images/clone.png';
+import edit from 'images/edit.png';
+import remove from 'images/Remove.png';
+import show from 'images/Show.png';
+import MaterialTable from "material-table";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
       color: '#ff8700',
     },
   },
+  toolbar: {
+    "display": "flex",
+    "width": "100%",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "padding": "15px 30px 7px"
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -65,12 +72,13 @@ const LakeDestination = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [filteredList, setFilteredList] = useState(props.tableData);
   const [selectedRow, setSelectedRow] = useState(null);
   
   useEffect(() => {
     if (props.fetchDataFlag) {
       setLoading(true);
-      defaultInstance.post('/targetsystem/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
+      defaultInstance.post('/target_system/read', { "fetch_limit": 'all', "target_config": { "target_id": null } })
         .then(response => {
           setLoading(false);
           if(response.data.responseStatus){
@@ -124,21 +132,17 @@ const LakeDestination = (props) => {
       <div className={classes.table}>
         <PageTitle showInfo={() => props.openSideBar({heading: 'Lake Destination', content: 'Targets are categories within the Data Lake to better organize the data as per enterprise needs. These are various domains/subdomains in which individual data assets are stored'})}>Lake Destination</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" /> */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px',}}>
+          <SearchBar data={props.tableData} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <Link to="./create" >
+            <Button variant="contained" className={classes.button} style={{marginTop: '7px'}} onClick={() => handleCreate()}>Add New +</Button>
+          </Link>
+        </div>
         <MaterialTable
-          components={{
-            Toolbar: (toolbarProps) => (
-              <Box >
-                <Link to="./create" >
-                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
-                <MTableToolbar {...toolbarProps} />
-              </Box>
-            ),
-          }}
           icons={tableIcons}
           title="Lake Destination"
           columns={columns}
-          data={props.tableData}          
+          data={filteredList}          
           actions={[
             {
               icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
@@ -189,6 +193,8 @@ const LakeDestination = (props) => {
             //selection: true,
             //showTextRowsSelected: false,
             paging: false,
+            search: false,
+            toolbar: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,

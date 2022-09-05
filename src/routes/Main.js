@@ -1,14 +1,14 @@
-import React from 'react';
-import {Navigate, Route, Routes} from 'react-router-dom';
 import Dashboard from 'components/Dashboard';
-import SourceSystems from 'components/SourceSystems';
-import CreateSourceSystem from 'components/SourceSystems/CreateSourceSystem';
 import DataAssets from 'components/DataAssets';
 import CreateDataAsset from 'components/DataAssets/CreateDataAsset';
-import CreateLakeDestination from 'components/LakeDestination/CreateLakeDestination';
-import LakeDestination from 'components/LakeDestination';
-import DataAssetDetails from 'components/DataAssets/DataAssetDetails'
+import DataAssetDetails from 'components/DataAssets/DataAssetDetails';
 import DataCatalogDetails from 'components/DataAssets/DataCatalogDetails';
+import LakeDestination from 'components/LakeDestination';
+import CreateLakeDestination from 'components/LakeDestination/CreateLakeDestination';
+import SourceSystems from 'components/SourceSystems';
+import CreateSourceSystem from 'components/SourceSystems/CreateSourceSystem';
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 const Page = props =>(
     <Routes>

@@ -54,6 +54,13 @@ export const columnFieldValue = (value) => dispatch => {
     })
 }
 
+export const validateColumnAttribute = (value) => dispatch => {
+    dispatch({
+        type: constants.VALIDATE_COLUMN_ATTRIBUTES_DATA,
+        payload: value
+    })
+}
+
 export const dqRulesFieldValue = (value) => dispatch => {
     dispatch({
         type: constants.UPDATE_DQ_RULES_FIELD,
