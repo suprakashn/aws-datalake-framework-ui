@@ -1,5 +1,5 @@
+import * as Constants from 'components/Constants/Constants';
 import { combineReducers } from "redux";
-import * as Constants from 'components/Constants/Constants'
 
 const initialDataAttributes = {
     "asset_id": "",
@@ -9,7 +9,7 @@ const initialDataAttributes = {
     "multipartition": "", //default false
     "file_type": "",
     "asset_nm": "",
-    "trigger_file_pattern": "",
+    "trigger_file_pattern": null,
     "file_delim": "", //default ,
     "file_encryption_ind": false, //default false
     "asset_owner": "",
@@ -22,18 +22,22 @@ const initialIngestionAttributes = {
     "ingstn_src_path": "",
     "trigger_mechanism": "",
     "frequency": "",
+    "ext_method": "full",
+    "ext_col": "",
 }
 const initialColumnAttributes = [{
     "col_id": 1,
     "col_nm": "",
     "tgt_col_nm": "",
     "tgt_data_type": "",
+    "tgt_datetime_format": "",
     "col_desc": "",
     "data_classification": "",
     "col_length": 0,
     "req_tokenization": false,
     "pk_ind": false,
     "data_type": "",
+    "datetime_format": "",
     "null_ind": false
 }]
 
@@ -81,6 +85,16 @@ const updateDataAssetTableData = (state = { data: [] }, action) => {
     }
 }
 
+
+const validateColumnAttribute = (state = {}, action) => {
+    switch (action.type) {
+        case Constants.VALIDATE_COLUMN_ATTRIBUTES_DATA:
+            return { ...state, data: action.payload }
+        default:
+            return { ...state }
+    }
+}
+
 const dataAssetValues = (state = { "asset_info": initialDataAttributes, "ingestion_attributes": initialIngestionAttributes, "asset_attributes": initialColumnAttributes, "adv_dq_rules": [] }, action) => {
     switch (action.type) {
         case Constants.UPDATE_ASSET_INFO_FIELD_VALUE:
@@ -117,7 +131,8 @@ const dataAssetsReducer = combineReducers({
     dataAssetValues,
     updateDataFlag,
     updateDataAssetTableData,
-    updateSelectedRow
+    updateSelectedRow,
+    validateColumnAttribute
 })
 
 export default dataAssetsReducer;

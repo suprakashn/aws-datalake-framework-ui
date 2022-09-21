@@ -1,30 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { useNavigate } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Button, Divider, TextField, Tooltip } from '@material-ui/core';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { openSnackbar, } from 'actions/notificationAction'
-import { BOOLEAN_VALUES, FILE_TYPE, TARGET_DATA_TYPE, DATA_CLASSIFICATION } from 'components/Constants/DataAssetsConstants'
-import {
-    columnFieldValue,
-    dataAssetFieldValue, closeDataAssetDialogue, resetDataAssetValues,
-    updateDataFlag, updateMode, updateAllDataAssetValues
-} from 'actions/dataAssetActions'
-import { Divider,Button,TextField } from '@material-ui/core';
-import defaultInstance from 'routes/defaultInstance';
-import { Tooltip, Fab } from '@material-ui/core';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {
+    closeDataAssetDialogue, columnFieldValue, validateColumnAttribute,
+    dataAssetFieldValue, resetDataAssetValues, updateAllDataAssetValues, updateDataFlag, updateMode
+} from 'actions/dataAssetActions';
+import { openSnackbar } from 'actions/notificationAction';
+import { BOOLEAN_VALUES, DATA_CLASSIFICATION, DATE_TIME_FORMATS, TARGET_DATA_TYPE } from 'components/Constants/DataAssetsConstants';
 import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -74,15 +70,72 @@ const useStyles = makeStyles((theme) => ({
 const ColumnAttributes = (props) => {
     const classes = useStyles();
     const navigate = useNavigate();
-    const [expanded, setExpanded] = React.useState(0);
+    const [expanded, setExpanded] = React.useState(-1);
     const [disableButton, setDisableButton] = useState(false);
-    const [error, setError] = useState({})
+    const [dateTimeFormatField, setDateTimeFormatField] = useState({});
+    const [customDateTimeFormatField, setCustomDateTimeFormatField] = useState({});
+    const [targetDateTimeFormatField, setTargetDateTimeFormatField] = useState({});
+    const [customTargetDateTimeFormatField, setCustomTargetDateTimeFormatField] = useState({});
 
+    const [error, setError] = useState({})
     useEffect(() => {
         if (props.mode === 'view' || props.mode === 'delete') {
             setDisableButton(true);
         }
+        var dateTimeFormat = {};
+        var targetDateTimeFormat = {};
+        var customDateTimeFormat = {};
+        var customTargetDateTimeFormat = {};
+
+        props.columnAttributesData?.forEach(row => {
+            if (DATE_TIME_FORMATS.find(d => d.value == row.datetime_format)) {
+                dateTimeFormat[row.col_id + ""] = row.datetime_format;
+            } else if (row.datetime_format) {
+                dateTimeFormat[row.col_id + ""] = "custom";
+                customDateTimeFormat[row.col_id + ""] = row.datetime_format
+            }
+
+            if (DATE_TIME_FORMATS.find(d => d.value == row.tgt_datetime_format)) {
+                targetDateTimeFormat[row.col_id + ""] = row.tgt_datetime_format;
+            } else if (row.tgt_datetime_format) {
+                targetDateTimeFormat[row.col_id + ""] = "custom";
+                customTargetDateTimeFormat[row.col_id + ""] = row.tgt_datetime_format
+            }
+        })
+        setDateTimeFormatField(dateTimeFormat)
+        setTargetDateTimeFormatField(targetDateTimeFormat)
+        setCustomDateTimeFormatField(customDateTimeFormat)
+        setCustomTargetDateTimeFormatField(customTargetDateTimeFormat)
+        setExpanded(0)
     }, []);
+
+    useEffect(() => {
+        props.saveForm && validate();
+    }, [props.saveForm]);
+
+    const handleDateTimeFormatChange = (row, value) => {
+        setDateTimeFormatField({ ...dateTimeFormatField, [row.col_id + ""]: value })
+        handleValueChange(row, "datetime_format", value == "custom" ? "" : value, {required: value != "custom"});
+    }
+
+    const handleCustomDateTimeFormatChange = (row, value) => {
+        setCustomDateTimeFormatField({ ...customDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "datetime_format", value, {required: false});
+        var errorMessage = (value || "").toString().trim().length > 0 ? "": "Required Field";
+        setError({ ...error, [row.col_id]: {...error[`${row.col_id}`], customdatetime_format: errorMessage} })        
+    }
+
+    const handleTargetDateTimeFormatChange = (row, value) => {
+        setTargetDateTimeFormatField({ ...targetDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "tgt_datetime_format", value == "custom" ? "" : value);
+    }
+
+    const handleCustomTargetDateTimeFormatChange = (row, value) => {
+        setCustomTargetDateTimeFormatField({ ...customTargetDateTimeFormatField, [row.col_id]: value })
+        handleValueChange(row, "tgt_datetime_format", value, {required: false});
+        var errorMessage = (value || "").toString().trim().length > 0 ? "": "Required Field";
+        setError({ ...error, [row.col_id]: {...error[`${row.col_id}`], customtargetdatetime_format: errorMessage} })        
+    }
 
     const handleChange = (row, id) => (_, isExpanded) => {
         setExpanded(isExpanded ? id : false)
@@ -99,28 +152,23 @@ const ColumnAttributes = (props) => {
         return indexValue;
     }
 
-    const handleMaxCharacter = (row, field, errorField, value, number) => {
-        if (value.length <= number) {
-            let info = props.columnAttributesData;
-            let indexValue = findIndexofObject(row);
-            info.splice(indexValue, 1, { ...row, [field]: value })
-            props.columnFieldValue([...info]);
-        }
-        setError({
-            ...error,
-            [errorField]: value.trim().length > 0 && value.trim().length <= number ? false : true
-        })
-    }
-
-    const handleValueChange = (row, field, errorField, value) => {
+    const handleValueChange = (row, field, value, validator = {required: true}) => {
         let info = props.columnAttributesData;
         let indexValue = findIndexofObject(row);
         info.splice(indexValue, 1, { ...row, [field]: value })
         props.columnFieldValue([...info]);
-        setError({
-            ...error,
-            [errorField]: value.toString().trim().length > 0 ? false : true
-        })
+        var errorMessage = "";
+        if(validator?.required){
+            errorMessage = (value || "").toString().trim().length > 0 ? "": "Required Field";
+            setError({ ...error, [row.col_id]: {...error[`${row.col_id}`], [field]: errorMessage} })        
+        }
+
+        if(validator?.maxLength > 0){
+            errorMessage = (value.trim().length <= validator?.maxLength) 
+            ?  errorMessage : `Reached maximum limit of ${validator?.maxLength} characters`;
+            setError({ ...error, [row.col_id]: {...error[`${row.col_id}`], [field]: errorMessage} })        
+        }
+        console.log("error", error)
     }
 
     const handleReset = () => {
@@ -136,30 +184,49 @@ const ColumnAttributes = (props) => {
         navigate("/data-assets");
     }
 
-    const validate = () => {
-        let errorObj = { ...error };
-        let lastObj = props.columnAttributesData[props.columnAttributesData.length - 1]
-        const info = Object.keys(lastObj).map(item => {
-            switch (item) {
-                case 'col_nm':
-                    errorObj = { ...errorObj, colNameError: !Boolean(lastObj[item].length) }
-                    return !Boolean(lastObj[item].length)
-                case 'col_desc':
-                    errorObj = { ...errorObj, colDescriptionError: !Boolean(lastObj[item].length) }
-                    return !Boolean(lastObj[item].length)
-                case 'data_classification':
-                    errorObj = { ...errorObj, dataClassificationError: !Boolean(lastObj[item].length) }
-                    return !Boolean(lastObj[item].length)
-                case 'data_type':
-                    errorObj = { ...errorObj, dataTypeError: !Boolean(lastObj[item].length) }
-                    return !Boolean(lastObj[item].length)
-                default:
-                    return false;
-            }
+    const validate = () => {        
+        var fieldsToValidate = ["col_nm", "col_desc", "data_classification", "data_type",
+        "tgt_col_nm","tgt_data_type","datetime_format","tgt_datetime_format","col_length","req_tokenization","pk_ind","null_ind"];
+        var newErrorObj = {};
+        props.columnAttributesData?.forEach(row => {   
+            fieldsToValidate.forEach(field => {
+                if((field == "datetime_format" && row['data_type'] != "Datetime")
+                || (field == "tgt_datetime_format" && row['tgt_data_type'] != "Datetime")){
+                    return;
+                }
+                
+                var errorMessage = "";
+                errorMessage = row[`${field}`]?.toString().trim().length > 0 
+                ? ((error[`${row.col_id}`] && error[`${row.col_id}`][`${field}`]) || "")
+                : "Required Field";
+                
+                if(field == "datetime_format" && customDateTimeFormatField[`${row.col_id}`]?.toString().trim().length > 0){
+                    errorMessage = "";
+                }
+                newErrorObj = {...newErrorObj, [row.col_id]: {...newErrorObj[`${row.col_id}`], [field]: errorMessage}}
+                //console.log("newErrorObj", newErrorObj)
+                //setError({ ...error, [row.col_id]: {...error[`${row.col_id}`], [field]: errorMessage} })        
+                //handleValueChange(row, field, row[`${field}`], {required: true})                    
+            })         
         })
-        setError({ ...errorObj })
-        console.log(info, errorObj)
-        return info.filter(item => item === true).length;
+
+        var isError = false;
+        newErrorObj = { ...error, ...newErrorObj }
+        for(var id in newErrorObj){
+            for(var col in newErrorObj[`${id}`]){
+                if(newErrorObj[`${id}`][`${col}`]){
+                    isError = true;
+                    break;
+                }
+            }
+            if(isError){
+                break;
+            }
+        }
+        setError({ ...newErrorObj })        
+        props.validateColumnAttribute(!isError)
+        props.validateColumnAttribute(!isError)
+
     }
     const handleAddNew = () => {
         props.columnFieldValue([...props.columnAttributesData, {
@@ -167,6 +234,8 @@ const ColumnAttributes = (props) => {
             "col_nm": "",
             "tgt_col_nm": "",
             "tgt_data_type": "",
+            "datetime_format": "",
+            "tgt_datetime_format": "",
             "col_desc": "",
             "data_classification": "",
             "col_length": 0,
@@ -185,6 +254,22 @@ const ColumnAttributes = (props) => {
         info.splice(indexValue, 1);
         let data = info.map((item, index) => { return { ...item, col_id: index + 1 } })
         props.columnFieldValue([...data]);
+
+        const newCustomDateTime = { ...customDateTimeFormatField }
+        delete newCustomDateTime["" + row.col_id];
+        setCustomDateTimeFormatField(newCustomDateTime)
+
+        const newDateTime = { ...dateTimeFormatField }
+        delete newDateTime["" + row.col_id];
+        setDateTimeFormatField(newDateTime)
+
+        const newTargetCustomDateTime = { ...customTargetDateTimeFormatField }
+        delete newTargetCustomDateTime["" + row.col_id];
+        setCustomTargetDateTimeFormatField(newTargetCustomDateTime)
+
+        const newTargetDateTime = { ...targetDateTimeFormatField }
+        delete newTargetDateTime["" + row.col_id];
+        setTargetDateTimeFormatField(newTargetDateTime)
     }
 
     return (
@@ -231,38 +316,40 @@ const ColumnAttributes = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div >Name*</div>
                                     <TextField
-                                        error={error.colNameError}
+                                        error={Boolean(error[`${row.col_id}`]?.col_nm)}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
+                                        helperText={error[`${row.col_id}`]?.col_nm}
                                         value={row.col_nm}
                                         id="col_nm"
-                                        onChange={(event) => handleMaxCharacter(row, 'col_nm', 'colNameError', event.target.value, 30)}
+                                        onChange={(event) => handleValueChange(row, 'col_nm', event.target.value, {required: true, maxLength: 30})}
                                     />
-                                    <FormHelperText>{error.colNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
                                 </FormControl>
-                                <FormControl className={classes.formControl} style={{minWidth: '535px'}}>
+                                <FormControl className={classes.formControl} style={{ minWidth: '535px' }}>
                                     <div > Description* </div>
                                     <TextField
-                                        error={error.colDescriptionError}
+                                        error={Boolean(error[`${row.col_id}`]?.col_desc)}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
+                                        helperText={error[`${row.col_id}`]?.col_desc}
                                         value={row.col_desc}
                                         id="col_desc"
-                                        onChange={(event) => handleValueChange(row, 'col_desc', 'colDescriptionError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'col_desc', event.target.value, {required: true, maxLength: 400})}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '3%' }}>Data Type*</div>
                                     <Select
-                                        error={error.dataTypeError}
+                                        error={Boolean(error[`${row.col_id}`]?.data_type)}
                                         disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
+                                        helperText={error[`${row.col_id}`]?.data_type}
                                         id="data_type"
                                         value={row.data_type}
-                                        onChange={(event) => handleValueChange(row, 'data_type', 'dataTypeError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'data_type',  event.target.value)}
                                     >
                                         <MenuItem value="">
                                             <em>Select data type</em>
@@ -272,29 +359,67 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
+                                {row.data_type === "Datetime" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Datetime Format*</div>
+                                        <Select
+                                            error={Boolean(error[`${row.col_id}`]?.datetime_format)}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            id="datetime_format"
+                                            helperText={error[`${row.col_id}`]?.datetime_format}
+                                            value={dateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleDateTimeFormatChange(row, event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select datetime format</em>
+                                            </MenuItem>
+                                            {DATE_TIME_FORMATS.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>}
+                                {row.data_type === "Datetime" && dateTimeFormatField[`${row.col_id}`] == "custom" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div>Custom Datetime Format*</div>
+                                        <TextField
+                                            type={"text"}
+                                            error={Boolean(error[`${row.col_id}`]?.customdatetime_format)}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            helperText={error[`${row.col_id}`]?.customdatetime_format}
+                                            id="customdatetime_format"
+                                            value={customDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleCustomDateTimeFormatChange(row, event.target.value)}
+                                        />
+                                    </FormControl>}
                                 <FormControl className={classes.formControl}>
                                     <div >Column Length</div>
                                     <TextField
                                         type={"number"}
-                                        error={error.columnLengthError}
+                                        error={Boolean(error[`${row.col_id}`]?.col_length)}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
+                                        helperText={error[`${row.col_id}`]?.col_length}
                                         value={row.col_length}
                                         id="col_length"
-                                        onChange={(event) => handleValueChange(row, 'col_length', 'columnLengthError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'col_length',  event.target.value)}
                                     />
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator</div>
+                                    <div style={{ marginBottom: '3%' }}>Primary key Indicator*</div>
                                     <Select
-                                        error={error.primaryKeyIndicatorError}
+                                        error={Boolean(error[`${row.col_id}`]?.pk_ind)}
                                         disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
+                                        helperText={error[`${row.col_id}`]?.pk_ind}
                                         id="pk_ind"
                                         value={row.pk_ind}
-                                        onChange={(event) => handleValueChange(row, 'pk_ind', 'primaryKeyIndicatorError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'pk_ind', event.target.value)}
                                     >
                                         {BOOLEAN_VALUES.map(item => {
                                             return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -304,13 +429,14 @@ const ColumnAttributes = (props) => {
                                 <FormControl className={classes.formControl}>
                                     <div style={{ marginBottom: '3%' }}>Data Classification*</div>
                                     <Select
-                                        error={error.dataClassificationError}
+                                        error={Boolean(error[`${row.col_id}`]?.data_classification)}
                                         disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
+                                        helperText={error[`${row.col_id}`]?.data_classification}
                                         id="data_classification"
                                         value={row.data_classification}
-                                        onChange={(event) => handleValueChange(row, 'data_classification', 'dataClassificationError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'data_classification',  event.target.value)}
                                     >
                                         {DATA_CLASSIFICATION.map(item => {
                                             return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
@@ -318,45 +444,47 @@ const ColumnAttributes = (props) => {
                                     </Select>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}> Enable Tokenization</div>
+                                    <div style={{ marginBottom: '3%' }}> Enable Tokenization*</div>
                                     <Select
-                                        error={error.tokenizationError}
+                                        error={Boolean(error[`${row.col_id}`]?.req_tokenization)}
                                         disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
-                                        id="req_tokenization"
+                                        helperText={error[`${row.col_id}`]?.req_tokenization}
+                                        id=""
                                         value={row.req_tokenization}
-                                        onChange={(event) => handleValueChange(row, 'req_tokenization', 'tokenizationError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'req_tokenization',  event.target.value)}
                                     >
                                         {BOOLEAN_VALUES.map(item => {
                                             return <MenuItem key={item.value} value={item.value} >{item.name}</MenuItem>
                                         })}
                                     </Select>
                                 </FormControl>
-                                <Divider style={{margin: '1% 7% 2% 1%'}}/>
+                                <Divider style={{ margin: '1% 7% 2% 1%' }} />
                                 <FormControl className={classes.formControl}>
-                                    <div >Target column name</div>
+                                    <div >Target column name*</div>
                                     <TextField
-                                        error={error.targetColumnNameError}
+                                        error={Boolean(error[`${row.col_id}`]?.tgt_col_nm)}
                                         disabled={disableButton}
                                         margin='dense'
                                         variant='outlined'
+                                        helperText={error[`${row.col_id}`]?.tgt_col_nm}
                                         value={row.tgt_col_nm}
                                         id="tgt_col_nm"
-                                        onChange={(event) => handleMaxCharacter(row, 'tgt_col_nm', 'targetColumnNameError', event.target.value, 30)}
+                                        onChange={(event) => handleValueChange(row, 'tgt_col_nm',  event.target.value, {required: true, maxLength: 30})}
                                     />
-                                    <FormHelperText>{error.targetColumnNameError ? <span style={{ color: 'red' }}>Reached maximum limit of 30 characters</span> : ''}</FormHelperText>
                                 </FormControl>
                                 <FormControl className={classes.formControl}>
-                                    <div style={{ marginBottom: '3%' }}>Target Data Type</div>
+                                    <div style={{ marginBottom: '3%' }}>Target Data Type*</div>
                                     <Select
-                                        error={error.targetDataTypeError}
+                                        error={Boolean(error[`${row.col_id}`]?.tgt_data_type)}
                                         disabled={disableButton}
                                         margin="dense"
                                         variant="outlined"
+                                        helperText={error[`${row.col_id}`]?.tgt_data_type}
                                         id="tgt_data_type"
                                         value={row.tgt_data_type}
-                                        onChange={(event) => handleValueChange(row, 'tgt_data_type', 'targetDataTypeError', event.target.value)}
+                                        onChange={(event) => handleValueChange(row, 'tgt_data_type',  event.target.value)}
                                     >
                                         <MenuItem value="">
                                             <em>Select target data type</em>
@@ -366,6 +494,44 @@ const ColumnAttributes = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
+                                {row.tgt_data_type === "Datetime" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div style={{ marginBottom: '3%' }}>Target Datetime Format*</div>
+                                        <Select
+                                            error={Boolean(error[`${row.col_id}`]?.tgt_datetime_format)}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            helperText={error[`${row.col_id}`]?.tgt_datetime_format}
+                                            id="tgt_datetime_format"
+                                            value={targetDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleTargetDateTimeFormatChange(row, event.target.value)}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Select target datetime format</em>
+                                            </MenuItem>
+                                            {DATE_TIME_FORMATS.map(item => {
+                                                return <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>}
+
+                                {row.tgt_data_type === "Datetime" &&
+                                    targetDateTimeFormatField[`${row.col_id}`] === "custom" &&
+                                    <FormControl className={classes.formControl}>
+                                        <div>Custom Target Datetime Format*</div>
+                                        <TextField
+                                            type={"text"}
+                                            error={Boolean(error[`${row.col_id}`]?.customtargetdatetime_format)}
+                                            disabled={disableButton}
+                                            margin="dense"
+                                            variant="outlined"
+                                            helperText={error[`${row.col_id}`]?.customtargetdatetime_format}
+                                            id="customtargetdatetime_format"
+                                            value={customTargetDateTimeFormatField[`${row.col_id}`]}
+                                            onChange={(event) => handleCustomTargetDateTimeFormatChange(row, event.target.value)}
+                                        />
+                                    </FormControl>}
                             </div>
                         </AccordionDetails>
                     </Accordion>
@@ -379,7 +545,7 @@ const mapStateToProps = state => ({
     open: state.dataAssetState.dialogue.flag,
     columnAttributesData: state.dataAssetState.dataAssetValues.asset_attributes,
     mode: state.dataAssetState.updateMode.mode,
-    dataFlag: state.dataAssetState.updateDataFlag.dataFlag
+    dataFlag: state.dataAssetState.updateDataFlag.dataFlag,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
     openSnackbar,
@@ -390,6 +556,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     resetDataAssetValues,
     updateAllDataAssetValues,
     columnFieldValue,
+    validateColumnAttribute,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ColumnAttributes);

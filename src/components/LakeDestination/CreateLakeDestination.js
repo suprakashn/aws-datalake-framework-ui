@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import Paper from '@material-ui/core/Paper';
+import { Button, CircularProgress, Switch, TextField } from '@material-ui/core';
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { withStyles } from '@material-ui/core/styles';
-import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ReplayIcon from '@material-ui/icons/Replay';
 import {
     lakeDestinationFieldValue, resetLakeDestinationValues, updateAllLakeDestinationValues,
     updateFetchDataFlag
-} from 'actions/lakeDestinationsAction'
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ReplayIcon from '@material-ui/icons/Replay';
-import { CircularProgress, Switch, TextField } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import { openSnackbar ,openSideBar} from 'actions/notificationAction';
-import defaultInstance from 'routes/defaultInstance';
+} from 'actions/lakeDestinationsAction';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
 import PageTitle from 'components/Common/PageTitle';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -180,13 +178,13 @@ const CreateLakeDestination = (props) => {
         switch (props.mode) {
             case 'create':
             case 'clone':
-                url = '/targetsystem/create';
+                url = '/target_system/create';
                 requestData = {
                     target_config: dataToSave
                 }
                 break;
             case 'edit':
-                url = '/targetsystem/update';
+                url = '/target_system/update';
                 requestData = {
                     target_config: {
                         target_id: props.fieldValues.target_id,

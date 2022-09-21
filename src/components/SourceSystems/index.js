@@ -1,24 +1,21 @@
+import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import { closeSourceSystemDialog, openSourceSystemDialog, resetSourceSystemValues, updateAllSourceSystemValues, updateDataFlag, updateMode, updateSourceSysTableData } from 'actions/sourceSystemsAction';
+import PageTitle from 'components/Common/PageTitle';
+import SearchBar from 'components/Common/SearchBar';
+import tableIcons from "components/MetaData/MaterialTableIcons";
+import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
+import clone from 'images/clone.png';
+import edit from 'images/edit.png';
+import remove from 'images/Remove.png';
+import show from 'images/Show.png';
+import MaterialTable from "material-table";
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  openSourceSystemDialog, updateMode, closeSourceSystemDialog, updateAllSourceSystemValues,
-  resetSourceSystemValues, updateSourceSysTableData, updateDataFlag
-} from 'actions/sourceSystemsAction';
+import { bindActionCreators } from 'redux';
 import defaultInstance from 'routes/defaultInstance';
-import show from 'images/Show.png';
-import edit from 'images/edit.png';
-import clone from 'images/clone.png';
-import remove from 'images/Remove.png';
-import tableIcons from "components/MetaData/MaterialTableIcons";
-import MaterialTable from "material-table";
-import { Box, Button, Tooltip, LinearProgress } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
-import ViewSourceSystem from 'components/SourceSystems/ViewSourceSystem';
-import { openSnackbar, openSideBar } from 'actions/notificationAction';
-import PageTitle from 'components/Common/PageTitle';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -47,6 +44,13 @@ const useStyles = makeStyles((theme) => ({
       color: '#ff8700',
     },
   },
+  toolbar: {
+    "display": "flex",
+    "width": "100%",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "padding": "15px 30px 7px"
+  },
   button: {
     float: 'right',
     margin: '2vh',
@@ -69,6 +73,7 @@ const SourceSystems = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = ([]);
+  const [filteredList, setFilteredList] = useState(props.data);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -136,21 +141,18 @@ const SourceSystems = (props) => {
       <div className={classes.table}>
         <PageTitle showInfo={() => props.openSideBar({heading: 'Source System', content: 'Source Systems are individual entities which are registered with the framework aligned with systems which owns one or more data assets. It could be a database, a vendor, social media websites, streaming sources etc.'})}>Source System</PageTitle>
         {/* <LinearProgress hidden={!loading} color="secondary" />  */}
+        <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '25px'}}>
+          <SearchBar data={props.data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <Link to="./create" >
+              <Button variant="contained" className={classes.button}  style={{marginTop: '7px'}} onClick={() => handleCreate()}>Add New +</Button>
+          </Link>
+        </div>
+
         <MaterialTable
-          components={{
-            Toolbar: (toolbarProps) => (
-              <Box >
-                <Link to="./create" >
-                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
-                <MTableToolbar {...toolbarProps} />
-              </Box>
-            ),
-          }}
           icons={tableIcons}
           title="Source Systems"
           columns={columns}
-          data={props.data}
+          data={filteredList}
           actions={[
             {
               icon: () => <img src={show} alt="view" style={{ maxWidth: '70%' }} />,
@@ -189,7 +191,9 @@ const SourceSystems = (props) => {
           options={{
             //selection: true,
             // showTextRowsSelected: false,
+            toolbar: false,
             paging: false,
+            search: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,

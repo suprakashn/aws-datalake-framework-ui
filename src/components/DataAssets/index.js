@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  openDataAssetDialogue, updateMode, closeDataAssetDialogue, updateAllDataAssetValues,
-  resetDataAssetValues, updateDataAssetTableData, updateSelectedRow
-} from 'actions/dataAssetActions';
-import { openSnackbar,openSideBar } from 'actions/notificationAction';
-import defaultInstance from 'routes/defaultInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import LaunchIcon from '@material-ui/icons/Launch';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import { closeDataAssetDialogue, openDataAssetDialogue, resetDataAssetValues, updateAllDataAssetValues, updateDataAssetTableData, updateMode, updateSelectedRow } from 'actions/dataAssetActions';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
+import SearchBar from 'components/Common/SearchBar';
 import tableIcons from "components/MetaData/MaterialTableIcons";
 import MaterialTable from "material-table";
-import { Box, Button, Tooltip } from '@material-ui/core';
-import { MTableToolbar } from 'material-table';
-import LaunchIcon from '@material-ui/icons/Launch';
-import PageTitle from 'components/Common/PageTitle';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -47,6 +44,13 @@ const useStyles = makeStyles((theme) => ({
       color: '#ff8700',
     },
   },
+  toolbar: {
+    "display": "flex",
+    "width": "100%",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "padding": "15px 30px 7px"
+  },
   button: {
     float: 'right',
     margin: '15px',
@@ -67,11 +71,12 @@ const DataAssets = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [backdrop, setBackdrop] = useState(false);
+  const [filteredList, setFilteredList] = useState(props.data);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     setBackdrop(true);
-    defaultInstance.post('/dataassetinfo/read', { "src_sys_id": null })
+    defaultInstance.post('/data_asset_info/read', { "src_sys_id": null })
       .then(response => {
         setData(response.data.responseBody);
         setBackdrop(false);
@@ -94,27 +99,27 @@ const DataAssets = (props) => {
     { title: "Data Asset Name", field: "asset_nm", },
     { title: "Target System ID", field: "target_id", },
     { title: "Asset Owner", field: "asset_owner", },
-    {
-      title: "Actions", field: "", render: (rowData) => {
-        return <div style={{minWidth: '200px'}}>
-          <Tooltip placement='top' title="View">
-            <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Edit">
-            <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></EditOutlinedIcon >
-          </Tooltip>
-          <Tooltip placement='top' title="Clone">
-            <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></FileCopyOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Delete">
-            <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>
-          </Tooltip>
-          <Tooltip placement='top' title="Catalogs">
-            <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
-          </Tooltip>
-        </div>
-      }
-    },
+    // {
+    //   title: "Actions", field: "", render: (rowData) => {
+    //     return <div style={{minWidth: '200px'}}>
+    //       <Tooltip placement='top' title="View">
+    //         <VisibilityOutlinedIcon onClick={() => { handleActionClick(rowData, 'view') }} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Edit">
+    //         <EditOutlinedIcon onClick={() => handleActionClick(rowData, 'edit')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></EditOutlinedIcon >
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Clone">
+    //         <FileCopyOutlinedIcon onClick={() => handleActionClick(rowData, 'clone')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></FileCopyOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Delete">
+    //         <DeleteOutlineOutlinedIcon onClick={() => handleActionClick(rowData, 'delete')} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>
+    //       </Tooltip>
+    //       <Tooltip placement='top' title="Catalogs">
+    //         <LaunchIcon onClick={() => handleUrlClick(rowData)} style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 15px', cursor: 'pointer' }}></LaunchIcon>
+    //       </Tooltip>
+    //     </div>
+    //   }
+    // },
   ];
 
   const handleUrlClick = (rowData) => {
@@ -154,24 +159,70 @@ const DataAssets = (props) => {
         <PageTitle showInfo={() => props.openSideBar({ heading: 'Data Assets', content: 'Data Assets are the entries within the framework which holds the properties of individual files coming from the various sources. In other words, they are the metadata of source files. The metadata includes column names, datatypes, security classifications, DQ rules, data obfuscation properties etc.' })}>
           Data Assets
         </PageTitle>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '25px' }}>
+          <SearchBar data={data} onChange={(d) => { setFilteredList(d) }}></SearchBar>
+          <Link to="/data-assets/create" >
+            <Button variant="contained" className={classes.button}  style={{marginTop: '7px'}} onClick={() => handleCreate()}>Add New +</Button>
+          </Link>
+        </div>
         <MaterialTable
-          components={{
-            Toolbar: (toolbarProps) => (
-              <Box >
-                <Link to="/data-assets/create" >
-                  <Button variant="contained" className={classes.button} onClick={() => handleCreate()}>Add New +</Button>
-                </Link>
-                <MTableToolbar {...toolbarProps} />
-              </Box>
-            ),
-          }}
           isLoading={backdrop}
           icons={tableIcons}
           title="Data Assets"
           columns={columns}
-          data={data}
+          data={filteredList}
+          actions={[
+            {
+              icon: () => <VisibilityOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 0px', cursor: 'pointer' }}></VisibilityOutlinedIcon>,
+              tooltip: 'View',
+              position: 'row', // 'auto' | 'toolbar' | 'toolbarOnSelect' | 'row'
+              onClick: (event, rowData) => {
+                console.log("view data", rowData)
+                handleActionClick(rowData, 'view')
+              }
+            },
+            {
+              icon: () => <EditOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></EditOutlinedIcon >,
+              tooltip: 'Edit',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'edit');
+              }
+            },
+            {
+
+              icon: () => <FileCopyOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></FileCopyOutlinedIcon>,
+              tooltip: 'Clone',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'clone');
+              }
+            },
+            {
+
+              icon: () => <DeleteOutlineOutlinedIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></DeleteOutlineOutlinedIcon>,
+              tooltip: 'Delete',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleActionClick(rowData, 'delete')
+              }
+            },
+            {
+              icon: () =>
+                <LaunchIcon style={{ color: '#666', fontSize: '18px', margin: '0 0 1px 5px', cursor: 'pointer' }}></LaunchIcon>,
+
+              tooltip: 'Catalogs',
+              position: 'row',
+              onClick: (event, rowData) => {
+                handleUrlClick(rowData)
+              }
+            },
+
+          ]}
           options={{
             paging: false,
+            toolbar: false,
+            search: false,
             searchFieldAlignment: 'left',
             showTitle: false,
             draggable: false,

@@ -1,5 +1,5 @@
-import ReactHelmet from 'containers/ReactHelmet';
 import Application from 'containers/Application';
+import ReactHelmet from 'containers/ReactHelmet';
 
 export {
 	Application,

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { closeSnackbar } from 'actions/notificationAction';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;

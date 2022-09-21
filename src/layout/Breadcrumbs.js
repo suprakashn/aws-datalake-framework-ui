@@ -1,6 +1,6 @@
-import React from 'react'
-import { useLocation, Link as RouterLink } from 'react-router-dom'
-import { Breadcrumbs, Typography, Link } from '@material-ui/core'
+import { Breadcrumbs, Link, Typography } from '@material-ui/core';
+import React from 'react';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 function toTitleCase(str) {
    return str.replace(/[^\w\s]/gi, ' ').replace(/_/, ' ').split(' ').map((item) => 

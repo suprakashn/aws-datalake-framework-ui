@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import { Button, CircularProgress, FormHelperText, InputAdornment, TextField, Tooltip } from '@material-ui/core';
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { Link, useNavigate } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import IconButton from "@material-ui/core/IconButton";
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
 import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import { openSnackbar, openSideBar} from 'actions/notificationAction'
-import { MECHANISM, INGESTION_PATTERN, DB_TYPE } from 'components/Constants/SourceSystemConstants'
-import {
-    sourceSystemFieldValue, closeSourceSystemDialog, resetSourceSystemValues,
-    updateDataFlag, updateMode, updateAllSourceSystemValues
-} from 'actions/sourceSystemsAction'
+import { makeStyles } from '@material-ui/core/styles';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ReplayIcon from '@material-ui/icons/Replay';
-import { TextField, CircularProgress, FormHelperText, Tooltip } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import defaultInstance from 'routes/defaultInstance';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import IconButton from "@material-ui/core/IconButton";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
-import { InputAdornment } from '@material-ui/core';
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import { closeSourceSystemDialog, resetSourceSystemValues, sourceSystemFieldValue, updateAllSourceSystemValues, updateDataFlag, updateMode } from 'actions/sourceSystemsAction';
 import PageTitle from 'components/Common/PageTitle';
+import { DB_TYPE, INGESTION_PATTERN, MECHANISM } from 'components/Constants/SourceSystemConstants';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import defaultInstance from 'routes/defaultInstance';
 
 
 const useStyles = makeStyles((theme) => ({

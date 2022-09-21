@@ -1,5 +1,5 @@
+import * as Constants from 'components/Constants/Constants';
 import { combineReducers } from "redux";
-import * as Constants from 'components/Constants/Constants'
 
 const initialSourceSystemValues = {
     src_sys_nm: '',

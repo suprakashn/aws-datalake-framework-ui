@@ -1,14 +1,14 @@
+import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import ReactHelmet from 'containers/ReactHelmet';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactHelmet from 'containers/ReactHelmet';
-import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import { themer } from 'styles/theme';
-import App from 'routes';
-import './index.css';
-import 'styles/materialTable.css';
-import { store, history } from 'store/configureStore';
-import rootReducer from 'reducers';
 import { Provider } from 'react-redux';
+import rootReducer from 'reducers';
+import App from 'routes';
+import { store } from 'store/configureStore';
+import 'styles/materialTable.css';
+import { themer } from 'styles/theme';
+import './index.css';
 
 document.getElementById('body').className = 'background-theme';
 

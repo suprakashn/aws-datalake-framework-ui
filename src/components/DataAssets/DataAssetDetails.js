@@ -1,28 +1,27 @@
+import { Backdrop, Button, CircularProgress } from '@material-ui/core';
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import FormControl from '@material-ui/core/FormControl';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import Close from '@material-ui/icons/Close';
+import { dqRulesFieldValue, updateAllDataAssetValues, updateMode } from 'actions/dataAssetActions';
+import { openSideBar, openSnackbar } from 'actions/notificationAction';
+import PageTitle from 'components/Common/PageTitle';
+import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
 import React, { useEffect, useState } from 'react';
+import Editor from "react-prism-editor";
 import { connect } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Paper from '@material-ui/core/Paper';
-import Close from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import { Button, CircularProgress, Backdrop } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import Tooltip from '@material-ui/core/Tooltip';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { Tab, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import { bindActionCreators } from 'redux';
 import defaultInstance from 'routes/defaultInstance';
-import { updateMode, dqRulesFieldValue, updateAllDataAssetValues } from 'actions/dataAssetActions'
-import { openSnackbar, openSideBar } from 'actions/notificationAction';
-import ColumnAttributes from 'components/DataAssets/ColumnAttributes';
-import Editor from "react-prism-editor";
-import PageTitle from 'components/Common/PageTitle';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -119,7 +118,7 @@ const DataAssetDetails = (props) => {
 
   const fetchDataAssetDetails = () => {
     setBackdrop(true);
-    defaultInstance.post('/dataasset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
+    defaultInstance.post('/data_asset/read', { "asset_id": props.selectedRow.asset_id, "src_sys_id": props.selectedRow.src_sys_id })
       .then(response => {
         props.updateAllDataAssetValues({ ...response.data.responseBody });
         setBackdrop(false);
@@ -141,7 +140,7 @@ const DataAssetDetails = (props) => {
     try {
       setDisplayDeleteDialog(false);
       setDeletingFlag(true);
-      const response = await defaultInstance.post('dataasset/delete', { asset_id: props.assetFieldValues.asset_id, src_sys_id: props.assetFieldValues.src_sys_id });
+      const response = await defaultInstance.post('data_asset/delete', { asset_id: props.assetFieldValues.asset_id, src_sys_id: props.assetFieldValues.src_sys_id });
       setDeletingFlag(false);
       if (response.data.responseStatus) {
         props.openSnackbar({ variant: 'success', message: `${response.data.responseMessage}` });
@@ -290,20 +289,34 @@ const DataAssetDetails = (props) => {
                         </div>
                         <div>{props.ingestionFieldValues.src_table_name}</div>
                       </FormControl>
-                      <FormControl className={classes.formControl}>
+                      {/* <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           Source SQL Query
                         </div>
                         <div>{props.ingestionFieldValues.src_sql_query}</div>
-                      </FormControl>
+                      </FormControl> */}
                       <FormControl className={classes.formControl}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Extraction Method
+                        </div>
+                        <div>{props.ingestionFieldValues.ext_method}</div>
+                      </FormControl>
+                      {srcIngestionValue === 'database' && props.ingestionFieldValues.ext_method === 'incremental' &&
+                      <FormControl className={classes.formControl}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                        Extraction Column
+                        </div>
+                        <div>{props.ingestionFieldValues.ext_col}</div>
+                      </FormControl>}
+                      </>
+                  }
+                  {srcIngestionValue !== 'database' &&
+                   <FormControl className={classes.formControl}>
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           Ingestion Source Path
                         </div>
                         <div>{props.ingestionFieldValues.ingstn_src_path}</div>
-                      </FormControl>
-                    </>
-                  }
+                      </FormControl>}
                   <FormControl className={classes.formControl}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                       Trigger Mechanism

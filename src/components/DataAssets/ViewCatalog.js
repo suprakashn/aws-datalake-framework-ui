@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Close from '@material-ui/icons/Close';
-import { Button } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
+import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Close from '@material-ui/icons/Close';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import defaultInstance from 'routes/defaultInstance';
-import { closeDataAssetDialogue, updateAllDataAssetValues, updateMode, updateDataFlag } from 'actions/dataAssetActions'
+import { bindActionCreators } from 'redux';
 
 const useStyles = makeStyles((theme) => ({
   dialogCustomizedWidth: {
@@ -39,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewCatalog = (props) => {
   const classes = useStyles();
-  const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
 
   return (
