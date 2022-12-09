@@ -5,6 +5,8 @@ import DataAssetDetails from 'components/DataAssets/DataAssetDetails';
 import DataCatalogDetails from 'components/DataAssets/DataCatalogDetails';
 import LakeDestination from 'components/LakeDestination';
 import CreateLakeDestination from 'components/LakeDestination/CreateLakeDestination';
+import Landingpage from 'components/Landingpage/Landingpage';
+import Signup from 'components/Signup/Signup';
 import SourceSystems from 'components/SourceSystems';
 import CreateSourceSystem from 'components/SourceSystems/CreateSourceSystem';
 import React from 'react';
@@ -26,6 +28,8 @@ const Page = props =>(
         <Route path="/lake-destinations/create" element={<CreateLakeDestination/>}/>
         <Route path="/lake-destinations/edit" element={<CreateLakeDestination/>}/>
         <Route path="*" element={<Navigate to="/" />}/>
+        <Route path="/signup" element={<Signup/>}/>
+        <Route path="/Landingpage" element={<Landingpage/>}/>
     </Routes>
 )
 
